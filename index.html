@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boutique</title>
+    <title>Boutique Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { 
@@ -16,61 +16,61 @@
         
         body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
         
-        /* Forcer le texte en noir pour la lisibilité sur PC */
-        h2, h3, .cart-title, .qty-info, .size-btn-opt { color: #222 !important; }
+        /* Personnalisation Prénom */
+        #welcome-msg { font-size: 1.4rem; font-weight: 300; text-align: center; margin-bottom: 5px; color: #222; }
+        #welcome-name { font-weight: bold; color: var(--primary); }
+
+        /* Barre de recherche style luxe */
+        .search-container { margin-bottom: 20px; position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 5px 0; }
+        #search-input { 
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; 
+            background: var(--sec-bg); color: #222; box-sizing: border-box; font-size: 16px;
+        }
 
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
         .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; }
         
         .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); }
-        
-        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; }
+        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; }
 
         .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 9999; padding: 20px; display: none; flex-direction: column; color: #222 !important; }
         .modal.open { display: flex; }
         
-        /* Tailles visibles */
         .size-box { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
-        .size-btn-opt { 
-            border: 2px solid #ccc; 
-            padding: 8px 15px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            background: #eee;
-            font-weight: bold;
-        }
+        .size-btn-opt { border: 2px solid #ccc; padding: 8px 15px; border-radius: 8px; cursor: pointer; background: #eee; font-weight: bold; color: #222; }
         .size-btn-opt.active { border: 2px solid var(--primary); background: var(--primary); color: white !important; }
 
-        /* Panier */
-        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #ddd; gap: 12px; color: #222 !important; }
+        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #ddd; gap: 12px; }
         .cart-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
-        .cart-info { flex-grow: 1; text-align: left; }
-        .btn-remove { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
-        
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; }
+        .btn-remove { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center; font-weight:300;">Notre Collection</h2>
+    <div id="welcome-msg">Bonjour, <span id="welcome-name">Invité</span></div>
+    <p style="text-align:center; font-size: 0.9rem; color: var(--hint); margin-top: 0;">Ravi de vous revoir.</p>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Rechercher un modèle..." oninput="filterProducts()">
+    </div>
+
     <div id="grid"></div>
 
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0">Mon Panier</h3>
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer; color:#222;">✕</span>
+            <h3>Mon Panier</h3>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px; color:#222;">
+        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px;">
             Total : <span id="total-price">0</span> €
         </div>
     </div>
 
     <div id="product-modal" class="modal">
         <div style="display:flex; justify-content:flex-end;">
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer; color:#222;">✕</span>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
         <div id="product-detail-content"></div>
     </div>
@@ -80,7 +80,12 @@
         tg.expand();
         tg.ready();
 
-        // Remise du bouton SAV
+        // 5. PERSONNALISATION : Récupérer le nom de l'utilisateur Telegram
+        const user = tg.initDataUnsafe?.user;
+        if (user && user.first_name) {
+            document.getElementById('welcome-name').innerText = user.first_name;
+        }
+
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
         tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
@@ -94,9 +99,20 @@
         let cart = [];
         let selectedSize = null;
 
-        function renderGrid() {
+        // 4. RECHERCHE : Filtrer les produits
+        function filterProducts() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderGrid(filtered);
+        }
+
+        function renderGrid(data = products) {
             const grid = document.getElementById('grid');
-            grid.innerHTML = products.map(p => {
+            if (data.length === 0) {
+                grid.innerHTML = `<p style="grid-column: span 2; text-align:center; padding: 20px;">Aucun article trouvé.</p>`;
+                return;
+            }
+            grid.innerHTML = data.map(p => {
                 const totalQty = cart.filter(item => item.id === p.id).reduce((sum, item) => sum + item.qty, 0);
                 return `
                 <div class="card">
@@ -115,8 +131,8 @@
             let sizeHtml = p.sizes ? `<div class="size-box">${p.sizes.map(s => `<div class="size-btn-opt" onclick="selectSize(this, '${s}')">${s}</div>`).join('')}</div>` : "";
 
             document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2 style="color:#222;">${p.name}</h2>
+                <img src="${p.img}" style="width:100%; border-radius:15px; height:250px; object-fit:cover;">
+                <h2 style="color:#222; margin-top:15px;">${p.name}</h2>
                 <p style="color:#666;">${p.desc}</p>
                 <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
                 ${sizeHtml}
@@ -155,8 +171,8 @@
                 html += `
                 <div class="cart-item">
                     <img src="${item.img}" class="cart-img">
-                    <div class="cart-info">
-                        <div style="font-weight:bold; color:#222;">${item.name} ${item.size ? '[Taille: '+item.size+']' : ''}</div>
+                    <div style="flex-grow:1;">
+                        <div style="font-weight:bold; color:#222;">${item.name} ${item.size ? '['+item.size+']' : ''}</div>
                         <div style="font-size:13px; color:#444;">${item.price}€ x ${item.qty} = ${subtotal}€</div>
                     </div>
                     <button class="btn-remove" onclick="removeFromCart(${index})">Supprimer</button>
@@ -204,7 +220,7 @@
         });
 
         tg.onEvent('backButtonClicked', closeAll);
-        window.onload = renderGrid;
+        window.onload = () => renderGrid();
     </script>
 </body>
 </html>
