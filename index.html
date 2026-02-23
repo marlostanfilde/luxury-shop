@@ -14,38 +14,37 @@
             --hint: var(--tg-theme-hint_color, #999);
         }
         
-        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 100px; }
+        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
         
-        /* Grille produits */
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
         
-        /* Boutons de taille */
-        .size-container { display: flex; gap: 8px; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
-        .size-btn { 
-            padding: 6px 12px; border: 1px solid var(--hint); border-radius: 6px; 
-            background: none; color: var(--text); cursor: pointer; font-size: 12px;
-        }
-        .size-btn.active { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
+        .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; display: block; }
+        
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; border: 2px solid var(--bg); }
+        
+        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        /* Modales */
-        .modal { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: var(--bg); z-index: 9999; padding: 20px; 
-            display: none; flex-direction: column; 
-        }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
+        
+        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 12px; }
+        .cart-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .cart-info { flex-grow: 1; text-align: left; }
+        .cart-title { font-weight: bold; font-size: 15px; display: block; }
+        .cart-desc { font-size: 12px; color: var(--hint); display: block; margin: 2px 0; }
+        .cart-qty-detail { font-size: 13px; color: var(--primary); font-weight: bold; }
+        
+        .cart-controls { display: flex; align-items: center; gap: 10px; }
+        .btn-qty { background: #333; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; font-weight: bold; cursor: pointer; font-size: 18px; }
+        .qty-label { font-weight: bold; min-width: 20px; text-align: center; }
 
-        .btn-main { 
-            background: var(--primary); color: white; border: none; 
-            border-radius: 8px; width: 100%; padding: 12px; font-weight: bold; margin-top: 10px;
-        }
+        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
 
-        .cart-item { 
-            display: flex; align-items: center; gap: 10px; padding: 10px 0; 
-            border-bottom: 1px solid rgba(0,0,0,0.1); 
-        }
+        /* NOUVEAU : Style pour les boutons de taille */
+        .size-selector { display: flex; gap: 8px; margin: 10px 0; }
+        .size-opt { border: 1px solid var(--hint); padding: 5px 10px; border-radius: 5px; cursor: pointer; background: none; color: var(--text); }
+        .size-opt.selected { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -54,165 +53,166 @@
     <div id="grid"></div>
 
     <div id="cart-modal" class="modal">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Mon Panier</h3>
-            <span onclick="closeModals()" style="font-size:30px;">✕</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0">Mon Panier</h3>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
-        <div id="cart-items" style="flex-grow:1; overflow-y:auto;"></div>
-        <div id="total-display" style="font-size:1.2rem; font-weight:bold; padding:20px 0;">Total: 0€</div>
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
+        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px;">
+            Total : <span id="total-price">0</span> €
+        </div>
     </div>
 
     <div id="product-modal" class="modal">
-        <span onclick="closeModals()" style="align-self:flex-end; font-size:30px;">✕</span>
-        <div id="product-detail"></div>
+        <div style="display:flex; justify-content:flex-end;">
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
+        </div>
+        <div id="product-detail-content"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, name: "Chemise Été", price: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L"] },
-            { id: 3, name: "Sac Voyage", price: 450, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
-            { id: 4, name: "Montre Or", price: 890, img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
+            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
+            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
+            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
-        let cart = [];
-        let selectedSize = null;
+        let cart = {};
+        let tempSize = null; // Stockage temporaire de la taille choisie
 
-        function init() {
+        function renderGrid() {
             const grid = document.getElementById('grid');
-            grid.innerHTML = products.map(p => `
-                <div class="card" onclick="openProduct(${p.id})">
-                    <img src="${p.img}">
-                    <div style="font-weight:bold; margin:5px 0;">${p.name}</div>
-                    <div style="color:var(--primary)">${p.price} €</div>
-                    <button class="btn-main" style="padding:5px; font-size:12px;">VOIR</button>
-                </div>
-            `).join('');
+            grid.innerHTML = products.map(p => {
+                const qte = cart[p.id] || 0;
+                return `
+                <div class="card">
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
+                    <img src="${p.img}" onclick="openProduct(${p.id})">
+                    <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
+                    <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
+                    <button class="btn-add" onclick="openProduct(${p.id})">AJOUTER</button>
+                </div>`;
+            }).join('');
+        }
+
+        // Gérer le clic sur une taille
+        function setSize(el, size) {
+            document.querySelectorAll('.size-opt').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            tempSize = size;
         }
 
         function openProduct(id) {
-            const p = products.find(x => x.id === id);
-            selectedSize = null;
+            const p = products.find(i => i.id === id);
+            tempSize = null; // Reset
             
-            let html = `
-                <img src="${p.img}" style="width:100%; border-radius:15px;">
-                <h2>${p.name}</h2>
-                <div style="font-size:20px; color:var(--primary); font-weight:bold;">${p.price} €</div>
-            `;
-
-            if (p.sizes) {
-                html += `<p>Choisir une taille :</p><div class="size-container">`;
-                p.sizes.forEach(s => {
-                    html += `<button class="size-btn" onclick="selectSize(this, '${s}')">${s}</button>`;
-                });
-                html += `</div>`;
+            let sizeSection = "";
+            if(p.sizes) {
+                sizeSection = `<p>Taille :</p><div class="size-selector">` + 
+                    p.sizes.map(s => `<div class="size-opt" onclick="setSize(this, '${s}')">${s}</div>`).join('') + 
+                    `</div>`;
             }
 
-            html += `<button class="btn-main" onclick="addToCart(${p.id})">AJOUTER AU PANIER</button>`;
-            
-            document.getElementById('product-detail').innerHTML = html;
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" class="detail-img">
+                <h2>${p.name}</h2>
+                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
+                ${sizeSection}
+                <button onclick="confirmAdd(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">CONFIRMER L'AJOUT</button>
+            `;
             document.getElementById('product-modal').classList.add('open');
             tg.BackButton.show();
         }
 
-        function selectSize(btn, size) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            selectedSize = size;
-        }
-
-        function addToCart(id) {
-            const p = products.find(x => x.id === id);
-            if (p.sizes && !selectedSize) {
-                tg.showAlert("Oups ! Choisis une taille.");
+        function confirmAdd(id) {
+            const p = products.find(i => i.id === id);
+            if(p.sizes && !tempSize) {
+                tg.showAlert("Veuillez choisir une taille !");
                 return;
             }
-
-            // On crée une clé unique (ex: "1_M") pour différencier les tailles
-            const itemKey = selectedSize ? `${id}_${selectedSize}` : `${id}`;
-            const existing = cart.find(item => item.key === itemKey);
-
-            if (existing) {
-                existing.qty++;
-            } else {
-                cart.push({
-                    key: itemKey,
-                    name: p.name,
-                    price: p.price,
-                    size: selectedSize,
-                    qty: 1
-                });
-            }
-
-            tg.HapticFeedback.notificationOccurred('success');
-            closeModals();
-            updateMainButton();
+            updateCart(id, 1);
+            closeAll();
         }
 
-        function updateMainButton() {
-            const count = cart.reduce((a, b) => a + b.qty, 0);
+        function updateCart(id, delta) {
+            tg.HapticFeedback.impactOccurred('medium');
+            cart[id] = (cart[id] || 0) + delta;
+            if (cart[id] <= 0) delete cart[id];
+            renderGrid();
+            updateInterface();
+            if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
+        }
+
+        function updateInterface() {
+            const count = Object.values(cart).reduce((a, b) => a + b, 0);
             if (count > 0) {
-                tg.MainButton.setText(`VOIR LE PANIER (${count})`);
+                const isCart = document.getElementById('cart-modal').classList.contains('open');
+                tg.MainButton.setText(isCart ? "ENVOYER LA COMMANDE" : "VOIR LE PANIER (" + count + ")");
                 tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
-            }
+            } else { tg.MainButton.hide(); }
         }
 
-        function showCart() {
-            let total = 0;
-            const container = document.getElementById('cart-items');
-            
-            if (cart.length === 0) {
-                container.innerHTML = "<p style='text-align:center;'>Le panier est vide</p>";
-            } else {
-                container.innerHTML = cart.map((item, index) => {
-                    total += item.price * item.qty;
-                    return `
-                        <div class="cart-item">
-                            <div style="flex-grow:1">
-                                <strong>${item.name}</strong> ${item.size ? `[${item.size}]` : ''}<br>
-                                ${item.price}€ x ${item.qty}
-                            </div>
-                            <button onclick="removeItem(${index})" style="color:red; background:none; border:none;">Supprimer</button>
+        function updateCartModal() {
+            let total = 0; let html = "";
+            products.forEach(p => {
+                if (cart[p.id]) {
+                    const qte = cart[p.id];
+                    const st = p.price * qte;
+                    total += st;
+                    html += `
+                    <div class="cart-item">
+                        <img src="${p.img}" class="cart-img">
+                        <div class="cart-info">
+                            <span class="cart-title">${p.name}</span>
+                            <span class="cart-qty-detail">${st}€ (${p.price}€ x ${qte})</span>
                         </div>
-                    `;
-                }).join('');
-            }
-            
-            document.getElementById('total-display').innerText = `Total : ${total} €`;
-            document.getElementById('cart-modal').classList.add('open');
-            tg.MainButton.setText("COMMANDER MAINTENANT");
+                        <div class="cart-controls">
+                            <button class="btn-qty" onclick="updateCart(${p.id}, -1)">-</button>
+                            <span class="qty-label">${qte}</span>
+                            <button class="btn-qty" onclick="updateCart(${p.id}, 1)">+</button>
+                        </div>
+                    </div>`;
+                }
+            });
+            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px; color:var(--hint);'>Votre panier est vide</p>";
+            document.getElementById('total-price').innerText = total;
         }
 
-        function removeItem(index) {
-            cart.splice(index, 1);
-            showCart();
-            updateMainButton();
-        }
-
-        function closeModals() {
-            document.getElementById('product-modal').classList.remove('open');
+        function closeAll() {
             document.getElementById('cart-modal').classList.remove('open');
+            document.getElementById('product-modal').classList.remove('open');
             tg.BackButton.hide();
-            updateMainButton();
+            updateInterface();
         }
 
         tg.onEvent('mainButtonClicked', () => {
-            if (document.getElementById('cart-modal').classList.contains('open')) {
-                tg.sendData(JSON.stringify(cart));
-            } else {
-                showCart();
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                document.getElementById('cart-modal').classList.add('open');
                 tg.BackButton.show();
+                updateCartModal();
+                updateInterface();
+            } else {
+                tg.showConfirm("Voulez-vous envoyer la commande ?", (ok) => {
+                    if (ok) { tg.sendData(JSON.stringify({commande: cart})); }
+                });
             }
         });
 
-        tg.onEvent('backButtonClicked', closeModals);
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315");
+        });
 
-        init();
+        tg.onEvent('backButtonClicked', closeAll);
+        window.onload = renderGrid;
     </script>
 </body>
 </html>
