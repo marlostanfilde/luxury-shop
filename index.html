@@ -2,29 +2,26 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ma Boutique Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Boutique Officielle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #c5a059; --bg: #ffffff; }
+        :root { --primary: #c5a059; --bg: #ffffff; --red: #ff4444; }
         
         body { 
             font-family: -apple-system, system-ui, sans-serif; 
-            margin: 0; 
-            padding: 15px; 
-            background: var(--bg);
-            /* Important : on laisse de la place pour que le contenu ne soit pas caché par le bouton fixe */
-            padding-bottom: 100px; 
+            margin: 0; padding: 15px; background: var(--bg);
+            padding-bottom: 120px; 
         }
         
-        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        h2 { text-align: center; font-weight: 300; margin-bottom: 25px; }
 
+        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
         .card { 
-            border: 1px solid #f0f0f0; 
-            border-radius: 15px; 
-            padding: 12px; 
-            text-align: center; 
-            background: white;
+            border: 1px solid #f0f0f0; border-radius: 15px; 
+            padding: 12px; text-align: center; background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
@@ -32,57 +29,67 @@
         
         .btn-action { 
             background: var(--primary); color: white; border: none; 
-            border-radius: 8px; width: 35px; height: 35px; font-size: 20px;
+            border-radius: 8px; width: 35px; height: 35px; font-size: 20px; 
         }
 
-        /* LE BOUTON SAV - FIXÉ STRICTEMENT EN BAS */
-        .sav-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 15px;
-            background: linear-gradient(to top, white, rgba(255,255,255,0.8));
-            text-align: center;
-            z-index: 999;
+        /* BOUTON SAV IMMOBILE */
+        .sav-container {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); z-index: 999;
+            width: 100%; display: flex; justify-content: center;
+            pointer-events: none;
         }
-
         .btn-sav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #1a1a1a;
-            color: white;
-            padding: 12px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            pointer-events: auto; background: #1a1a1a; color: white;
+            padding: 12px 35px; border-radius: 50px; text-decoration: none;
+            font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 2px solid white;
         }
 
-        /* Style Panier */
-        #cart-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 10000; padding: 25px; display: none; flex-direction: column; }
+        /* PANIER */
+        #cart-modal { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: white; z-index: 10000; padding: 25px; 
+            display: none; flex-direction: column; 
+        }
         #cart-modal.open { display: flex; }
-        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
+        
+        .cart-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid #eee; 
+        }
+        
+        /* BOUTON SUPPRIMER DANS LE PANIER */
+        .btn-remove {
+            background: #fff0f0;
+            color: var(--red);
+            border: 1px solid #ffcccc;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .total-section { margin-top: auto; padding: 20px 0; font-weight: bold; font-size: 1.4em; border-top: 2px solid #eee; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center; font-weight:300;">Collection</h2>
-    
+    <h2>Notre Collection</h2>
     <div id="grid"></div>
 
-    <div class="sav-footer">
-        <a href="https://t.me/TonUsername" class="btn-sav-link">
-            <span>💬</span> CONTACTER LE SAV
-        </a>
+    <div class="sav-container">
+        <a href="https://t.me/toulouse315" class="btn-sav-link">💬 CONTACT SAV</a>
     </div>
 
     <div id="cart-modal">
-        <h3>Votre Panier</h3>
-        <div id="cart-content"></div>
-        <div style="margin-top:auto; padding:20px; font-weight:bold; font-size:1.2em; border-top:1px solid #eee;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <h3 style="margin:0">Votre Panier</h3>
+            <span onclick="closeCart()" style="font-size:30px; color:#ccc; cursor:pointer;">✕</span>
+        </div>
+        <div id="cart-content" style="overflow-y: auto; flex-grow: 1;"></div>
+        <div class="total-section">
             Total : <span id="total-price">0</span> €
         </div>
     </div>
@@ -90,7 +97,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        // On règle le bouton Telegram sans animation de mouvement
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
 
         const products = [
@@ -121,24 +127,34 @@
             if (cart[id] <= 0) delete cart[id];
             
             const controlDiv = document.getElementById(`controls-${id}`);
-            const count = cart[id] || 0;
-            controlDiv.innerHTML = `
-                ${count > 0 ? `<button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px">${count}</span>` : ''}
-                <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
-            `;
+            if (controlDiv) {
+                const count = cart[id] || 0;
+                controlDiv.innerHTML = `
+                    ${count > 0 ? `<button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px">${count}</span>` : ''}
+                    <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
+                `;
+            }
             updateInterface();
+            if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
+        }
+
+        function removeItem(id) {
+            delete cart[id];
+            const controlDiv = document.getElementById(`controls-${id}`);
+            if (controlDiv) controlDiv.innerHTML = `<button class="btn-action" onclick="updateCart(${id}, 1)">+</button>`;
+            updateInterface();
+            updateCartModal();
         }
 
         function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
-            const modalOpen = document.getElementById('cart-modal').classList.contains('open');
-            
+            const isCartOpen = document.getElementById('cart-modal').classList.contains('open');
             if (count > 0) {
-                tg.MainButton.setText(modalOpen ? "VALIDER LA COMMANDE" : `VOIR LE PANIER (${count})`);
+                tg.MainButton.setText(isCartOpen ? "VALIDER LA COMMANDE" : `VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
             } else {
                 tg.MainButton.hide();
-                if (modalOpen) closeCart();
+                if (isCartOpen) closeCart();
             }
         }
 
@@ -150,10 +166,18 @@
                 if (cart[p.id]) {
                     const subtotal = p.price * cart[p.id];
                     total += subtotal;
-                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><span>${subtotal} €</span></div>`;
+                    html += `
+                        <div class="cart-item">
+                            <div style="flex-grow:1">
+                                <strong>${p.name}</strong><br>
+                                <span style="color:#888; font-size:13px;">${p.price}€ x ${cart[p.id]}</span>
+                            </div>
+                            <div style="font-weight:bold;">${subtotal}€</div>
+                            <button class="btn-remove" onclick="removeItem(${p.id})">Suppr.</button>
+                        </div>`;
                 }
             });
-            content.innerHTML = html || "<p>Panier vide</p>";
+            content.innerHTML = html || "<p style='text-align:center; color:#999; margin-top:50px;'>Votre panier est vide</p>";
             document.getElementById('total-price').innerText = total;
         }
 
@@ -174,7 +198,7 @@
             if (!document.getElementById('cart-modal').classList.contains('open')) {
                 openCart();
             } else {
-                tg.sendData(JSON.stringify({cart: cart}));
+                tg.sendData(JSON.stringify({commande: cart}));
             }
         });
 
