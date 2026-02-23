@@ -3,41 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Boutique</title>
+    <title>Boutique Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #c5a059; --bg: var(--tg-theme-bg_color, #ffffff); --text: var(--tg-theme-text-color, #222); --secondary: var(--tg-theme-secondary_bg_color, #f4f4f4); }
-        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
+        :root { 
+            --primary: #c5a059; 
+            --bg: var(--tg-theme-bg_color, #ffffff); 
+            --text: var(--tg-theme-text-color, #222); 
+            --sec-bg: var(--tg-theme-secondary_bg_color, #f4f4f4);
+            --hint: var(--tg-theme-hint_color, #999);
+        }
+        
+        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
+        
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--secondary); border-radius: 12px; padding: 10px; text-align: center; position: relative; }
-        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; }
-        .badge { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .btn-action { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 8px; margin-top: 10px; font-weight: bold; }
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 999; padding: 20px; display: none; flex-direction: column; }
+        
+        .card { background: var(--sec-bg); border-radius: 15px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 10px; }
+        
+        .badge { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); }
+        
+        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 8px; font-weight: bold; }
+
+        /* PANIER MOBILE */
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
-        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; }
+        
+        .cart-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 10px; }
+        .cart-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .cart-info { flex-grow: 1; }
+        .cart-controls { display: flex; align-items: center; gap: 10px; }
+        
+        .btn-qty { background: var(--sec-bg); color: var(--text); border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; width: 30px; height: 30px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center">Ma Boutique</h2>
+    <h2 style="text-align:center; font-weight:300;">Notre Collection</h2>
     <div id="grid"></div>
 
     <div id="cart-modal" class="modal">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Mon Panier</h3>
-            <b onclick="closeAll()" style="font-size:24px; cursor:pointer;">✕</b>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0">Mon Panier</h3>
+            <span onclick="closeAll()" style="font-size:28px; color:var(--hint); cursor:pointer;">✕</span>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.2em; font-weight:bold; padding-top:10px;">Total : <span id="total-price">0</span> €</div>
+        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 1px solid rgba(0,0,0,0.1);">
+            Total : <span id="total-price">0</span> €
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.MainButton.setParams({ color: '#c5a059' });
-        
-        // Configuration du SAV toulouse315
+        tg.ready(); // Signal à Telegram que l'app est prête (important pour mobile)
+
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
         tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
@@ -49,29 +70,29 @@
 
         let cart = {};
 
-        function render() {
+        function renderGrid() {
             const grid = document.getElementById('grid');
+            if(!grid) return;
             grid.innerHTML = products.map(p => {
                 const qte = cart[p.id] || 0;
                 return `
                 <div class="card">
                     ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
-                    <img src="${p.img}">
-                    <div style="margin:8px 0; font-size:14px;">${p.name}</div>
+                    <img src="${p.img}" alt="${p.name}">
+                    <div style="margin:8px 0; font-size:14px; font-weight:500;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-action" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
+                    <button class="btn-add" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
                 </div>`;
             }).join('');
         }
 
         function updateCart(id, delta) {
-            // Vibration uniquement (plus stable que le son)
             tg.HapticFeedback.impactOccurred('medium');
             
             cart[id] = (cart[id] || 0) + delta;
             if (cart[id] <= 0) delete cart[id];
             
-            render();
+            renderGrid();
             updateInterface();
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
         }
@@ -80,9 +101,11 @@
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
             if (count > 0) {
                 const isCart = document.getElementById('cart-modal').classList.contains('open');
-                tg.MainButton.setText(isCart ? "VALIDER LA COMMANDE" : `VOIR PANIER (${count})`);
+                tg.MainButton.setText(isCart ? "CONFIRMER LA COMMANDE" : `VOIR PANIER (${count})`);
                 tg.MainButton.show();
-            } else { tg.MainButton.hide(); }
+            } else { 
+                tg.MainButton.hide(); 
+            }
         }
 
         function updateCartModal() {
@@ -91,13 +114,22 @@
                 if (cart[p.id]) {
                     const st = p.price * cart[p.id];
                     total += st;
-                    html += `<div class="cart-item">
-                        <span>${p.name} (x${cart[p.id]})</span>
-                        <b>${st}€ <i onclick="updateCart(${p.id}, -1)" style="color:red; margin-left:10px; font-style:normal; cursor:pointer;">[X]</i></b>
+                    html += `
+                    <div class="cart-item">
+                        <img src="${p.img}" class="cart-img">
+                        <div class="cart-info">
+                            <div style="font-weight:bold; font-size:14px;">${p.name}</div>
+                            <div style="color:var(--primary); font-size:13px;">${p.price} €</div>
+                        </div>
+                        <div class="cart-controls">
+                            <button class="btn-qty" onclick="updateCart(${p.id}, -1)">-</button>
+                            <span style="font-weight:bold;">${cart[p.id]}</span>
+                            <button class="btn-qty" onclick="updateCart(${p.id}, 1)">+</button>
+                        </div>
                     </div>`;
                 }
             });
-            document.getElementById('cart-content').innerHTML = html || "Vide";
+            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; color:var(--hint); margin-top:50px;'>Panier vide</p>";
             document.getElementById('total-price').innerText = total;
         }
 
@@ -114,8 +146,11 @@
                 updateCartModal();
                 updateInterface();
             } else {
-                tg.showConfirm("Confirmer commande ?", (ok) => {
-                    if (ok) { tg.sendData(JSON.stringify(cart)); tg.close(); }
+                tg.showConfirm("Voulez-vous valider votre commande ?", (ok) => {
+                    if (ok) { 
+                        tg.sendData(JSON.stringify({commande: cart})); 
+                        tg.close(); 
+                    }
                 });
             }
         });
@@ -126,7 +161,8 @@
 
         tg.onEvent('backButtonClicked', closeAll);
         
-        window.onload = render;
+        // Démarrage
+        window.onload = renderGrid;
     </script>
 </body>
 </html>
