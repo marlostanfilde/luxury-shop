@@ -6,50 +6,93 @@
     <title>Boutique Officielle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #c5a059; --bg: #ffffff; --red: #ff4444; }
-        body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 15px; background: var(--bg); padding-bottom: 120px; }
+        :root { 
+            --primary: #c5a059; 
+            --bg: var(--tg-theme-bg_color, #ffffff); 
+            --text: var(--tg-theme-text-color, #222222);
+            --hint: var(--tg-theme-hint_color, #999999);
+            --secondary-bg: var(--tg-theme-secondary_bg_color, #f4f4f4);
+            --red: #ff4444; 
+        }
+        
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            margin: 0; padding: 15px; 
+            background: var(--bg); color: var(--text);
+            padding-bottom: 140px; 
+            -webkit-user-select: none; /* Empêche la sélection de texte pour faire plus "App" */
+        }
+
+        h2 { text-align: center; font-weight: 300; margin-bottom: 20px; }
         
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { border: 1px solid #f0f0f0; border-radius: 15px; padding: 12px; text-align: center; background: white; cursor: pointer; }
-        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
-        .price { font-weight: bold; color: var(--primary); display: block; margin: 10px 0; }
-        .btn-action { background: var(--primary); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; font-size: 20px; }
+        
+        .card { 
+            border-radius: 15px; padding: 12px; text-align: center; 
+            background: var(--secondary-bg); cursor: pointer;
+            position: relative; transition: transform 0.1s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .card:active { transform: scale(0.95); }
+        
+        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; }
+        .price { font-weight: bold; color: var(--primary); display: block; margin: 8px 0; }
+        
+        .badge {
+            position: absolute; top: -5px; right: -5px;
+            background: var(--red); color: white; border-radius: 50%;
+            width: 24px; height: 24px; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; border: 2px solid var(--bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-        /* BOUTON SAV */
-        .sav-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 99; width: 100%; display: flex; justify-content: center; pointer-events: none; }
-        .btn-sav-link { pointer-events: auto; background: #1a1a1a; color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-size: 14px; font-weight: 600; border: 2px solid white; }
+        .btn-action { 
+            background: var(--primary); color: white; border: none; 
+            border-radius: 8px; width: 45px; height: 35px; font-size: 20px;
+            margin: 0 auto; display: flex; align-items: center; justify-content: center;
+        }
 
-        /* MODALES (PANIER ET DÉTAIL) */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 10000; padding: 25px; display: none; flex-direction: column; overflow-y: auto; }
+        /* MODALES */
+        .modal { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: var(--bg); z-index: 10000; padding: 25px; 
+            display: none; flex-direction: column; 
+        }
         .modal.open { display: flex; }
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
-        .btn-minus-cart { background: #fff0f0; color: var(--red); border: 1px solid #ffcccc; border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: bold; }
+        .cart-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 0; border-bottom: 1px solid var(--secondary-bg); 
+        }
+        
+        .btn-minus { 
+            background: none; color: var(--red); border: 1px solid var(--red); 
+            border-radius: 5px; padding: 4px 8px; font-size: 11px; font-weight: bold;
+        }
 
-        /* STYLE FICHE PRODUIT */
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; }
-        .detail-desc { color: #666; line-height: 1.6; margin-bottom: 20px; }
+        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center; font-weight:300;">Notre Collection</h2>
+    <h2>Ma Boutique Pro</h2>
     <div id="grid"></div>
-
-    <div class="sav-container"><a href="https://t.me/toulouse315" class="btn-sav-link">💬 CONTACT SAV</a></div>
 
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <h3 style="margin:0">Votre Panier</h3>
-            <span onclick="closeAll()" style="font-size:30px; color:#ccc;">✕</span>
+            <h3 style="margin:0">Mon Panier</h3>
+            <span onclick="closeAll()" style="font-size:30px; color:var(--hint); cursor:pointer;">✕</span>
         </div>
-        <div id="cart-content"></div>
-        <div style="margin-top:auto; padding-top:20px; font-weight:bold; font-size:1.4em; border-top: 2px solid #eee;">Total : <span id="total-price">0</span> €</div>
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
+        <div style="padding-top:20px; font-weight:bold; font-size:1.4em; border-top: 1px solid var(--secondary-bg);">
+            Total : <span id="total-price">0</span> €
+        </div>
     </div>
 
     <div id="product-modal" class="modal">
         <div style="display:flex; justify-content:flex-end;">
-            <span onclick="closeAll()" style="font-size:30px; color:#ccc;">✕</span>
+            <span onclick="closeAll()" style="font-size:30px; color:var(--hint); cursor:pointer;">✕</span>
         </div>
         <div id="product-detail-content"></div>
     </div>
@@ -57,56 +100,70 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // 1. SON DE CLIC (Bruit de bouton propre)
+        const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+        clickSound.volume = 0.5;
+
+        // Configuration des boutons officiels Telegram
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        tg.SecondaryButton.setParams({
+            text: "💬 CONTACT SAV",
+            color: "#222222",
+            text_color: "#ffffff",
+            is_visible: true
+        });
 
         const products = [
-            { id: 1, name: "Veste Signature", price: 280, desc: "Une veste en laine premium, coupe ajustée, idéale pour vos soirées élégantes.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
-            { id: 2, name: "Chemise Lin", price: 120, desc: "Lin 100% naturel, ultra respirant pour l'été. Un classique indispensable.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=500" },
-            { id: 3, name: "Sac Cuir", price: 450, desc: "Cuir pleine fleur tanné de façon végétale. Haute résistance et finitions main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500" },
-            { id: 4, name: "Lunettes", price: 320, desc: "Protection UV400, monture en acétate italien. Design intemporel.", img: "https://images.unsplash.com/photo-1511499767390-90342f54b207?w=500" }
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne haute qualité, coupe ajustée.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
+            { id: 2, name: "Chemise Été", price: 120, desc: "Lin respirant, idéal pour les fortes chaleurs.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
+            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable tanné végétal, fait main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
+            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique japonais, cristal saphir.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
         let cart = {};
 
-        function initialRender() {
+        function render() {
             const grid = document.getElementById('grid');
-            grid.innerHTML = products.map(p => `
+            grid.innerHTML = products.map(p => {
+                const qte = cart[p.id] || 0;
+                return `
                 <div class="card" onclick="openProduct(${p.id})">
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}">
-                    <h4>${p.name}</h4>
+                    <div style="font-weight:bold; margin-top:10px;">${p.name}</div>
                     <span class="price">${p.price} €</span>
-                    <div id="controls-${p.id}" onclick="event.stopPropagation()">
+                    <div onclick="event.stopPropagation()">
                         <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function updateCart(id, delta) {
+            // EFFET SONORE + VIBRATION (Haptic)
+            try {
+                clickSound.currentTime = 0;
+                clickSound.play();
+            } catch(e) {}
+            tg.HapticFeedback.impactOccurred('medium');
+
             cart[id] = (cart[id] || 0) + delta;
             if (cart[id] <= 0) delete cart[id];
             
-            // Mise à jour sur la grille
-            const controlDiv = document.getElementById(`controls-${id}`);
-            if (controlDiv) {
-                const count = cart[id] || 0;
-                controlDiv.innerHTML = count > 0 ? 
-                    `<button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px; font-weight:bold;">${count}</span><button class="btn-action" onclick="updateCart(${id}, 1)">+</button>` : 
-                    `<button class="btn-action" onclick="updateCart(${id}, 1)">+</button>`;
-            }
+            render();
             updateInterface();
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
         }
 
         function openProduct(id) {
-            const p = products.find(item => item.id === id);
-            const content = document.getElementById('product-detail-content');
-            content.innerHTML = `
+            const p = products.find(i => i.id === id);
+            document.getElementById('product-detail-content').innerHTML = `
                 <img src="${p.img}" class="detail-img">
-                <h2 style="text-align:left; margin-bottom:10px;">${p.name}</h2>
-                <div style="font-size:22px; font-weight:bold; color:var(--primary); margin-bottom:20px;">${p.price} €</div>
-                <p class="detail-desc">${p.desc}</p>
-                <button onclick="updateCart(${p.id}, 1); closeAll();" style="width:100%; background:var(--primary); color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; font-size:16px;">
+                <h2 style="text-align:left;">${p.name}</h2>
+                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+                <div style="font-size:24px; font-weight:bold; color:var(--primary); margin: 20px 0;">${p.price} €</div>
+                <button onclick="updateCart(${p.id}, 1); closeAll();" style="width:100%; background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:bold; font-size:16px;">
                     AJOUTER AU PANIER
                 </button>
             `;
@@ -115,56 +172,4 @@
         }
 
         function updateInterface() {
-            const count = Object.values(cart).reduce((a, b) => a + b, 0);
-            const isCartOpen = document.getElementById('cart-modal').classList.contains('open');
-            const isDetailOpen = document.getElementById('product-modal').classList.contains('open');
-            
-            if (count > 0) {
-                tg.MainButton.setText(isCartOpen ? "VALIDER LA COMMANDE" : `VOIR LE PANIER (${count})`);
-                tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
-            }
-        }
-
-        function updateCartModal() {
-            const content = document.getElementById('cart-content');
-            let total = 0; let html = "";
-            products.forEach(p => {
-                if (cart[p.id]) {
-                    const subtotal = p.price * cart[p.id];
-                    total += subtotal;
-                    html += `<div class="cart-item"><div style="flex-grow:1"><strong>${p.name}</strong><br><span style="color:#888; font-size:13px;">${p.price}€ x ${cart[p.id]}</span></div><div style="font-weight:bold; margin-right:10px;">${subtotal}€</div><button class="btn-minus-cart" onclick="updateCart(${p.id}, -1)">Enlever 1</button></div>`;
-                }
-            });
-            content.innerHTML = html || "<p style='text-align:center; color:#999; margin-top:50px;'>Panier vide</p>";
-            document.getElementById('total-price').innerText = total;
-        }
-
-        function openCart() {
-            updateCartModal();
-            document.getElementById('cart-modal').classList.add('open');
-            tg.BackButton.show();
-            updateInterface();
-        }
-
-        function closeAll() {
-            document.getElementById('cart-modal').classList.remove('open');
-            document.getElementById('product-modal').classList.remove('open');
-            tg.BackButton.hide();
-            updateInterface();
-        }
-
-        tg.onEvent('mainButtonClicked', function() {
-            if (!document.getElementById('cart-modal').classList.contains('open')) {
-                openCart();
-            } else {
-                tg.sendData(JSON.stringify({commande: cart}));
-            }
-        });
-
-        tg.onEvent('backButtonClicked', closeAll);
-        window.onload = initialRender;
-    </script>
-</body>
-</html>
+            const count = Object.
