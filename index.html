@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Boutique Pro</title>
+    <title>Boutique Officielle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { 
@@ -18,28 +18,30 @@
         
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        .card { background: var(--sec-bg); border-radius: 15px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 10px; }
+        .card { background: var(--sec-bg); border-radius: 15px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 10px; pointer-events: none; }
         
-        .badge { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); }
+        .badge { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); z-index: 10; }
         
-        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 8px; font-weight: bold; }
+        .btn-add-main { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 8px; font-weight: bold; cursor: pointer; }
 
-        /* PANIER MOBILE */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; overflow-y: auto; }
         .modal.open { display: flex; }
         
         .cart-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 10px; }
-        .cart-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .cart-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         .cart-info { flex-grow: 1; }
-        .cart-controls { display: flex; align-items: center; gap: 10px; }
+        .cart-controls { display: flex; align-items: center; gap: 8px; }
         
-        .btn-qty { background: var(--sec-bg); color: var(--text); border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; width: 30px; height: 30px; font-weight: bold; }
+        /* Boutons + et - corrigés (Visibles partout) */
+        .btn-qty { background: #333 !important; color: white !important; border: none; border-radius: 6px; width: 32px; height: 32px; font-weight: bold; cursor: pointer; font-size: 18px; }
+
+        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center; font-weight:300;">Notre Collection</h2>
+    <h2 style="text-align:center; font-weight:300;">Ma Collection</h2>
     <div id="grid"></div>
 
     <div id="cart-modal" class="modal">
@@ -47,65 +49,82 @@
             <h3 style="margin:0">Mon Panier</h3>
             <span onclick="closeAll()" style="font-size:28px; color:var(--hint); cursor:pointer;">✕</span>
         </div>
-        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 1px solid rgba(0,0,0,0.1);">
+        <div id="cart-content" style="flex-grow:1;"></div>
+        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 1px solid rgba(0,0,0,0.1); margin-top:20px;">
             Total : <span id="total-price">0</span> €
         </div>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <div style="display:flex; justify-content:flex-end;">
+            <span onclick="closeAll()" style="font-size:30px; color:var(--hint); cursor:pointer;">✕</span>
+        </div>
+        <div id="product-detail-content"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready(); // Signal à Telegram que l'app est prête (important pour mobile)
+        tg.ready();
 
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
         tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=300" },
-            { id: 2, name: "Chemise Été", price: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=300" },
-            { id: 3, name: "Sac Voyage", price: 450, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300" },
-            { id: 4, name: "Montre Or", price: 890, img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=300" }
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
+            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
+            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
+            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
         let cart = {};
 
         function renderGrid() {
             const grid = document.getElementById('grid');
-            if(!grid) return;
             grid.innerHTML = products.map(p => {
                 const qte = cart[p.id] || 0;
                 return `
-                <div class="card">
+                <div class="card" onclick="openProduct(${p.id})">
                     ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
-                    <img src="${p.img}" alt="${p.name}">
-                    <div style="margin:8px 0; font-size:14px; font-weight:500;">${p.name}</div>
+                    <img src="${p.img}">
+                    <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-add" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
+                    <button class="btn-add-main" onclick="event.stopPropagation(); updateCart(${p.id}, 1)">AJOUTER</button>
                 </div>`;
             }).join('');
         }
 
         function updateCart(id, delta) {
             tg.HapticFeedback.impactOccurred('medium');
-            
             cart[id] = (cart[id] || 0) + delta;
             if (cart[id] <= 0) delete cart[id];
-            
             renderGrid();
             updateInterface();
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
+        }
+
+        function openProduct(id) {
+            const p = products.find(i => i.id === id);
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" class="detail-img">
+                <h2 style="margin-top:0;">${p.name}</h2>
+                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+                <div style="font-size:24px; font-weight:bold; color:var(--primary); margin: 20px 0;">${p.price} €</div>
+                <button onclick="updateCart(${p.id}, 1); closeAll();" style="width:100%; background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:bold; cursor:pointer;">
+                    AJOUTER AU PANIER
+                </button>
+            `;
+            document.getElementById('product-modal').classList.add('open');
+            tg.BackButton.show();
         }
 
         function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
             if (count > 0) {
                 const isCart = document.getElementById('cart-modal').classList.contains('open');
-                tg.MainButton.setText(isCart ? "CONFIRMER LA COMMANDE" : `VOIR PANIER (${count})`);
+                tg.MainButton.setText(isCart ? "ENVOYER LA COMMANDE" : `VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
-            } else { 
-                tg.MainButton.hide(); 
-            }
+            } else { tg.MainButton.hide(); }
         }
 
         function updateCartModal() {
@@ -118,23 +137,25 @@
                     <div class="cart-item">
                         <img src="${p.img}" class="cart-img">
                         <div class="cart-info">
-                            <div style="font-weight:bold; font-size:14px;">${p.name}</div>
-                            <div style="color:var(--primary); font-size:13px;">${p.price} €</div>
+                            <div style="font-weight:bold;">${p.name}</div>
+                            <div style="font-size:12px; color:var(--hint);">${p.desc}</div>
+                            <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
                         </div>
                         <div class="cart-controls">
                             <button class="btn-qty" onclick="updateCart(${p.id}, -1)">-</button>
-                            <span style="font-weight:bold;">${cart[p.id]}</span>
+                            <span style="font-weight:bold; min-width:20px; text-align:center;">${cart[p.id]}</span>
                             <button class="btn-qty" onclick="updateCart(${p.id}, 1)">+</button>
                         </div>
                     </div>`;
                 }
             });
-            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; color:var(--hint); margin-top:50px;'>Panier vide</p>";
+            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; color:var(--hint);'>Panier vide</p>";
             document.getElementById('total-price').innerText = total;
         }
 
         function closeAll() {
             document.getElementById('cart-modal').classList.remove('open');
+            document.getElementById('product-modal').classList.remove('open');
             tg.BackButton.hide();
             updateInterface();
         }
@@ -146,10 +167,11 @@
                 updateCartModal();
                 updateInterface();
             } else {
-                tg.showConfirm("Voulez-vous valider votre commande ?", (ok) => {
+                tg.showConfirm("Confirmer l'envoi de la commande ?", (ok) => {
                     if (ok) { 
-                        tg.sendData(JSON.stringify({commande: cart})); 
-                        tg.close(); 
+                        tg.sendData(JSON.stringify({commande: cart}));
+                        // tg.close(); <--- Supprimé pour ne pas quitter l'app
+                        tg.showAlert("Commande envoyée avec succès !");
                     }
                 });
             }
@@ -160,8 +182,6 @@
         });
 
         tg.onEvent('backButtonClicked', closeAll);
-        
-        // Démarrage
         window.onload = renderGrid;
     </script>
 </body>
