@@ -59,8 +59,8 @@
             padding: 15px 0; border-bottom: 1px solid #eee; 
         }
         
-        /* BOUTON SUPPRIMER DANS LE PANIER */
-        .btn-remove {
+        /* BOUTON "RETIRER 1" DANS LE PANIER */
+        .btn-minus-cart {
             background: #fff0f0;
             color: var(--red);
             border: 1px solid #ffcccc;
@@ -122,28 +122,36 @@
             `).join('');
         }
 
+        // Cette fonction gère TOUT : ajout, retrait de 1, et suppression si 0
         function updateCart(id, delta) {
             cart[id] = (cart[id] || 0) + delta;
-            if (cart[id] <= 0) delete cart[id];
             
+            // Si on arrive à 0, on supprime carrément l'entrée
+            if (cart[id] <= 0) {
+                delete cart[id];
+            }
+            
+            // On met à jour la grille de produits (les boutons + / -)
             const controlDiv = document.getElementById(`controls-${id}`);
             if (controlDiv) {
                 const count = cart[id] || 0;
-                controlDiv.innerHTML = `
-                    ${count > 0 ? `<button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px">${count}</span>` : ''}
-                    <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
-                `;
+                if (count > 0) {
+                    controlDiv.innerHTML = `
+                        <button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button>
+                        <span style="margin:0 10px; font-weight:bold;">${count}</span>
+                        <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
+                    `;
+                } else {
+                    controlDiv.innerHTML = `<button class="btn-action" onclick="updateCart(${id}, 1)">+</button>`;
+                }
             }
-            updateInterface();
-            if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
-        }
 
-        function removeItem(id) {
-            delete cart[id];
-            const controlDiv = document.getElementById(`controls-${id}`);
-            if (controlDiv) controlDiv.innerHTML = `<button class="btn-action" onclick="updateCart(${id}, 1)">+</button>`;
             updateInterface();
-            updateCartModal();
+            
+            // Si le panier est ouvert, on le rafraîchit en temps réel
+            if (document.getElementById('cart-modal').classList.contains('open')) {
+                updateCartModal();
+            }
         }
 
         function updateInterface() {
@@ -162,21 +170,25 @@
             const content = document.getElementById('cart-content');
             let total = 0;
             let html = "";
+            
             products.forEach(p => {
                 if (cart[p.id]) {
-                    const subtotal = p.price * cart[p.id];
+                    const quantity = cart[p.id];
+                    const subtotal = p.price * quantity;
                     total += subtotal;
+                    
                     html += `
                         <div class="cart-item">
                             <div style="flex-grow:1">
                                 <strong>${p.name}</strong><br>
-                                <span style="color:#888; font-size:13px;">${p.price}€ x ${cart[p.id]}</span>
+                                <span style="color:#888; font-size:13px;">${p.price}€ x ${quantity}</span>
                             </div>
-                            <div style="font-weight:bold;">${subtotal}€</div>
-                            <button class="btn-remove" onclick="removeItem(${p.id})">Suppr.</button>
+                            <div style="font-weight:bold; margin-right: 10px;">${subtotal}€</div>
+                            <button class="btn-minus-cart" onclick="updateCart(${p.id}, -1)">Enlever 1</button>
                         </div>`;
                 }
             });
+            
             content.innerHTML = html || "<p style='text-align:center; color:#999; margin-top:50px;'>Votre panier est vide</p>";
             document.getElementById('total-price').innerText = total;
         }
