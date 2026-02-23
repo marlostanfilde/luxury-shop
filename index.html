@@ -15,35 +15,40 @@
         }
         
         body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
+        
+        /* Forcer le texte en noir pour la lisibilité sur PC */
+        h2, h3, .cart-title, .qty-info, .size-btn-opt { color: #222 !important; }
+
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
+        .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.1); }
         .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; }
         
         .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); }
         
         .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 9999; padding: 20px; display: none; flex-direction: column; color: #222 !important; }
         .modal.open { display: flex; }
         
-        /* Correction visibilité Tailles */
+        /* Tailles visibles */
         .size-box { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
         .size-btn-opt { 
-            border: 1px solid var(--hint); 
+            border: 2px solid #ccc; 
             padding: 8px 15px; 
             border-radius: 8px; 
             cursor: pointer; 
-            color: var(--text) !important; /* Force la couleur du texte */
-            background-color: var(--sec-bg);
+            background: #eee;
             font-weight: bold;
         }
-        .size-btn-opt.active { border: 2px solid var(--primary); color: var(--primary) !important; background: var(--bg); }
+        .size-btn-opt.active { border: 2px solid var(--primary); background: var(--primary); color: white !important; }
 
-        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 12px; }
+        /* Panier */
+        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #ddd; gap: 12px; color: #222 !important; }
         .cart-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
         .cart-info { flex-grow: 1; text-align: left; }
         .btn-remove { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
+        
         .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; }
     </style>
 </head>
@@ -55,17 +60,17 @@
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3 style="margin:0">Mon Panier</h3>
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer; color:#222;">✕</span>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px;">
+        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px; color:#222;">
             Total : <span id="total-price">0</span> €
         </div>
     </div>
 
     <div id="product-modal" class="modal">
         <div style="display:flex; justify-content:flex-end;">
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer; color:#222;">✕</span>
         </div>
         <div id="product-detail-content"></div>
     </div>
@@ -73,6 +78,11 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        // Remise du bouton SAV
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
             { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
@@ -81,7 +91,7 @@
             { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
-        let cart = []; // Liste d'objets {id, name, price, size, qty}
+        let cart = [];
         let selectedSize = null;
 
         function renderGrid() {
@@ -92,9 +102,9 @@
                 <div class="card">
                     ${totalQty > 0 ? `<div class="badge">${totalQty}</div>` : ''}
                     <img src="${p.img}" onclick="openProduct(${p.id})">
-                    <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
+                    <div style="margin:8px 0; font-size:14px; font-weight:bold; color:#222;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-add" onclick="openProduct(${p.id})">AJOUTER</button>
+                    <button class="btn-add" onclick="openProduct(${p.id})">VOIR</button>
                 </div>`;
             }).join('');
         }
@@ -106,8 +116,8 @@
 
             document.getElementById('product-detail-content').innerHTML = `
                 <img src="${p.img}" class="detail-img">
-                <h2>${p.name}</h2>
-                <p style="color:var(--hint);">${p.desc}</p>
+                <h2 style="color:#222;">${p.name}</h2>
+                <p style="color:#666;">${p.desc}</p>
                 <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
                 ${sizeHtml}
                 <button onclick="addToCart(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
@@ -128,14 +138,9 @@
                 tg.showAlert("Merci de choisir une taille");
                 return;
             }
-
             const existing = cart.find(item => item.id === id && item.size === selectedSize);
-            if (existing) {
-                existing.qty++;
-            } else {
-                cart.push({ id: p.id, name: p.name, price: p.price, size: selectedSize, img: p.img, qty: 1 });
-            }
-
+            if (existing) { existing.qty++; } 
+            else { cart.push({ id: p.id, name: p.name, price: p.price, size: selectedSize, img: p.img, qty: 1 }); }
             tg.HapticFeedback.notificationOccurred('success');
             closeAll();
             renderGrid();
@@ -151,21 +156,19 @@
                 <div class="cart-item">
                     <img src="${item.img}" class="cart-img">
                     <div class="cart-info">
-                        <div style="font-weight:bold;">${item.name} ${item.size ? '['+item.size+']' : ''}</div>
-                        <div style="font-size:13px;">${item.price}€ x ${item.qty} = ${subtotal}€</div>
+                        <div style="font-weight:bold; color:#222;">${item.name} ${item.size ? '[Taille: '+item.size+']' : ''}</div>
+                        <div style="font-size:13px; color:#444;">${item.price}€ x ${item.qty} = ${subtotal}€</div>
                     </div>
                     <button class="btn-remove" onclick="removeFromCart(${index})">Supprimer</button>
                 </div>`;
             });
-            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px;'>Panier vide</p>";
+            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; color:#999;'>Votre panier est vide</p>";
             document.getElementById('total-price').innerText = total;
             
             if (cart.length > 0) {
-                tg.MainButton.setText("COMMANDER (" + total + "€)");
+                tg.MainButton.setText("VALIDER LA COMMANDE (" + total + "€)");
                 tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
-            }
+            } else { tg.MainButton.hide(); }
         }
 
         function removeFromCart(index) {
@@ -194,6 +197,10 @@
                     if (ok) tg.sendData(JSON.stringify(cart));
                 });
             }
+        });
+
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315");
         });
 
         tg.onEvent('backButtonClicked', closeAll);
