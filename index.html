@@ -8,86 +8,91 @@
     <style>
         :root { 
             --gold: #c5a059; 
-            --dark-bg: #1a1a1a; 
-            --card-bg: #262626;
+            /* Couleurs pour le fond dégradé */
+            --bg-top: #2c2c2c; 
+            --bg-bottom: #0f0f0f;
+            --card-bg: rgba(255, 255, 255, 0.05);
             --text-white: #ffffff;
-            --text-gold: #d4af37;
         }
         
         body { 
             font-family: 'Georgia', serif; 
             margin: 0; padding: 15px; 
-            background: var(--dark-bg); 
+            /* EFFET STUDIO : Dégradé du gris sombre vers le noir profond */
+            background: radial-gradient(circle at top, var(--bg-top) 0%, var(--bg-bottom) 70%);
+            background-attachment: fixed;
             color: var(--text-white); 
             padding-bottom: 100px;
+            min-height: 100vh;
         }
 
         /* HEADER & LOGO */
-        .header { text-align: center; padding: 20px 0; border-bottom: 1px solid rgba(197, 160, 89, 0.2); }
-        .logo { font-size: 28px; letter-spacing: 4px; color: var(--gold); margin: 0; font-weight: bold; }
-        .slogan { font-size: 12px; letter-spacing: 2px; color: var(--text-gold); text-transform: uppercase; margin-top: 5px; }
+        .header { text-align: center; padding: 30px 0 10px 0; }
+        .logo { font-size: 32px; letter-spacing: 6px; color: var(--gold); margin: 0; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .slogan { font-size: 11px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
 
         /* BIENVENUE & RECHERCHE */
-        .welcome-area { text-align: center; margin-top: 25px; }
+        .welcome-area { text-align: center; margin: 20px 0; }
         #welcome-name { font-weight: bold; color: var(--gold); }
         
         .search-box { 
-            margin: 20px 0; background: #333; border-radius: 8px; 
-            display: flex; align-items: center; padding: 10px; border: 1px solid #444;
+            margin: 20px auto; background: rgba(255,255,255,0.07); border-radius: 12px; 
+            display: flex; align-items: center; padding: 12px; border: 1px solid rgba(197, 160, 89, 0.2);
+            max-width: 500px;
         }
         #search-input { 
-            background: none; border: none; color: white; width: 100%; outline: none; font-size: 14px;
+            background: none; border: none; color: white; width: 100%; outline: none; font-size: 15px;
         }
 
         /* MENU DES RUBRIQUES */
         #categories-menu { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; 
         }
         .cat-card { 
-            position: relative; height: 160px; border-radius: 12px; overflow: hidden;
-            border: 1px solid rgba(197, 160, 89, 0.3); cursor: pointer;
+            position: relative; height: 180px; border-radius: 15px; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
         }
-        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .cat-card:active { transform: scale(0.97); }
+        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
         .cat-title { 
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 10px;
-            background: rgba(0,0,0,0.6); text-align: center; font-size: 14px;
-            font-weight: bold; letter-spacing: 1px; color: var(--gold);
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); text-align: center; 
+            font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
         }
 
-        /* GRILLE PRODUITS (Cachée) */
+        /* GRILLE PRODUITS */
         #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .product-card { 
-            background: var(--card-bg); border-radius: 10px; padding: 10px; text-align: center;
-            border: 1px solid #333; position: relative;
+            background: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); position: relative;
+            backdrop-filter: blur(5px);
         }
-        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
+
         .badge { 
             position: absolute; top: -5px; right: -5px; background: #ff4444; 
-            color: white; border-radius: 50%; width: 22px; height: 22px; 
+            color: white; border-radius: 50%; width: 24px; height: 24px; 
             font-size: 12px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #1a1a1a;
         }
 
         /* MODALES */
         .modal { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: var(--dark-bg); z-index: 9999; padding: 20px; 
+            background: #121212; z-index: 9999; padding: 25px; 
             display: none; flex-direction: column; 
         }
         .modal.open { display: flex; }
-        .size-box { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
-        .size-opt { 
-            border: 1px solid var(--gold); padding: 8px 12px; border-radius: 5px; 
-            color: white; background: #333; cursor: pointer;
-        }
-        .size-opt.active { background: var(--gold); font-weight: bold; }
-
         .btn-gold { 
-            background: var(--gold); color: white; border: none; padding: 12px; 
-            border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            background: var(--gold); color: white; border: none; padding: 15px; 
+            border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
         }
         
-        .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #333; }
+        .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -99,51 +104,51 @@
 
     <div id="home-page">
         <div class="welcome-area">
-            <h2 style="font-weight: 300;">Bienvenue chez <span id="welcome-name">Invité</span></h2>
-            <p style="color: #999; font-size: 13px;">Découvrez nos pièces exclusives.</p>
+            <h2 style="font-weight: 300; margin-bottom: 5px;">Bienvenue chez <span id="welcome-name">Invité</span></h2>
+            <p style="color: #888; font-size: 14px; margin: 0;">Sélection exclusive de pièces rares.</p>
         </div>
 
         <div class="search-box">
-            <span style="margin-right: 10px;">🔍</span>
-            <input type="text" id="search-input" placeholder="Rechercher un modèle..." oninput="filterProducts()">
+            <span style="margin-right: 10px; opacity: 0.6;">🔍</span>
+            <input type="text" id="search-input" placeholder="Quel modèle recherchez-vous ?" oninput="filterProducts()">
         </div>
 
         <div id="categories-menu">
             <div class="cat-card" onclick="showCategory('Habille')">
-                <img src="https://images.unsplash.com/photo-1594932224030-94042867f0f7?w=400">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=500">
                 <div class="cat-title">PRÊT-À-PORTER</div>
             </div>
             <div class="cat-card" onclick="showCategory('Accessoire')">
-                <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400">
+                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=500">
                 <div class="cat-title">ACCESSOIRES</div>
             </div>
             <div class="cat-card" onclick="showCategory('Montre')">
-                <img src="https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400">
+                <img src="https://images.unsplash.com/photo-1509112756314-34a0badb29d4?w=500">
                 <div class="cat-title">HORLOGERIE</div>
             </div>
             <div class="cat-card" onclick="showCategory('Voyage')">
-                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400">
+                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500">
                 <div class="cat-title">SACS VOYAGE</div>
             </div>
         </div>
     </div>
 
     <div id="products-section">
-        <div style="display:flex; align-items:center; gap:10px; margin: 20px 0;">
-            <button onclick="goBack()" style="background:none; border:none; color:var(--gold); font-size:16px; cursor:pointer;">← Retour</button>
-            <h3 id="category-label" style="margin:0; text-transform: uppercase; letter-spacing: 2px;"></h3>
+        <div style="display:flex; align-items:center; gap:12px; margin: 25px 0;">
+            <button onclick="goBack()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 8px 15px; border-radius:8px; cursor:pointer;">← Retour</button>
+            <h3 id="category-label" style="margin:0; text-transform: uppercase; letter-spacing: 2px; color: var(--gold);"></h3>
         </div>
         <div id="grid"></div>
     </div>
 
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="color:var(--gold)">MON PANIER</h3>
+            <h3 style="color:var(--gold); letter-spacing:2px;">VOTRE PANIER</h3>
             <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto; margin-top:20px;"></div>
-        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid var(--gold);">
-            Total : <span id="total-price" style="color:var(--gold)">0</span> €
+        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid rgba(197,160,89,0.3);">
+            Total : <span id="total-price" style="color:var(--gold); font-weight:bold;">0</span> €
         </div>
     </div>
 
@@ -166,8 +171,8 @@
         const products = [
             { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
             { id: 2, category: "Habille", name: "Chemise Été", price: 120, desc: "Lin naturel respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
-            { id: 3, category: "Accessoire", name: "Sac à main", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
-            { id: 4, category: "Montre", name: "Montre Or", price: 890, desc: "Automatique précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
+            { id: 3, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 4, category: "Montre", name: "Submariner Gold", price: 890, desc: "Mouvement automatique haute précision.", img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400" }
         ];
 
         let cart = [];
@@ -176,7 +181,7 @@
         function showCategory(cat) {
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('products-section').style.display = 'block';
-            document.getElementById('category-label').innerText = cat;
+            document.getElementById('category-label').innerText = cat === 'Habille' ? 'Prêt-à-Porter' : cat;
             renderGrid(products.filter(p => p.category === cat));
             tg.BackButton.show();
         }
@@ -195,8 +200,8 @@
                 <div class="product-card" onclick="openProduct(${p.id})">
                     ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}">
-                    <div style="margin:10px 0; font-weight:bold;">${p.name}</div>
-                    <div style="color:var(--gold);">${p.price} €</div>
+                    <div style="margin:12px 0 5px 0; font-weight:bold; font-size:14px;">${p.name}</div>
+                    <div style="color:var(--gold); font-weight:bold;">${p.price} €</div>
                 </div>`;
             }).join('');
         }
@@ -204,28 +209,29 @@
         function openProduct(id) {
             const p = products.find(i => i.id === id);
             selectedSize = null;
-            let sizeHtml = p.sizes ? `<div class="size-box">${p.sizes.map(s => `<div class="size-opt" onclick="selectSize(this, '${s}')">${s}</div>`).join('')}</div>` : "";
+            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" style="border:1px solid #444; padding:10px 15px; border-radius:8px; cursor:pointer; color:white;" class="size-opt">${s}</div>`).join('')}</div>` : "";
 
             document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" style="width:100%; border-radius:10px; height:250px; object-fit:cover; border:1px solid var(--gold);">
-                <h2 style="color:var(--gold); margin-top:20px;">${p.name}</h2>
-                <p style="color:#ccc; font-size:14px;">${p.desc}</p>
-                <div style="font-size:24px; color:var(--gold); margin-bottom:15px;">${p.price} €</div>
+                <img src="${p.img}" style="width:100%; border-radius:15px; height:280px; object-fit:cover; border:1px solid rgba(197,160,89,0.3);">
+                <h2 style="color:var(--gold); margin:20px 0 10px 0;">${p.name}</h2>
+                <p style="color:#888; font-size:14px; line-height:1.6;">${p.desc}</p>
+                <div style="font-size:26px; color:var(--gold); margin-bottom:20px; font-weight:bold;">${p.price} €</div>
                 ${sizeHtml}
-                <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">Ajouter au panier</button>
+                <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">AJOUTER AU PANIER</button>
             `;
             document.getElementById('product-modal').classList.add('open');
-        }
-
-        function selectSize(el, size) {
-            document.querySelectorAll('.size-opt').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            selectedSize = size;
+            // CSS dynamique pour la taille sélectionnée
+            window.selectSize = (el, s) => {
+                document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; b.style.borderColor = '#444'; });
+                el.style.background = 'var(--gold)';
+                el.style.borderColor = 'var(--gold)';
+                selectedSize = s;
+            };
         }
 
         function addToCart(id) {
             const p = products.find(i => i.id === id);
-            if (p.sizes && !selectedSize) { tg.showAlert("Sélectionnez une taille"); return; }
+            if (p.sizes && !selectedSize) { tg.showAlert("Veuillez sélectionner une taille."); return; }
             const existing = cart.find(item => item.id === id && item.size === selectedSize);
             if (existing) { existing.qty++; } else { cart.push({ ...p, size: selectedSize, qty: 1 }); }
             tg.HapticFeedback.notificationOccurred('success');
@@ -235,22 +241,22 @@
 
         function updateCartModal() {
             let total = 0;
-            let html = cart.length ? "" : "<p style='text-align:center;'>Votre panier est vide</p>";
+            let html = cart.length ? "" : "<p style='text-align:center; color:#666;'>Votre panier est vide</p>";
             cart.forEach((item, index) => {
                 total += item.price * item.qty;
                 html += `
                 <div class="cart-item">
-                    <img src="${item.img}" style="width:50px; border-radius:5px;">
+                    <img src="${item.img}" style="width:55px; height:55px; border-radius:8px; object-fit:cover;">
                     <div style="flex-grow:1">
-                        <div style="font-weight:bold;">${item.name} ${item.size ? `[${item.size}]` : ''}</div>
-                        <div style="color:var(--gold)">${item.price}€ x ${item.qty}</div>
+                        <div style="font-weight:bold; font-size:15px;">${item.name} ${item.size ? `[${item.size}]` : ''}</div>
+                        <div style="color:var(--gold); font-size:14px;">${item.price}€ x ${item.qty}</div>
                     </div>
-                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4444;">✕</button>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4444; font-size:18px;">✕</button>
                 </div>`;
             });
             document.getElementById('cart-content').innerHTML = html;
             document.getElementById('total-price').innerText = total;
-            tg.MainButton.setText(`VALIDER LA COMMANDE (${total}€)`);
+            tg.MainButton.setText(`COMMANDER (${total}€)`);
         }
 
         function removeItem(i) { cart.splice(i, 1); updateCartModal(); updateInterface(); }
@@ -273,7 +279,7 @@
                 document.getElementById('cart-modal').classList.add('open');
                 updateCartModal();
             } else {
-                tg.showConfirm("Envoyer la commande ?", ok => ok && tg.sendData(JSON.stringify(cart)));
+                tg.showConfirm("Confirmer l'envoi de la commande ?", ok => ok && tg.sendData(JSON.stringify(cart)));
             }
         });
 
