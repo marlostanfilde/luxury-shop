@@ -1,186 +1,61 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boutique</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root { 
-            --primary: #c5a059; 
-            --bg: var(--tg-theme-bg_color, #ffffff); 
-            --text: var(--tg-theme-text-color, #222); 
-            --sec-bg: var(--tg-theme-secondary_bg_color, #f4f4f4);
-            --hint: var(--tg-theme-hint_color, #999);
-        }
-        
-        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
-        
-        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; display: block; }
-        
-        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; border: 2px solid var(--bg); }
-        
-        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+// 1. Mise à jour de la liste des produits avec les tailles
+const products = [
+    { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
+    { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["S", "M", "L"] },
+    { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" }, // Pas de taille
+    { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" } // Pas de taille
+];
 
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
-        .modal.open { display: flex; }
-        
-        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 12px; }
-        .cart-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-        .cart-info { flex-grow: 1; text-align: left; }
-        .cart-title { font-weight: bold; font-size: 15px; display: block; }
-        .cart-desc { font-size: 12px; color: var(--hint); display: block; margin: 2px 0; }
-        .cart-qty-detail { font-size: 13px; color: var(--primary); font-weight: bold; }
-        
-        .cart-controls { display: flex; align-items: center; gap: 10px; }
-        .btn-qty { background: #333; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; font-weight: bold; cursor: pointer; font-size: 18px; }
-        .qty-label { font-weight: bold; min-width: 20px; text-align: center; }
+let selectedSize = null;
 
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-    </style>
-</head>
-<body>
+// 2. Fonction pour sélectionner une taille (visuel)
+function selectSize(btn, size) {
+    document.querySelectorAll('.size-btn').forEach(b => b.style.border = "1px solid #ccc");
+    btn.style.border = `2px solid var(--primary)`;
+    selectedSize = size;
+}
 
-    <h2 style="text-align:center; font-weight:300;">Notre Collection</h2>
-    <div id="grid"></div>
+// 3. Mise à jour de la fonction openProduct
+function openProduct(id) {
+    const p = products.find(i => i.id === id);
+    selectedSize = null; // Reset de la taille choisie
 
-    <div id="cart-modal" class="modal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0">Mon Panier</h3>
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
-        </div>
-        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.3em; font-weight:bold; padding-top:15px; border-top: 2px solid var(--primary); margin-top:10px;">
-            Total : <span id="total-price">0</span> €
-        </div>
-    </div>
+    let sizeHtml = "";
+    if (p.sizes) {
+        sizeHtml = `
+            <p style="margin-top:15px; font-weight:bold;">Choisir une taille :</p>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                ${p.sizes.map(s => `
+                    <button class="size-btn" onclick="selectSize(this, '${s}')" 
+                        style="padding:8px 15px; border-radius:5px; border:1px solid #ccc; background:none; color:var(--text); cursor:pointer;">
+                        ${s}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    }
 
-    <div id="product-modal" class="modal">
-        <div style="display:flex; justify-content:flex-end;">
-            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
-        </div>
-        <div id="product-detail-content"></div>
-    </div>
+    document.getElementById('product-detail-content').innerHTML = `
+        <img src="${p.img}" class="detail-img">
+        <h2>${p.name}</h2>
+        <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+        <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
+        ${sizeHtml}
+        <button onclick="handleAddToCart(${p.id}, ${p.sizes ? 'true' : 'false'})" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
+    `;
+    document.getElementById('product-modal').classList.add('open');
+    tg.BackButton.show();
+}
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
-        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
-
-        const products = [
-            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
-            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
-            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
-            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
-        ];
-
-        let cart = {};
-
-        function renderGrid() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = products.map(p => {
-                const qte = cart[p.id] || 0;
-                return `
-                <div class="card">
-                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
-                    <img src="${p.img}" onclick="openProduct(${p.id})">
-                    <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
-                    <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-add" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
-                </div>`;
-            }).join('');
-        }
-
-        function updateCart(id, delta) {
-            tg.HapticFeedback.impactOccurred('medium');
-            cart[id] = (cart[id] || 0) + delta;
-            if (cart[id] <= 0) delete cart[id];
-            renderGrid();
-            updateInterface();
-            if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
-        }
-
-        function openProduct(id) {
-            const p = products.find(i => i.id === id);
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2>${p.name}</h2>
-                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
-                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
-                <button onclick="updateCart(${p.id}, 1); closeAll();" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
-            `;
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
-        }
-
-        function updateInterface() {
-            const count = Object.values(cart).reduce((a, b) => a + b, 0);
-            if (count > 0) {
-                const isCart = document.getElementById('cart-modal').classList.contains('open');
-                tg.MainButton.setText(isCart ? "ENVOYER LA COMMANDE" : "VOIR LE PANIER (" + count + ")");
-                tg.MainButton.show();
-            } else { tg.MainButton.hide(); }
-        }
-
-        function updateCartModal() {
-            let total = 0; let html = "";
-            products.forEach(p => {
-                if (cart[p.id]) {
-                    const qte = cart[p.id];
-                    const st = p.price * qte;
-                    total += st;
-                    html += `
-                    <div class="cart-item">
-                        <img src="${p.img}" class="cart-img">
-                        <div class="cart-info">
-                            <span class="cart-title">${p.name}</span>
-                            <span class="cart-desc">${p.desc}</span>
-                            <span class="cart-qty-detail">${st}€ (${p.price}€ x ${qte})</span>
-                        </div>
-                        <div class="cart-controls">
-                            <button class="btn-qty" onclick="updateCart(${p.id}, -1)">-</button>
-                            <span class="qty-label">${qte}</span>
-                            <button class="btn-qty" onclick="updateCart(${p.id}, 1)">+</button>
-                        </div>
-                    </div>`;
-                }
-            });
-            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px; color:var(--hint);'>Votre panier est vide</p>";
-            document.getElementById('total-price').innerText = total;
-        }
-
-        function closeAll() {
-            document.getElementById('cart-modal').classList.remove('open');
-            document.getElementById('product-modal').classList.remove('open');
-            tg.BackButton.hide();
-            updateInterface();
-        }
-
-        tg.onEvent('mainButtonClicked', () => {
-            if (!document.getElementById('cart-modal').classList.contains('open')) {
-                document.getElementById('cart-modal').classList.add('open');
-                tg.BackButton.show();
-                updateCartModal();
-                updateInterface();
-            } else {
-                tg.showConfirm("Voulez-vous envoyer la commande ?", (ok) => {
-                    if (ok) { tg.sendData(JSON.stringify({commande: cart})); }
-                });
-            }
-        });
-
-        tg.onEvent('secondaryButtonClicked', () => {
-            tg.openTelegramLink("https://t.me/toulouse315");
-        });
-
-        tg.onEvent('backButtonClicked', closeAll);
-        window.onload = renderGrid;
-    </script>
-</body>
-</html>
+// 4. Nouvelle fonction pour gérer l'ajout avec vérification de taille
+function handleAddToCart(id, needsSize) {
+    if (needsSize && !selectedSize) {
+        tg.showAlert("Veuillez sélectionner une taille avant d'ajouter au panier.");
+        return;
+    }
+    
+    // On peut modifier le panier pour stocker la taille si besoin
+    // Ici, on garde ton système simple, mais on pourrait faire cart[`${id}_${selectedSize}`]
+    updateCart(id, 1);
+    closeAll();
+}
