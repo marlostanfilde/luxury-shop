@@ -3,150 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Luxury Clothing Pro</title>
+    <title>Luxury Shop Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #c5a059; /* Or élégant */
+            --primary: #c5a059; /* Or Sablé */
             --bg: #ffffff;
+            --secondary-bg: #f9f9f9;
             --text: #1a1a1a;
-            --light-gray: #f8f8f8;
-            --tg-theme-btn: var(--tg-theme-button-color, #1a1a1a);
+            --btn-bg: #1a1a1a;
+            --btn-text: #ffffff;
         }
 
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; padding-bottom: 100px;
         }
 
-        /* Logo et Header */
-        .header {
-            padding: 30px 15px;
-            text-align: center;
-            background: white;
+        /* HEADER & LOGO */
+        .header { padding: 40px 20px; text-align: center; background: #fff; }
+        .logo-box { border: 2px solid var(--text); display: inline-block; padding: 10px 25px; }
+        .logo-box h1 { 
+            font-family: 'Playfair Display', serif; 
+            margin: 0; font-size: 26px; letter-spacing: 5px; text-transform: uppercase; 
         }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            letter-spacing: 6px;
-            margin: 0;
-            text-transform: uppercase;
-        }
-        .header p {
-            font-size: 10px;
-            letter-spacing: 3px;
-            color: var(--primary);
-            margin: 5px 0 0;
-            text-transform: uppercase;
-        }
+        .header p { font-size: 10px; letter-spacing: 4px; color: var(--primary); font-weight: 600; margin-top: 5px; }
 
-        /* Grille de produits */
-        .container { padding: 15px; }
+        /* GRILLE DE PRODUITS */
+        .container { padding: 0 15px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        
-        .card { 
-            background: white;
-            border-radius: 0px; 
-            text-align: center;
-            transition: 0.3s;
-        }
-        .img-wrapper {
-            background: var(--light-gray);
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-        }
-        .card img { 
-            width: 100%; 
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .card h3 { 
-            font-size: 13px; 
-            margin: 12px 0 5px; 
-            font-weight: 400;
-            text-transform: uppercase;
-        }
-        .price { 
-            font-weight: 600; 
-            color: var(--primary); 
-            font-size: 14px;
-            display: block; 
-            margin-bottom: 12px; 
+        .card { background: var(--bg); text-align: center; }
+        .img-container { background: var(--secondary-bg); aspect-ratio: 3/4; overflow: hidden; margin-bottom: 12px; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card h3 { font-size: 12px; font-weight: 400; text-transform: uppercase; margin: 10px 0 5px; }
+        .price { font-weight: 600; color: var(--primary); display: block; margin-bottom: 12px; }
+
+        /* CONTRÔLES */
+        .controls { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .btn-action { 
+            background: var(--btn-bg); color: var(--btn-text); border: none;
+            width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 18px;
         }
 
-        /* Contrôles d'ajout */
-        .controls { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px;
-            padding-bottom: 10px;
+        /* PANIER MODAL */
+        #cart-modal {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 75%;
+            background: var(--bg); border-top: 2px solid var(--primary);
+            border-radius: 25px 25px 0 0; transition: 0.4s ease-out; z-index: 100;
+            padding: 25px; box-sizing: border-box; box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
         }
-        button {
-            background-color: var(--text);
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-add-initial {
-            width: 100%;
-            border-radius: 0;
-            font-size: 11px;
-            height: 35px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .qty { font-weight: 600; font-size: 14px; min-width: 20px; }
+        #cart-modal.open { bottom: 0; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
 
-        /* SAV Section */
-        .sav-section {
-            margin: 40px 0 80px;
-            padding: 30px 15px;
-            background: var(--light-gray);
-            text-align: center;
-        }
+        /* SAV */
+        .sav-section { margin-top: 50px; text-align: center; padding: 30px 15px; background: var(--secondary-bg); }
         .sav-link { 
-            display: inline-block;
-            margin-top: 10px;
-            padding: 12px 25px;
-            background: #0088cc; 
-            color: white; 
-            text-decoration: none; 
-            font-weight: bold; 
-            border-radius: 50px;
-            font-size: 13px;
+            color: #fff; text-decoration: none; font-weight: bold; background: #0088cc; 
+            padding: 12px 30px; border-radius: 50px; display: inline-block; font-size: 12px;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 class="logo">LUXURY</h1>
-        <p>Premium Apparel</p>
+        <div class="logo-box"><h1>LUXURY</h1></div>
+        <p>Est. 2026 • Paris</p>
     </div>
 
     <div class="container">
         <div class="product-grid" id="grid"></div>
     </div>
 
+    <div id="cart-modal">
+        <h2 style="font-family: 'Playfair Display', serif; border-bottom: 2px solid var(--primary); display: inline-block;">Mon Panier</h2>
+        <div id="cart-content" style="margin-top: 20px;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 20px; margin-top: 25px; color: var(--primary);">
+            <span>TOTAL :</span>
+            <span id="total-price">0 €</span>
+        </div>
+        <button onclick="closeCart()" style="width: 100%; padding: 15px; margin-top: 25px; background: #eee; border: none; border-radius: 8px; font-weight: 600;">RETOUR À LA BOUTIQUE</button>
+    </div>
+
     <div class="sav-section">
-        <p style="font-size: 14px; margin: 0;">Besoin d'aide pour une taille ?</p>
-        <a href="https://t.me/toulouse315" class="sav-link">SERVICE CLIENT 24/7</a>
+        <a href="https://t.me/TON_PSEUDO" class="sav-link">ASSISTANCE TELEGRAM</a>
     </div>
 
     <script>
@@ -154,12 +96,11 @@
         tg.expand();
         tg.MainButton.setParams({ color: '#1a1a1a', text_color: '#ffffff' });
 
-        // Liste avec de VRAIES images pour le look
         const products = [
-            { id: 1, name: "Veste Signature", price: "280 €", rawPrice: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
-            { id: 2, name: "Chemise Lin", price: "120 €", rawPrice: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=500" },
-            { id: 3, name: "Pantalon Slim", price: "190 €", rawPrice: 190, img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500" },
-            { id: 4, name: "T-shirt Premium", price: "85 €", rawPrice: 85, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500" }
+            { id: 1, name: "Veste Signature", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
+            { id: 2, name: "Chemise Lin", price: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=500" },
+            { id: 3, name: "Sac Cuir", price: 450, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500" },
+            { id: 4, name: "Lunettes", price: 320, img: "https://images.unsplash.com/photo-1511499767390-90342f54b207?w=500" }
         ];
 
         let cart = {};
@@ -168,23 +109,15 @@
             const grid = document.getElementById('grid');
             grid.innerHTML = products.map(p => `
                 <div class="card">
-                    <div class="img-wrapper">
-                        <img src="${p.img}" alt="${p.name}">
-                    </div>
+                    <div class="img-container"><img src="${p.img}"></div>
                     <h3>${p.name}</h3>
-                    <span class="price">${p.price}</span>
+                    <span class="price">${p.price} €</span>
                     <div class="controls">
-                        ${cart[p.id] ? `
-                            <button onclick="updateCart(${p.id}, -1)">-</button>
-                            <span class="qty">${cart[p.id]}</span>
-                            <button onclick="updateCart(${p.id}, 1)">+</button>
-                        ` : `
-                            <button class="btn-add-initial" onclick="updateCart(${p.id}, 1)">Ajouter</button>
-                        `}
+                        ${cart[p.id] ? `<button class="btn-action" onclick="updateCart(${p.id}, -1)">-</button><span style="font-weight:600">${cart[p.id]}</span>` : ''}
+                        <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
                     </div>
                 </div>
             `).join('');
-
             updateMainButton();
         }
 
@@ -192,20 +125,47 @@
             cart[id] = (cart[id] || 0) + delta;
             if (cart[id] <= 0) delete cart[id];
             render();
+            updateCartModal();
         }
 
         function updateMainButton() {
-            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
-            if (totalItems > 0) {
-                tg.MainButton.setText(`VOIR LE PANIER (${totalItems})`);
+            const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            if (count > 0) {
+                tg.MainButton.setText(`VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
             } else {
                 tg.MainButton.hide();
             }
         }
 
+        function updateCartModal() {
+            const content = document.getElementById('cart-content');
+            let total = 0;
+            let html = "";
+            products.forEach(p => {
+                if (cart[p.id]) {
+                    const subtotal = p.price * cart[p.id];
+                    total += subtotal;
+                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><span>${subtotal} €</span></div>`;
+                }
+            });
+            content.innerHTML = html || "<p>Votre panier est vide</p>";
+            document.getElementById('total-price').innerText = total + " €";
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').classList.remove('open');
+            updateMainButton();
+        }
+
         tg.onEvent('mainButtonClicked', function() {
-            tg.sendData(JSON.stringify({order: cart, date: new Date().toISOString()}));
+            const modal = document.getElementById('cart-modal');
+            if (!modal.classList.contains('open')) {
+                modal.classList.add('open');
+                tg.MainButton.setText("CONFIRMER ET PAYER");
+            } else {
+                tg.sendData(JSON.stringify({panier: cart, total: document.getElementById('total-price').innerText}));
+            }
         });
 
         render();
