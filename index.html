@@ -14,37 +14,37 @@
             --hint: var(--tg-theme-hint_color, #999);
         }
         
-        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
-        
+        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
         .card { background: var(--sec-bg); border-radius: 12px; padding: 10px; text-align: center; position: relative; border: 1px solid rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; display: block; }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; cursor: pointer; }
         
-        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; border: 2px solid var(--bg); }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--bg); }
         
-        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-add { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
         .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 9999; padding: 20px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
         
-        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 12px; }
-        .cart-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
-        .cart-info { flex-grow: 1; text-align: left; }
-        .cart-title { font-weight: bold; font-size: 15px; display: block; }
-        .cart-desc { font-size: 12px; color: var(--hint); display: block; margin: 2px 0; }
-        .cart-qty-detail { font-size: 13px; color: var(--primary); font-weight: bold; }
-        
-        .cart-controls { display: flex; align-items: center; gap: 10px; }
-        .btn-qty { background: #333; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; font-weight: bold; cursor: pointer; font-size: 18px; }
-        .qty-label { font-weight: bold; min-width: 20px; text-align: center; }
-
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-
-        /* Styles pour les tailles */
+        /* Correction visibilité Tailles */
         .size-box { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
-        .size-btn-opt { border: 1px solid var(--hint); padding: 8px 15px; border-radius: 8px; cursor: pointer; }
-        .size-btn-opt.active { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
+        .size-btn-opt { 
+            border: 1px solid var(--hint); 
+            padding: 8px 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            color: var(--text) !important; /* Force la couleur du texte */
+            background-color: var(--sec-bg);
+            font-weight: bold;
+        }
+        .size-btn-opt.active { border: 2px solid var(--primary); color: var(--primary) !important; background: var(--bg); }
+
+        .cart-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.1); gap: 12px; }
+        .cart-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .cart-info { flex-grow: 1; text-align: left; }
+        .btn-remove { background: #ff4444; color: white; border: none; border-radius: 5px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
+        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; }
     </style>
 </head>
 <body>
@@ -73,28 +73,24 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
-
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
-        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
             { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
-            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
-            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
+            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
+            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
-        let cart = {};
+        let cart = []; // Liste d'objets {id, name, price, size, qty}
         let selectedSize = null;
 
         function renderGrid() {
             const grid = document.getElementById('grid');
             grid.innerHTML = products.map(p => {
-                const qte = cart[p.id] ? (typeof cart[p.id] === 'object' ? cart[p.id].qty : cart[p.id]) : 0;
+                const totalQty = cart.filter(item => item.id === p.id).reduce((sum, item) => sum + item.qty, 0);
                 return `
                 <div class="card">
-                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
+                    ${totalQty > 0 ? `<div class="badge">${totalQty}</div>` : ''}
                     <img src="${p.img}" onclick="openProduct(${p.id})">
                     <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
@@ -103,106 +99,89 @@
             }).join('');
         }
 
+        function openProduct(id) {
+            const p = products.find(i => i.id === id);
+            selectedSize = null;
+            let sizeHtml = p.sizes ? `<div class="size-box">${p.sizes.map(s => `<div class="size-btn-opt" onclick="selectSize(this, '${s}')">${s}</div>`).join('')}</div>` : "";
+
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" class="detail-img">
+                <h2>${p.name}</h2>
+                <p style="color:var(--hint);">${p.desc}</p>
+                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
+                ${sizeHtml}
+                <button onclick="addToCart(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
+            `;
+            document.getElementById('product-modal').classList.add('open');
+            tg.BackButton.show();
+        }
+
         function selectSize(el, size) {
             document.querySelectorAll('.size-btn-opt').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             selectedSize = size;
         }
 
-        function openProduct(id) {
-            const p = products.find(i => i.id === id);
-            selectedSize = null;
-            let sizeHtml = "";
-            if (p.sizes) {
-                sizeHtml = `<div class="size-box">` + p.sizes.map(s => `<div class="size-btn-opt" onclick="selectSize(this, '${s}')">${s}</div>`).join('') + `</div>`;
-            }
-
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2>${p.name}</h2>
-                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
-                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
-                ${sizeHtml}
-                <button onclick="addToCartWithCheck(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
-            `;
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
-        }
-
-        function addToCartWithCheck(id) {
+        function addToCart(id) {
             const p = products.find(i => i.id === id);
             if (p.sizes && !selectedSize) {
                 tg.showAlert("Merci de choisir une taille");
                 return;
             }
-            // On enregistre l'objet avec la taille dans le panier
-            const cartKey = selectedSize ? `${id}_${selectedSize}` : `${id}`;
-            cart[cartKey] = (cart[cartKey] || 0) + 1;
-            
-            // Pour le badge sur la grille, on garde aussi le compte total par ID
-            cart[id] = (cart[id] || 0) + 1;
 
-            tg.HapticFeedback.impactOccurred('medium');
+            const existing = cart.find(item => item.id === id && item.size === selectedSize);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ id: p.id, name: p.name, price: p.price, size: selectedSize, img: p.img, qty: 1 });
+            }
+
+            tg.HapticFeedback.notificationOccurred('success');
             closeAll();
             renderGrid();
-            updateInterface();
-        }
-
-        function updateCart(id, delta) {
-            tg.HapticFeedback.impactOccurred('medium');
-            cart[id] = (cart[id] || 0) + delta;
-            if (cart[id] <= 0) delete cart[id];
-            renderGrid();
-            updateInterface();
-            if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
-        }
-
-        function updateInterface() {
-            // On ne compte que les ID numériques (les totaux) pour éviter les doublons
-            const count = products.reduce((sum, p) => sum + (cart[p.id] || 0), 0);
-            if (count > 0) {
-                const isCart = document.getElementById('cart-modal').classList.contains('open');
-                tg.MainButton.setText(isCart ? "ENVOYER LA COMMANDE" : "VOIR LE PANIER (" + count + ")");
-                tg.MainButton.show();
-            } else { tg.MainButton.hide(); }
         }
 
         function updateCartModal() {
-            let total = 0; let html = "";
-            // On parcourt les clés du panier pour afficher les produits + tailles
-            Object.keys(cart).forEach(key => {
-                if (key.toString().includes('_') || (!key.toString().includes('_') && !products.find(p => p.id == key && cart[key+'_S']))) {
-                    // Logique simplifiée pour l'affichage
-                    const id = key.split('_')[0];
-                    const size = key.split('_')[1];
-                    const p = products.find(item => item.id == id);
-                    if(p && isNaN(key) == (key.includes('_'))) { // Evite de compter deux fois
-                         const qte = cart[key];
-                         const st = p.price * qte;
-                         total += st;
-                         html += `
-                            <div class="cart-item">
-                                <img src="${p.img}" class="cart-img">
-                                <div class="cart-info">
-                                    <span class="cart-title">${p.name} ${size ? '['+size+']' : ''}</span>
-                                    <span class="cart-qty-detail">${st}€</span>
-                                </div>
-                                <div class="cart-controls">
-                                    <span class="qty-label">x${qte}</span>
-                                </div>
-                            </div>`;
-                    }
-                }
+            let total = 0;
+            let html = "";
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                html += `
+                <div class="cart-item">
+                    <img src="${item.img}" class="cart-img">
+                    <div class="cart-info">
+                        <div style="font-weight:bold;">${item.name} ${item.size ? '['+item.size+']' : ''}</div>
+                        <div style="font-size:13px;">${item.price}€ x ${item.qty} = ${subtotal}€</div>
+                    </div>
+                    <button class="btn-remove" onclick="removeFromCart(${index})">Supprimer</button>
+                </div>`;
             });
-            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px; color:var(--hint);'>Votre panier est vide</p>";
+            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px;'>Panier vide</p>";
             document.getElementById('total-price').innerText = total;
+            
+            if (cart.length > 0) {
+                tg.MainButton.setText("COMMANDER (" + total + "€)");
+                tg.MainButton.show();
+            } else {
+                tg.MainButton.hide();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartModal();
+            renderGrid();
         }
 
         function closeAll() {
-            document.getElementById('cart-modal').classList.remove('open');
-            document.getElementById('product-modal').classList.remove('open');
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
             tg.BackButton.hide();
-            updateInterface();
+            const count = cart.reduce((a, b) => a + b.qty, 0);
+            if(count > 0) {
+                tg.MainButton.setText("VOIR LE PANIER (" + count + ")");
+                tg.MainButton.show();
+            } else { tg.MainButton.hide(); }
         }
 
         tg.onEvent('mainButtonClicked', () => {
@@ -210,16 +189,11 @@
                 document.getElementById('cart-modal').classList.add('open');
                 tg.BackButton.show();
                 updateCartModal();
-                updateInterface();
             } else {
-                tg.showConfirm("Voulez-vous envoyer la commande ?", (ok) => {
-                    if (ok) { tg.sendData(JSON.stringify({commande: cart})); }
+                tg.showConfirm("Envoyer la commande ?", (ok) => {
+                    if (ok) tg.sendData(JSON.stringify(cart));
                 });
             }
-        });
-
-        tg.onEvent('secondaryButtonClicked', () => {
-            tg.openTelegramLink("https://t.me/toulouse315");
         });
 
         tg.onEvent('backButtonClicked', closeAll);
