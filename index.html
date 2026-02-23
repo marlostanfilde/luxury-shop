@@ -8,12 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #c5a059; /* Or Sablé */
+            --primary: #c5a059;
             --bg: #ffffff;
             --secondary-bg: #f9f9f9;
             --text: #1a1a1a;
-            --btn-bg: #1a1a1a;
-            --btn-text: #ffffff;
         }
 
         body {
@@ -23,16 +21,13 @@
             margin: 0; padding: 0; padding-bottom: 100px;
         }
 
-        /* HEADER & LOGO */
+        /* HEADER */
         .header { padding: 40px 20px; text-align: center; background: #fff; }
         .logo-box { border: 2px solid var(--text); display: inline-block; padding: 10px 25px; }
-        .logo-box h1 { 
-            font-family: 'Playfair Display', serif; 
-            margin: 0; font-size: 26px; letter-spacing: 5px; text-transform: uppercase; 
-        }
+        .logo-box h1 { font-family: 'Playfair Display', serif; margin: 0; font-size: 26px; letter-spacing: 5px; text-transform: uppercase; }
         .header p { font-size: 10px; letter-spacing: 4px; color: var(--primary); font-weight: 600; margin-top: 5px; }
 
-        /* GRILLE DE PRODUITS */
+        /* PRODUITS */
         .container { padding: 0 15px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: var(--bg); text-align: center; }
@@ -41,14 +36,23 @@
         .card h3 { font-size: 12px; font-weight: 400; text-transform: uppercase; margin: 10px 0 5px; }
         .price { font-weight: 600; color: var(--primary); display: block; margin-bottom: 12px; }
 
-        /* CONTRÔLES */
+        /* BOUTONS +/- */
         .controls { display: flex; justify-content: center; align-items: center; gap: 15px; }
         .btn-action { 
-            background: var(--btn-bg); color: var(--btn-text); border: none;
+            background: #1a1a1a; color: #fff; border: none;
             width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 18px;
         }
 
-        /* PANIER MODAL */
+        /* BOUTON PANIER FLOTTANT (Pour le test hors Telegram) */
+        #floating-cart {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--primary); color: white;
+            padding: 15px 20px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: bold; cursor: pointer; display: none; z-index: 90;
+        }
+
+        /* MODAL PANIER */
         #cart-modal {
             position: fixed; bottom: -100%; left: 0; width: 100%; height: 75%;
             background: var(--bg); border-top: 2px solid var(--primary);
@@ -58,24 +62,22 @@
         #cart-modal.open { bottom: 0; }
         .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
 
-        /* SAV */
         .sav-section { margin-top: 50px; text-align: center; padding: 30px 15px; background: var(--secondary-bg); }
-        .sav-link { 
-            color: #fff; text-decoration: none; font-weight: bold; background: #0088cc; 
-            padding: 12px 30px; border-radius: 50px; display: inline-block; font-size: 12px;
-        }
+        .sav-link { color: #fff; text-decoration: none; font-weight: bold; background: #0088cc; padding: 12px 30px; border-radius: 50px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="logo-box"><h1>LUXURY</h1></div>
-        <p>Est. 2026 • Paris</p>
+        <p>Premium Apparel</p>
     </div>
 
     <div class="container">
         <div class="product-grid" id="grid"></div>
     </div>
+
+    <div id="floating-cart" onclick="openCart()">🛒 PANIER (<span id="cart-count-float">0</span>)</div>
 
     <div id="cart-modal">
         <h2 style="font-family: 'Playfair Display', serif; border-bottom: 2px solid var(--primary); display: inline-block;">Mon Panier</h2>
@@ -84,17 +86,17 @@
             <span>TOTAL :</span>
             <span id="total-price">0 €</span>
         </div>
-        <button onclick="closeCart()" style="width: 100%; padding: 15px; margin-top: 25px; background: #eee; border: none; border-radius: 8px; font-weight: 600;">RETOUR À LA BOUTIQUE</button>
+        <button onclick="closeCart()" style="width: 100%; padding: 15px; margin-top: 25px; background: #eee; border: none; border-radius: 8px; font-weight: 600;">RETOUR</button>
+        <button id="pay-manual" onclick="confirmPayment()" style="width: 100%; padding: 15px; margin-top: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600;">CONFIRMER LA COMMANDE</button>
     </div>
 
     <div class="sav-section">
-        <a href="https://t.me/TON_PSEUDO" class="sav-link">ASSISTANCE TELEGRAM</a>
+        <a href="https://t.me/VOTRE_NOM_UTILISATEUR" class="sav-link">SERVICE CLIENT</a>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.MainButton.setParams({ color: '#1a1a1a', text_color: '#ffffff' });
 
         const products = [
             { id: 1, name: "Veste Signature", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
@@ -118,7 +120,7 @@
                     </div>
                 </div>
             `).join('');
-            updateMainButton();
+            updateInterface();
         }
 
         function updateCart(id, delta) {
@@ -128,8 +130,15 @@
             updateCartModal();
         }
 
-        function updateMainButton() {
+        function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            
+            // Mise à jour bouton flottant (Navigateur)
+            const floatBtn = document.getElementById('floating-cart');
+            document.getElementById('cart-count-float').innerText = count;
+            floatBtn.style.display = count > 0 ? 'block' : 'none';
+
+            // Mise à jour bouton Telegram
             if (count > 0) {
                 tg.MainButton.setText(`VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
@@ -153,18 +162,27 @@
             document.getElementById('total-price').innerText = total + " €";
         }
 
+        function openCart() {
+            document.getElementById('cart-modal').classList.add('open');
+            tg.MainButton.setText("CONFIRMER ET PAYER");
+        }
+
         function closeCart() {
             document.getElementById('cart-modal').classList.remove('open');
-            updateMainButton();
+            updateInterface();
+        }
+
+        function confirmPayment() {
+            alert("Commande envoyée !");
+            tg.sendData(JSON.stringify(cart));
         }
 
         tg.onEvent('mainButtonClicked', function() {
             const modal = document.getElementById('cart-modal');
             if (!modal.classList.contains('open')) {
-                modal.classList.add('open');
-                tg.MainButton.setText("CONFIRMER ET PAYER");
+                openCart();
             } else {
-                tg.sendData(JSON.stringify({panier: cart, total: document.getElementById('total-price').innerText}));
+                confirmPayment();
             }
         });
 
