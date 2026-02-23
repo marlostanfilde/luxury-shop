@@ -7,64 +7,107 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #c5a059; --bg: #ffffff; }
-        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); padding-bottom: 120px; }
         
-        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { border: 1px solid #eee; border-radius: 12px; padding: 10px; text-align: center; background: white; }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
-        .price { font-weight: bold; color: var(--primary); display: block; margin: 8px 0; }
-        .btn-action { background: var(--primary); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 20px; }
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            background: var(--bg);
+            /* On ajoute un énorme espace en bas pour que le dernier article puisse monter au-dessus des boutons */
+            padding-bottom: 180px; 
+        }
         
-        /* BARRE SAV EN BAS */
-        .bottom-bar {
+        h2 { text-align: center; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
+
+        #grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+        }
+
+        .card { 
+            border: 1px solid #f0f0f0; 
+            border-radius: 15px; 
+            padding: 12px; 
+            text-align: center; 
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
+        .price { font-weight: bold; color: var(--primary); display: block; margin: 10px 0; }
+        
+        .controls { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .btn-action { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            width: 35px; 
+            height: 35px; 
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* LA BARRE FIXE EN BAS - LA PROTECTION */
+        .bottom-nav-area {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 10px 20px;
+            height: 80px; /* Zone réservée */
+            background: linear-gradient(to top, white 80%, rgba(255,255,255,0));
             display: flex;
             justify-content: center;
-            border-top: 1px solid #eee;
-            z-index: 90;
-        }
-        .btn-sav-bottom {
-            background: #242424;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 99;
+            pointer-events: none; /* Laisse passer le clic sauf sur le bouton */
         }
 
-        #cart-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 100; padding: 20px; display: none; flex-direction: column; }
+        .btn-sav-fixed {
+            pointer-events: auto; /* Réactive le clic sur le bouton */
+            background: #1a1a1a;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        /* Style Panier */
+        #cart-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 1000; padding: 25px; display: none; flex-direction: column; }
         #cart-modal.open { display: flex; }
-        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .total-section { margin-top: auto; padding: 20px 0; font-size: 1.2em; font-weight: bold; }
+        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
+        .total-section { margin-top: auto; padding: 25px 0; font-size: 1.4em; font-weight: bold; border-top: 2px solid #eee; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align:center; margin-bottom: 20px;">Collection Signature</h2>
+    <h2>Collection Exclusive</h2>
     
     <div id="grid"></div>
 
-    <div class="bottom-bar" id="sav-bar">
-        <a href="https://t.me/TonUsername" class="btn-sav-bottom">
-            <span>💬</span> CONTACTER LE SAV
+    <div class="bottom-nav-area" id="nav-area">
+        <a href="https://t.me/TonUsername" class="btn-sav-fixed">
+            <span>💬</span> BESOIN D'AIDE ?
         </a>
     </div>
 
     <div id="cart-modal">
-        <h3>Votre Panier</h3>
+        <h3 style="font-size: 24px;">Votre Sélection</h3>
         <div id="cart-content"></div>
-        <div class="total-section">Total: <span id="total-price">0</span> €</div>
+        <div class="total-section">
+            <span>Total :</span>
+            <span id="total-price">0</span> €
+        </div>
     </div>
 
     <script>
@@ -86,9 +129,9 @@
             grid.innerHTML = products.map(p => `
                 <div class="card">
                     <img src="${p.img}">
-                    <h4>${p.name}</h4>
+                    <h4 style="margin: 10px 0 5px 0; font-size: 15px;">${p.name}</h4>
                     <span class="price">${p.price} €</span>
-                    <div id="controls-${p.id}">
+                    <div class="controls" id="controls-${p.id}">
                         <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
                     </div>
                 </div>
@@ -102,7 +145,7 @@
             const controlDiv = document.getElementById(`controls-${id}`);
             const count = cart[id] || 0;
             controlDiv.innerHTML = `
-                ${count > 0 ? `<button class="btn-action" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px">${count}</span>` : ''}
+                ${count > 0 ? `<button class="btn-action" style="background:#eee; color:#333;" onclick="updateCart(${id}, -1)">-</button><span style="font-weight:bold; min-width:20px">${count}</span>` : ''}
                 <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
             `;
             updateInterface();
@@ -111,11 +154,11 @@
         function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
             const modalOpen = document.getElementById('cart-modal').classList.contains('open');
-            const savBar = document.getElementById('sav-bar');
+            const navArea = document.getElementById('nav-area');
             
             if (count > 0) {
-                // On cache la barre SAV quand le bouton Telegram apparaît pour ne pas chevaucher
-                savBar.style.bottom = "60px"; 
+                // Le bouton SAV remonte pour laisser la place au bouton de commande de Telegram
+                navArea.style.bottom = "65px"; 
                 if (modalOpen) {
                     tg.MainButton.setText("VALIDER LA COMMANDE");
                 } else {
@@ -123,7 +166,7 @@
                 }
                 tg.MainButton.show();
             } else {
-                savBar.style.bottom = "0";
+                navArea.style.bottom = "10px";
                 tg.MainButton.hide();
                 if (modalOpen) closeCart();
             }
@@ -137,10 +180,10 @@
                 if (cart[p.id]) {
                     const subtotal = p.price * cart[p.id];
                     total += subtotal;
-                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><span>${subtotal} €</span></div>`;
+                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><strong>${subtotal} €</strong></div>`;
                 }
             });
-            content.innerHTML = html || "<p>Panier vide</p>";
+            content.innerHTML = html || "<p style='color:#888'>Votre panier est vide...</p>";
             document.getElementById('total-price').innerText = total;
         }
 
