@@ -2,45 +2,213 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Shop</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Luxury Clothing Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c5a059; /* Or élégant */
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --light-gray: #f8f8f8;
+            --tg-theme-btn: var(--tg-theme-button-color, #1a1a1a);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Logo et Header */
+        .header {
+            padding: 30px 15px;
+            text-align: center;
+            background: white;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            letter-spacing: 6px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .header p {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin: 5px 0 0;
+            text-transform: uppercase;
+        }
+
+        /* Grille de produits */
+        .container { padding: 15px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .card { 
+            background: white;
+            border-radius: 0px; 
+            text-align: center;
+            transition: 0.3s;
+        }
+        .img-wrapper {
+            background: var(--light-gray);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+        }
+        .card img { 
+            width: 100%; 
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card h3 { 
+            font-size: 13px; 
+            margin: 12px 0 5px; 
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+        .price { 
+            font-weight: 600; 
+            color: var(--primary); 
+            font-size: 14px;
+            display: block; 
+            margin-bottom: 12px; 
+        }
+
+        /* Contrôles d'ajout */
+        .controls { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 15px;
+            padding-bottom: 10px;
+        }
+        button {
+            background-color: var(--text);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-add-initial {
+            width: 100%;
+            border-radius: 0;
+            font-size: 11px;
+            height: 35px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .qty { font-weight: 600; font-size: 14px; min-width: 20px; }
+
+        /* SAV Section */
+        .sav-section {
+            margin: 40px 0 80px;
+            padding: 30px 15px;
+            background: var(--light-gray);
+            text-align: center;
+        }
+        .sav-link { 
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 25px;
+            background: #0088cc; 
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold; 
+            border-radius: 50px;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">LUXURY SHOP</div>
-        <p class="subtitle">L'excellence à votre portée</p>
-    </header>
+    <div class="header">
+        <h1 class="logo">LUXURY</h1>
+        <p>Premium Apparel</p>
+    </div>
 
-    <main class="container">
-        <section class="product-grid">
-            
-            <div class="product-card">
-                <div class="product-badge">Premium</div>
-                <img src="https://via.placeholder.com/300x300?text=Produit+1" alt="Produit">
-                <h3>Montre de Luxe</h3>
-                <p class="price">1,200.00 €</p>
-                <button class="buy-btn">Ajouter au panier</button>
-            </div>
+    <div class="container">
+        <div class="product-grid" id="grid"></div>
+    </div>
 
-            <div class="product-card">
-                <img src="https://via.placeholder.com/300x300?text=Produit+2" alt="Produit">
-                <h3>Sac en Cuir</h3>
-                <p class="price">850.00 €</p>
-                <button class="buy-btn">Ajouter au panier</button>
-            </div>
+    <div class="sav-section">
+        <p style="font-size: 14px; margin: 0;">Besoin d'aide pour une taille ?</p>
+        <a href="https://t.me/toulouse315" class="sav-link">SERVICE CLIENT 24/7</a>
+    </div>
 
-            </section>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.setParams({ color: '#1a1a1a', text_color: '#ffffff' });
 
-        <section class="support-section">
-            <h2>Besoin d'aide ?</h2>
-            <p>Notre service client est disponible 24h/7j pour vous accompagner.</p>
-            <a href="https://t.me/VOTRE_PSEUDO" class="support-btn">Contactez le SAV sur Telegram</a>
-        </section>
-    </main>
+        // Liste avec de VRAIES images pour le look
+        const products = [
+            { id: 1, name: "Veste Signature", price: "280 €", rawPrice: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
+            { id: 2, name: "Chemise Lin", price: "120 €", rawPrice: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=500" },
+            { id: 3, name: "Pantalon Slim", price: "190 €", rawPrice: 190, img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500" },
+            { id: 4, name: "T-shirt Premium", price: "85 €", rawPrice: 85, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500" }
+        ];
 
-    <script src="script.js"></script>
+        let cart = {};
+
+        function render() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = products.map(p => `
+                <div class="card">
+                    <div class="img-wrapper">
+                        <img src="${p.img}" alt="${p.name}">
+                    </div>
+                    <h3>${p.name}</h3>
+                    <span class="price">${p.price}</span>
+                    <div class="controls">
+                        ${cart[p.id] ? `
+                            <button onclick="updateCart(${p.id}, -1)">-</button>
+                            <span class="qty">${cart[p.id]}</span>
+                            <button onclick="updateCart(${p.id}, 1)">+</button>
+                        ` : `
+                            <button class="btn-add-initial" onclick="updateCart(${p.id}, 1)">Ajouter</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+
+            updateMainButton();
+        }
+
+        function updateCart(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
+            if (cart[id] <= 0) delete cart[id];
+            render();
+        }
+
+        function updateMainButton() {
+            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+            if (totalItems > 0) {
+                tg.MainButton.setText(`VOIR LE PANIER (${totalItems})`);
+                tg.MainButton.show();
+            } else {
+                tg.MainButton.hide();
+            }
+        }
+
+        tg.onEvent('mainButtonClicked', function() {
+            tg.sendData(JSON.stringify({order: cart, date: new Date().toISOString()}));
+        });
+
+        render();
+    </script>
 </body>
 </html>
