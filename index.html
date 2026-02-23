@@ -8,7 +8,6 @@
     <style>
         :root { 
             --gold: #c5a059; 
-            /* Couleurs pour le fond dégradé */
             --bg-top: #2c2c2c; 
             --bg-bottom: #0f0f0f;
             --card-bg: rgba(255, 255, 255, 0.05);
@@ -18,7 +17,6 @@
         body { 
             font-family: 'Georgia', serif; 
             margin: 0; padding: 15px; 
-            /* EFFET STUDIO : Dégradé du gris sombre vers le noir profond */
             background: radial-gradient(circle at top, var(--bg-top) 0%, var(--bg-bottom) 70%);
             background-attachment: fixed;
             color: var(--text-white); 
@@ -26,12 +24,10 @@
             min-height: 100vh;
         }
 
-        /* HEADER & LOGO */
         .header { text-align: center; padding: 30px 0 10px 0; }
         .logo { font-size: 32px; letter-spacing: 6px; color: var(--gold); margin: 0; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .slogan { font-size: 11px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
 
-        /* BIENVENUE & RECHERCHE */
         .welcome-area { text-align: center; margin: 20px 0; }
         #welcome-name { font-weight: bold; color: var(--gold); }
         
@@ -40,19 +36,13 @@
             display: flex; align-items: center; padding: 12px; border: 1px solid rgba(197, 160, 89, 0.2);
             max-width: 500px;
         }
-        #search-input { 
-            background: none; border: none; color: white; width: 100%; outline: none; font-size: 15px;
-        }
+        #search-input { background: none; border: none; color: white; width: 100%; outline: none; font-size: 15px; }
 
-        /* MENU DES RUBRIQUES */
-        #categories-menu { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; 
-        }
+        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
         .cat-card { 
             position: relative; height: 180px; border-radius: 15px; overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.2s;
         }
         .cat-card:active { transform: scale(0.97); }
         .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
@@ -62,36 +52,18 @@
             font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
         }
 
-        /* GRILLE PRODUITS */
         #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .product-card { 
             background: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1); position: relative;
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1); position: relative; backdrop-filter: blur(5px);
         }
         .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a1a; }
 
-        .badge { 
-            position: absolute; top: -5px; right: -5px; background: #ff4444; 
-            color: white; border-radius: 50%; width: 24px; height: 24px; 
-            font-size: 12px; display: flex; align-items: center; justify-content: center;
-            border: 2px solid #1a1a1a;
-        }
-
-        /* MODALES */
-        .modal { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: #121212; z-index: 9999; padding: 25px; 
-            display: none; flex-direction: column; 
-        }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 25px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
-        .btn-gold { 
-            background: var(--gold); color: white; border: none; padding: 15px; 
-            border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
-        }
-        
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
@@ -115,19 +87,19 @@
 
         <div id="categories-menu">
             <div class="cat-card" onclick="showCategory('Habille')">
-                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=500">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600">
                 <div class="cat-title">PRÊT-À-PORTER</div>
             </div>
             <div class="cat-card" onclick="showCategory('Accessoire')">
-                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=500">
+                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=600">
                 <div class="cat-title">ACCESSOIRES</div>
             </div>
-            <div class="cat-card" onclick="showCategory('Montre')">
-                <img src="https://images.unsplash.com/photo-1509112756314-34a0badb29d4?w=500">
-                <div class="cat-title">PARFUM</div>
+            <div class="cat-card" onclick="showCategory('Parfum')">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=600">
+                <div class="cat-title">PARFUMS</div>
             </div>
-            <div class="cat-card" onclick="showCategory('Voyage')">
-                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500">
+            <div class="cat-card" onclick="showCategory('Chaussures')">
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600">
                 <div class="cat-title">CHAUSSURES</div>
             </div>
         </div>
@@ -170,9 +142,9 @@
 
         const products = [
             { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, category: "Habille", name: "Chemise Été", price: 120, desc: "Lin naturel respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
-            { id: 3, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 4, category: "Montre", name: "Submariner Gold", price: 890, desc: "Mouvement automatique haute précision.", img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400" }
+            { id: 2, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 3, category: "Parfum", name: "Parfum Signature", price: 110, desc: "Notes boisées et cuir.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+            { id: 4, category: "Chaussures", name: "Sneakers Cuir", price: 320, desc: "Confort et élégance.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
         ];
 
         let cart = [];
@@ -181,7 +153,9 @@
         function showCategory(cat) {
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('products-section').style.display = 'block';
-            document.getElementById('category-label').innerText = cat === 'Habille' ? 'Prêt-à-Porter' : cat;
+            let label = cat;
+            if (cat === 'Habille') label = 'Prêt-à-Porter';
+            document.getElementById('category-label').innerText = label;
             renderGrid(products.filter(p => p.category === cat));
             tg.BackButton.show();
         }
@@ -220,7 +194,6 @@
                 <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">AJOUTER AU PANIER</button>
             `;
             document.getElementById('product-modal').classList.add('open');
-            // CSS dynamique pour la taille sélectionnée
             window.selectSize = (el, s) => {
                 document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; b.style.borderColor = '#444'; });
                 el.style.background = 'var(--gold)';
@@ -279,7 +252,7 @@
                 document.getElementById('cart-modal').classList.add('open');
                 updateCartModal();
             } else {
-                tg.showConfirm("Confirmer l'envoi de la commande ?", ok => ok && tg.sendData(JSON.stringify(cart)));
+                tg.showConfirm("Confirmer la commande ?", ok => ok && tg.sendData(JSON.stringify(cart)));
             }
         });
 
