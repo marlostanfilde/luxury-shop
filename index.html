@@ -13,17 +13,11 @@
             margin: 0; 
             padding: 15px; 
             background: var(--bg);
-            /* On ajoute un énorme espace en bas pour que le dernier article puisse monter au-dessus des boutons */
-            padding-bottom: 180px; 
+            /* Important : on laisse de la place pour que le contenu ne soit pas caché par le bouton fixe */
+            padding-bottom: 100px; 
         }
         
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
-
-        #grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-        }
+        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .card { 
             border: 1px solid #f0f0f0; 
@@ -31,88 +25,72 @@
             padding: 12px; 
             text-align: center; 
             background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
         .price { font-weight: bold; color: var(--primary); display: block; margin: 10px 0; }
         
-        .controls { display: flex; align-items: center; justify-content: center; gap: 12px; }
         .btn-action { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            width: 35px; 
-            height: 35px; 
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: var(--primary); color: white; border: none; 
+            border-radius: 8px; width: 35px; height: 35px; font-size: 20px;
         }
 
-        /* LA BARRE FIXE EN BAS - LA PROTECTION */
-        .bottom-nav-area {
+        /* LE BOUTON SAV - FIXÉ STRICTEMENT EN BAS */
+        .sav-footer {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 80px; /* Zone réservée */
-            background: linear-gradient(to top, white 80%, rgba(255,255,255,0));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99;
-            pointer-events: none; /* Laisse passer le clic sauf sur le bouton */
+            padding: 15px;
+            background: linear-gradient(to top, white, rgba(255,255,255,0.8));
+            text-align: center;
+            z-index: 999;
         }
 
-        .btn-sav-fixed {
-            pointer-events: auto; /* Réactive le clic sur le bouton */
+        .btn-sav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: #1a1a1a;
             color: white;
-            padding: 12px 30px;
+            padding: 12px 40px;
             border-radius: 50px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: transform 0.2s;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
         }
 
         /* Style Panier */
-        #cart-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 1000; padding: 25px; display: none; flex-direction: column; }
+        #cart-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 10000; padding: 25px; display: none; flex-direction: column; }
         #cart-modal.open { display: flex; }
-        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
-        .total-section { margin-top: auto; padding: 25px 0; font-size: 1.4em; font-weight: bold; border-top: 2px solid #eee; }
+        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-    <h2>Collection Exclusive</h2>
+    <h2 style="text-align:center; font-weight:300;">Collection</h2>
     
     <div id="grid"></div>
 
-    <div class="bottom-nav-area" id="nav-area">
-        <a href="https://t.me/TonUsername" class="btn-sav-fixed">
-            <span>💬</span> BESOIN D'AIDE ?
+    <div class="sav-footer">
+        <a href="https://t.me/TonUsername" class="btn-sav-link">
+            <span>💬</span> CONTACTER LE SAV
         </a>
     </div>
 
     <div id="cart-modal">
-        <h3 style="font-size: 24px;">Votre Sélection</h3>
+        <h3>Votre Panier</h3>
         <div id="cart-content"></div>
-        <div class="total-section">
-            <span>Total :</span>
-            <span id="total-price">0</span> €
+        <div style="margin-top:auto; padding:20px; font-weight:bold; font-size:1.2em; border-top:1px solid #eee;">
+            Total : <span id="total-price">0</span> €
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        // On règle le bouton Telegram sans animation de mouvement
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
 
         const products = [
@@ -129,9 +107,9 @@
             grid.innerHTML = products.map(p => `
                 <div class="card">
                     <img src="${p.img}">
-                    <h4 style="margin: 10px 0 5px 0; font-size: 15px;">${p.name}</h4>
+                    <h4>${p.name}</h4>
                     <span class="price">${p.price} €</span>
-                    <div class="controls" id="controls-${p.id}">
+                    <div id="controls-${p.id}">
                         <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
                     </div>
                 </div>
@@ -145,7 +123,7 @@
             const controlDiv = document.getElementById(`controls-${id}`);
             const count = cart[id] || 0;
             controlDiv.innerHTML = `
-                ${count > 0 ? `<button class="btn-action" style="background:#eee; color:#333;" onclick="updateCart(${id}, -1)">-</button><span style="font-weight:bold; min-width:20px">${count}</span>` : ''}
+                ${count > 0 ? `<button class="btn-action" style="background:#f0f0f0;color:#000" onclick="updateCart(${id}, -1)">-</button><span style="margin:0 10px">${count}</span>` : ''}
                 <button class="btn-action" onclick="updateCart(${id}, 1)">+</button>
             `;
             updateInterface();
@@ -154,19 +132,11 @@
         function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
             const modalOpen = document.getElementById('cart-modal').classList.contains('open');
-            const navArea = document.getElementById('nav-area');
             
             if (count > 0) {
-                // Le bouton SAV remonte pour laisser la place au bouton de commande de Telegram
-                navArea.style.bottom = "65px"; 
-                if (modalOpen) {
-                    tg.MainButton.setText("VALIDER LA COMMANDE");
-                } else {
-                    tg.MainButton.setText(`VOIR LE PANIER (${count})`);
-                }
+                tg.MainButton.setText(modalOpen ? "VALIDER LA COMMANDE" : `VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
             } else {
-                navArea.style.bottom = "10px";
                 tg.MainButton.hide();
                 if (modalOpen) closeCart();
             }
@@ -180,10 +150,10 @@
                 if (cart[p.id]) {
                     const subtotal = p.price * cart[p.id];
                     total += subtotal;
-                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><strong>${subtotal} €</strong></div>`;
+                    html += `<div class="cart-item"><span>${p.name} (x${cart[p.id]})</span><span>${subtotal} €</span></div>`;
                 }
             });
-            content.innerHTML = html || "<p style='color:#888'>Votre panier est vide...</p>";
+            content.innerHTML = html || "<p>Panier vide</p>";
             document.getElementById('total-price').innerText = total;
         }
 
@@ -201,11 +171,10 @@
         }
 
         tg.onEvent('mainButtonClicked', function() {
-            const modal = document.getElementById('cart-modal');
-            if (!modal.classList.contains('open')) {
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
                 openCart();
             } else {
-                tg.sendData(JSON.stringify({commande: cart, total: document.getElementById('total-price').innerText}));
+                tg.sendData(JSON.stringify({cart: cart}));
             }
         });
 
