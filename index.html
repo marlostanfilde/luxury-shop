@@ -40,11 +40,6 @@
         .qty-label { font-weight: bold; min-width: 20px; text-align: center; }
 
         .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
-
-        /* NOUVEAU : Style pour les boutons de taille */
-        .size-selector { display: flex; gap: 8px; margin: 10px 0; }
-        .size-opt { border: 1px solid var(--hint); padding: 5px 10px; border-radius: 5px; cursor: pointer; background: none; color: var(--text); }
-        .size-opt.selected { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -79,14 +74,13 @@
         tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
+            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
             { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
             { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
         let cart = {};
-        let tempSize = null; // Stockage temporaire de la taille choisie
 
         function renderGrid() {
             const grid = document.getElementById('grid');
@@ -98,49 +92,9 @@
                     <img src="${p.img}" onclick="openProduct(${p.id})">
                     <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-add" onclick="openProduct(${p.id})">AJOUTER</button>
+                    <button class="btn-add" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
                 </div>`;
             }).join('');
-        }
-
-        // Gérer le clic sur une taille
-        function setSize(el, size) {
-            document.querySelectorAll('.size-opt').forEach(opt => opt.classList.remove('selected'));
-            el.classList.add('selected');
-            tempSize = size;
-        }
-
-        function openProduct(id) {
-            const p = products.find(i => i.id === id);
-            tempSize = null; // Reset
-            
-            let sizeSection = "";
-            if(p.sizes) {
-                sizeSection = `<p>Taille :</p><div class="size-selector">` + 
-                    p.sizes.map(s => `<div class="size-opt" onclick="setSize(this, '${s}')">${s}</div>`).join('') + 
-                    `</div>`;
-            }
-
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2>${p.name}</h2>
-                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
-                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
-                ${sizeSection}
-                <button onclick="confirmAdd(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">CONFIRMER L'AJOUT</button>
-            `;
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
-        }
-
-        function confirmAdd(id) {
-            const p = products.find(i => i.id === id);
-            if(p.sizes && !tempSize) {
-                tg.showAlert("Veuillez choisir une taille !");
-                return;
-            }
-            updateCart(id, 1);
-            closeAll();
         }
 
         function updateCart(id, delta) {
@@ -150,6 +104,19 @@
             renderGrid();
             updateInterface();
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
+        }
+
+        function openProduct(id) {
+            const p = products.find(i => i.id === id);
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" class="detail-img">
+                <h2>${p.name}</h2>
+                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
+                <button onclick="updateCart(${p.id}, 1); closeAll();" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
+            `;
+            document.getElementById('product-modal').classList.add('open');
+            tg.BackButton.show();
         }
 
         function updateInterface() {
@@ -173,6 +140,7 @@
                         <img src="${p.img}" class="cart-img">
                         <div class="cart-info">
                             <span class="cart-title">${p.name}</span>
+                            <span class="cart-desc">${p.desc}</span>
                             <span class="cart-qty-detail">${st}€ (${p.price}€ x ${qte})</span>
                         </div>
                         <div class="cart-controls">
