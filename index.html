@@ -40,6 +40,11 @@
         .qty-label { font-weight: bold; min-width: 20px; text-align: center; }
 
         .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+
+        /* Styles pour les tailles */
+        .size-box { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
+        .size-btn-opt { border: 1px solid var(--hint); padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        .size-btn-opt.active { border: 2px solid var(--primary); color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -74,27 +79,73 @@
         tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
-            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
+            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne, coupe ajustée premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
+            { id: 2, name: "Chemise Été", price: 120, desc: "Lin naturel ultra respirant.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400", sizes: ["M", "L", "XL"] },
             { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable fait à la main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
             { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique de précision.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
         ];
 
         let cart = {};
+        let selectedSize = null;
 
         function renderGrid() {
             const grid = document.getElementById('grid');
             grid.innerHTML = products.map(p => {
-                const qte = cart[p.id] || 0;
+                const qte = cart[p.id] ? (typeof cart[p.id] === 'object' ? cart[p.id].qty : cart[p.id]) : 0;
                 return `
                 <div class="card">
                     ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}" onclick="openProduct(${p.id})">
                     <div style="margin:8px 0; font-size:14px; font-weight:bold;">${p.name}</div>
                     <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
-                    <button class="btn-add" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
+                    <button class="btn-add" onclick="openProduct(${p.id})">AJOUTER</button>
                 </div>`;
             }).join('');
+        }
+
+        function selectSize(el, size) {
+            document.querySelectorAll('.size-btn-opt').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            selectedSize = size;
+        }
+
+        function openProduct(id) {
+            const p = products.find(i => i.id === id);
+            selectedSize = null;
+            let sizeHtml = "";
+            if (p.sizes) {
+                sizeHtml = `<div class="size-box">` + p.sizes.map(s => `<div class="size-btn-opt" onclick="selectSize(this, '${s}')">${s}</div>`).join('') + `</div>`;
+            }
+
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" class="detail-img">
+                <h2>${p.name}</h2>
+                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
+                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
+                ${sizeHtml}
+                <button onclick="addToCartWithCheck(${p.id})" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
+            `;
+            document.getElementById('product-modal').classList.add('open');
+            tg.BackButton.show();
+        }
+
+        function addToCartWithCheck(id) {
+            const p = products.find(i => i.id === id);
+            if (p.sizes && !selectedSize) {
+                tg.showAlert("Merci de choisir une taille");
+                return;
+            }
+            // On enregistre l'objet avec la taille dans le panier
+            const cartKey = selectedSize ? `${id}_${selectedSize}` : `${id}`;
+            cart[cartKey] = (cart[cartKey] || 0) + 1;
+            
+            // Pour le badge sur la grille, on garde aussi le compte total par ID
+            cart[id] = (cart[id] || 0) + 1;
+
+            tg.HapticFeedback.impactOccurred('medium');
+            closeAll();
+            renderGrid();
+            updateInterface();
         }
 
         function updateCart(id, delta) {
@@ -106,21 +157,9 @@
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
         }
 
-        function openProduct(id) {
-            const p = products.find(i => i.id === id);
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2>${p.name}</h2>
-                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
-                <div style="font-size:22px; font-weight:bold; color:var(--primary);">${p.price} €</div>
-                <button onclick="updateCart(${p.id}, 1); closeAll();" class="btn-add" style="padding:15px; font-size:16px;">AJOUTER AU PANIER</button>
-            `;
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
-        }
-
         function updateInterface() {
-            const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            // On ne compte que les ID numériques (les totaux) pour éviter les doublons
+            const count = products.reduce((sum, p) => sum + (cart[p.id] || 0), 0);
             if (count > 0) {
                 const isCart = document.getElementById('cart-modal').classList.contains('open');
                 tg.MainButton.setText(isCart ? "ENVOYER LA COMMANDE" : "VOIR LE PANIER (" + count + ")");
@@ -130,25 +169,29 @@
 
         function updateCartModal() {
             let total = 0; let html = "";
-            products.forEach(p => {
-                if (cart[p.id]) {
-                    const qte = cart[p.id];
-                    const st = p.price * qte;
-                    total += st;
-                    html += `
-                    <div class="cart-item">
-                        <img src="${p.img}" class="cart-img">
-                        <div class="cart-info">
-                            <span class="cart-title">${p.name}</span>
-                            <span class="cart-desc">${p.desc}</span>
-                            <span class="cart-qty-detail">${st}€ (${p.price}€ x ${qte})</span>
-                        </div>
-                        <div class="cart-controls">
-                            <button class="btn-qty" onclick="updateCart(${p.id}, -1)">-</button>
-                            <span class="qty-label">${qte}</span>
-                            <button class="btn-qty" onclick="updateCart(${p.id}, 1)">+</button>
-                        </div>
-                    </div>`;
+            // On parcourt les clés du panier pour afficher les produits + tailles
+            Object.keys(cart).forEach(key => {
+                if (key.toString().includes('_') || (!key.toString().includes('_') && !products.find(p => p.id == key && cart[key+'_S']))) {
+                    // Logique simplifiée pour l'affichage
+                    const id = key.split('_')[0];
+                    const size = key.split('_')[1];
+                    const p = products.find(item => item.id == id);
+                    if(p && isNaN(key) == (key.includes('_'))) { // Evite de compter deux fois
+                         const qte = cart[key];
+                         const st = p.price * qte;
+                         total += st;
+                         html += `
+                            <div class="cart-item">
+                                <img src="${p.img}" class="cart-img">
+                                <div class="cart-info">
+                                    <span class="cart-title">${p.name} ${size ? '['+size+']' : ''}</span>
+                                    <span class="cart-qty-detail">${st}€</span>
+                                </div>
+                                <div class="cart-controls">
+                                    <span class="qty-label">x${qte}</span>
+                                </div>
+                            </div>`;
+                    }
                 }
             });
             document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; margin-top:40px; color:var(--hint);'>Votre panier est vide</p>";
