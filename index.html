@@ -3,122 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Boutique Officielle</title>
+    <title>Boutique</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { 
-            --primary: #c5a059; 
-            --bg: var(--tg-theme-bg_color, #ffffff); 
-            --text: var(--tg-theme-text-color, #222222);
-            --hint: var(--tg-theme-hint_color, #999999);
-            --secondary-bg: var(--tg-theme-secondary_bg_color, #f4f4f4);
-            --red: #ff4444; 
-        }
-        
-        body { 
-            font-family: -apple-system, system-ui, sans-serif; 
-            margin: 0; padding: 15px; 
-            background: var(--bg); color: var(--text);
-            padding-bottom: 140px; 
-            -webkit-user-select: none; /* Empêche la sélection de texte pour faire plus "App" */
-        }
-
-        h2 { text-align: center; font-weight: 300; margin-bottom: 20px; }
-        
+        :root { --primary: #c5a059; --bg: var(--tg-theme-bg_color, #ffffff); --text: var(--tg-theme-text-color, #222); --secondary: var(--tg-theme-secondary_bg_color, #f4f4f4); }
+        body { font-family: sans-serif; margin: 0; padding: 15px; background: var(--bg); color: var(--text); padding-bottom: 120px; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        .card { 
-            border-radius: 15px; padding: 12px; text-align: center; 
-            background: var(--secondary-bg); cursor: pointer;
-            position: relative; transition: transform 0.1s;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .card:active { transform: scale(0.95); }
-        
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; }
-        .price { font-weight: bold; color: var(--primary); display: block; margin: 8px 0; }
-        
-        .badge {
-            position: absolute; top: -5px; right: -5px;
-            background: var(--red); color: white; border-radius: 50%;
-            width: 24px; height: 24px; font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; border: 2px solid var(--bg);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .btn-action { 
-            background: var(--primary); color: white; border: none; 
-            border-radius: 8px; width: 45px; height: 35px; font-size: 20px;
-            margin: 0 auto; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* MODALES */
-        .modal { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: var(--bg); z-index: 10000; padding: 25px; 
-            display: none; flex-direction: column; 
-        }
+        .card { background: var(--secondary); border-radius: 12px; padding: 10px; text-align: center; position: relative; }
+        .card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; }
+        .badge { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .btn-action { background: var(--primary); color: white; border: none; border-radius: 8px; width: 100%; padding: 8px; margin-top: 10px; font-weight: bold; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 999; padding: 20px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
-        
-        .cart-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 0; border-bottom: 1px solid var(--secondary-bg); 
-        }
-        
-        .btn-minus { 
-            background: none; color: var(--red); border: 1px solid var(--red); 
-            border-radius: 5px; padding: 4px 8px; font-size: 11px; font-weight: bold;
-        }
-
-        .detail-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <h2>Ma Boutique Pro</h2>
+    <h2 style="text-align:center">Ma Boutique</h2>
     <div id="grid"></div>
 
     <div id="cart-modal" class="modal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <h3 style="margin:0">Mon Panier</h3>
-            <span onclick="closeAll()" style="font-size:30px; color:var(--hint); cursor:pointer;">✕</span>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Mon Panier</h3>
+            <b onclick="closeAll()" style="font-size:24px; cursor:pointer;">✕</b>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="padding-top:20px; font-weight:bold; font-size:1.4em; border-top: 1px solid var(--secondary-bg);">
-            Total : <span id="total-price">0</span> €
-        </div>
-    </div>
-
-    <div id="product-modal" class="modal">
-        <div style="display:flex; justify-content:flex-end;">
-            <span onclick="closeAll()" style="font-size:30px; color:var(--hint); cursor:pointer;">✕</span>
-        </div>
-        <div id="product-detail-content"></div>
+        <div style="font-size:1.2em; font-weight:bold; padding-top:10px;">Total : <span id="total-price">0</span> €</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
-        // 1. SON DE CLIC (Bruit de bouton propre)
-        const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-        clickSound.volume = 0.5;
-
-        // Configuration des boutons officiels Telegram
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
-        tg.SecondaryButton.setParams({
-            text: "💬 CONTACT SAV",
-            color: "#222222",
-            text_color: "#ffffff",
-            is_visible: true
-        });
+        tg.MainButton.setParams({ color: '#c5a059' });
+        
+        // Configuration du SAV toulouse315
+        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
 
         const products = [
-            { id: 1, name: "Veste Luxe", price: 280, desc: "Laine italienne haute qualité, coupe ajustée.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400" },
-            { id: 2, name: "Chemise Été", price: 120, desc: "Lin respirant, idéal pour les fortes chaleurs.", img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=400" },
-            { id: 3, name: "Sac Voyage", price: 450, desc: "Cuir véritable tanné végétal, fait main.", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400" },
-            { id: 4, name: "Montre Or", price: 890, desc: "Mouvement automatique japonais, cristal saphir.", img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=400" }
+            { id: 1, name: "Veste Luxe", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=300" },
+            { id: 2, name: "Chemise Été", price: 120, img: "https://images.unsplash.com/photo-1598033129183-c4f50c717658?w=300" },
+            { id: 3, name: "Sac Voyage", price: 450, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300" },
+            { id: 4, name: "Montre Or", price: 890, img: "https://images.unsplash.com/photo-1524592094713-9487cc757a04?w=300" }
         ];
 
         let cart = {};
@@ -128,26 +54,20 @@
             grid.innerHTML = products.map(p => {
                 const qte = cart[p.id] || 0;
                 return `
-                <div class="card" onclick="openProduct(${p.id})">
+                <div class="card">
                     ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}">
-                    <div style="font-weight:bold; margin-top:10px;">${p.name}</div>
-                    <span class="price">${p.price} €</span>
-                    <div onclick="event.stopPropagation()">
-                        <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
-                    </div>
+                    <div style="margin:8px 0; font-size:14px;">${p.name}</div>
+                    <div style="color:var(--primary); font-weight:bold;">${p.price} €</div>
+                    <button class="btn-action" onclick="updateCart(${p.id}, 1)">AJOUTER</button>
                 </div>`;
             }).join('');
         }
 
         function updateCart(id, delta) {
-            // EFFET SONORE + VIBRATION (Haptic)
-            try {
-                clickSound.currentTime = 0;
-                clickSound.play();
-            } catch(e) {}
+            // Vibration uniquement (plus stable que le son)
             tg.HapticFeedback.impactOccurred('medium');
-
+            
             cart[id] = (cart[id] || 0) + delta;
             if (cart[id] <= 0) delete cart[id];
             
@@ -156,20 +76,57 @@
             if (document.getElementById('cart-modal').classList.contains('open')) updateCartModal();
         }
 
-        function openProduct(id) {
-            const p = products.find(i => i.id === id);
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" class="detail-img">
-                <h2 style="text-align:left;">${p.name}</h2>
-                <p style="color:var(--hint); line-height:1.5;">${p.desc}</p>
-                <div style="font-size:24px; font-weight:bold; color:var(--primary); margin: 20px 0;">${p.price} €</div>
-                <button onclick="updateCart(${p.id}, 1); closeAll();" style="width:100%; background:var(--primary); color:white; border:none; padding:18px; border-radius:12px; font-weight:bold; font-size:16px;">
-                    AJOUTER AU PANIER
-                </button>
-            `;
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
+        function updateInterface() {
+            const count = Object.values(cart).reduce((a, b) => a + b, 0);
+            if (count > 0) {
+                const isCart = document.getElementById('cart-modal').classList.contains('open');
+                tg.MainButton.setText(isCart ? "VALIDER LA COMMANDE" : `VOIR PANIER (${count})`);
+                tg.MainButton.show();
+            } else { tg.MainButton.hide(); }
         }
 
-        function updateInterface() {
-            const count = Object.
+        function updateCartModal() {
+            let total = 0; let html = "";
+            products.forEach(p => {
+                if (cart[p.id]) {
+                    const st = p.price * cart[p.id];
+                    total += st;
+                    html += `<div class="cart-item">
+                        <span>${p.name} (x${cart[p.id]})</span>
+                        <b>${st}€ <i onclick="updateCart(${p.id}, -1)" style="color:red; margin-left:10px; font-style:normal; cursor:pointer;">[X]</i></b>
+                    </div>`;
+                }
+            });
+            document.getElementById('cart-content').innerHTML = html || "Vide";
+            document.getElementById('total-price').innerText = total;
+        }
+
+        function closeAll() {
+            document.getElementById('cart-modal').classList.remove('open');
+            tg.BackButton.hide();
+            updateInterface();
+        }
+
+        tg.onEvent('mainButtonClicked', () => {
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                document.getElementById('cart-modal').classList.add('open');
+                tg.BackButton.show();
+                updateCartModal();
+                updateInterface();
+            } else {
+                tg.showConfirm("Confirmer commande ?", (ok) => {
+                    if (ok) { tg.sendData(JSON.stringify(cart)); tg.close(); }
+                });
+            }
+        });
+
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315");
+        });
+
+        tg.onEvent('backButtonClicked', closeAll);
+        
+        window.onload = render;
+    </script>
+</body>
+</html>
