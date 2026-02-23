@@ -19,6 +19,7 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0; padding: 0; padding-bottom: 100px;
+            user-select: none;
         }
 
         /* HEADER */
@@ -41,9 +42,10 @@
         .btn-action { 
             background: #1a1a1a; color: #fff; border: none;
             width: 32px; height: 32px; border-radius: 50%; font-weight: bold; font-size: 18px;
+            cursor: pointer;
         }
 
-        /* BOUTON PANIER FLOTTANT (Pour le test hors Telegram) */
+        /* BOUTON PANIER FLOTTANT */
         #floating-cart {
             position: fixed; bottom: 20px; right: 20px;
             background: var(--primary); color: white;
@@ -70,7 +72,7 @@
 
     <div class="header">
         <div class="logo-box"><h1>LUXURY</h1></div>
-        <p>Shop</p>
+        <p>Exclusive Selection</p>
     </div>
 
     <div class="container">
@@ -86,17 +88,22 @@
             <span>TOTAL :</span>
             <span id="total-price">0 €</span>
         </div>
-        <button onclick="closeCart()" style="width: 100%; padding: 15px; margin-top: 25px; background: #eee; border: none; border-radius: 8px; font-weight: 600;">RETOUR</button>
-        <button id="pay-manual" onclick="confirmPayment()" style="width: 100%; padding: 15px; margin-top: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600;">CONFIRMER LA COMMANDE</button>
+        <button onclick="closeCart()" style="width: 100%; padding: 15px; margin-top: 25px; background: #eee; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">RETOUR</button>
+        <button id="pay-manual" onclick="confirmPayment()" style="width: 100%; padding: 15px; margin-top: 10px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">CONFIRMER ET PAYER</button>
     </div>
 
     <div class="sav-section">
-        <a href="https://t.me/toulouse315" class="sav-link">SERVICE CLIENT</a>
+        <a href="https://t.me/toulouse315" class="sav-link">SERVICE CLIENT (SAV)</a>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        // On configure le bouton Telegram dès le début
+        tg.MainButton.setParams({
+            color: '#c5a059',
+            text_color: '#ffffff'
+        });
 
         const products = [
             { id: 1, name: "Veste Signature", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
@@ -115,7 +122,7 @@
                     <h3>${p.name}</h3>
                     <span class="price">${p.price} €</span>
                     <div class="controls">
-                        ${cart[p.id] ? `<button class="btn-action" onclick="updateCart(${p.id}, -1)">-</button><span style="font-weight:600">${cart[p.id]}</span>` : ''}
+                        ${cart[p.id] ? `<button class="btn-action" onclick="updateCart(${p.id}, -1)">-</button><span style="font-weight:600; margin: 0 10px;">${cart[p.id]}</span>` : ''}
                         <button class="btn-action" onclick="updateCart(${p.id}, 1)">+</button>
                     </div>
                 </div>
@@ -133,12 +140,11 @@
         function updateInterface() {
             const count = Object.values(cart).reduce((a, b) => a + b, 0);
             
-            // Mise à jour bouton flottant (Navigateur)
-            const floatBtn = document.getElementById('floating-cart');
+            // Bouton flottant
             document.getElementById('cart-count-float').innerText = count;
-            floatBtn.style.display = count > 0 ? 'block' : 'none';
+            document.getElementById('floating-cart').style.display = count > 0 ? 'block' : 'none';
 
-            // Mise à jour bouton Telegram
+            // Bouton Telegram
             if (count > 0) {
                 tg.MainButton.setText(`VOIR LE PANIER (${count})`);
                 tg.MainButton.show();
@@ -172,9 +178,24 @@
             updateInterface();
         }
 
+        // --- LA PARTIE PAIEMENT MISE À JOUR ---
         function confirmPayment() {
-            alert("Commande envoyée !");
-            tg.sendData(JSON.stringify(cart));
+            const total = document.getElementById('total-price').innerText;
+            
+            if (Object.keys(cart).length === 0) {
+                tg.showAlert("Votre panier est vide !");
+                return;
+            }
+
+            // Envoi des données JSON au Bot
+            tg.sendData(JSON.stringify({
+                action: "payment",
+                commande: cart,
+                total_price: total
+            }));
+            
+            // On ferme l'App pour que le bot puisse répondre
+            tg.close();
         }
 
         tg.onEvent('mainButtonClicked', function() {
