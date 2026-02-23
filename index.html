@@ -3,43 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxuryShop App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; text-align: center; }
-        .container { padding: 20px; }
-        .item { border: 1px solid #c5a059; border-radius: 15px; padding: 15px; margin-bottom: 20px; background: #1a1a1a; }
-        .price { color: #c5a059; font-weight: bold; font-size: 1.2em; }
-        button { background: #c5a059; color: black; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
-        h1 { color: #c5a059; }
-    </style>
+    <title>Luxury Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>💎 LUXURY SHOP</h1>
-        <p>Sélection Sport & Luxe</p>
 
-        <div class="item">
-            <h3>👟 Ensemble On Cloud</h3>
-            <p class="price">130€</p>
-            <button onclick="sendOrder('Ensemble On Cloud', 130)">🛒 Commander</button>
-        </div>
+    <header>
+        <div class="logo">LUXURY SHOP</div>
+        <p class="subtitle">L'excellence à votre portée</p>
+    </header>
 
-        <div class="item">
-            <h3>👕 T-shirt Luxe</h3>
-            <p class="price">60€</p>
-            <button onclick="sendOrder('T-shirt Luxe', 60)">🛒 Commander</button>
-        </div>
-    </div>
+    <main class="container">
+        <section class="product-grid">
+            
+            <div class="product-card">
+                <div class="product-badge">Premium</div>
+                <img src="https://via.placeholder.com/300x300?text=Produit+1" alt="Produit">
+                <h3>Montre de Luxe</h3>
+                <p class="price">1,200.00 €</p>
+                <button class="buy-btn">Ajouter au panier</button>
+            </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x300?text=Produit+2" alt="Produit">
+                <h3>Sac en Cuir</h3>
+                <p class="price">850.00 €</p>
+                <button class="buy-btn">Ajouter au panier</button>
+            </div>
 
-        function sendOrder(name, price) {
-            const data = { product: name, price: price };
-            tg.sendData(JSON.stringify(data)); // Envoie les infos au bot
-        }
-    </script>
+            </section>
+
+        <section class="support-section">
+            <h2>Besoin d'aide ?</h2>
+            <p>Notre service client est disponible 24h/7j pour vous accompagner.</p>
+            <a href="https://t.me/VOTRE_PSEUDO" class="support-btn">Contactez le SAV sur Telegram</a>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
