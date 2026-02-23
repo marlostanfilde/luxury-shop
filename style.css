@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo">LUXURY SHOP</div>
+        <p class="subtitle">L'excellence à votre portée</p>
+    </header>
+
+    <main class="container">
+        <section class="product-grid">
+            
+            <div class="product-card">
+                <div class="product-badge">Premium</div>
+                <img src="https://via.placeholder.com/300x300?text=Produit+1" alt="Produit">
+                <h3>Montre de Luxe</h3>
+                <p class="price">1,200.00 €</p>
+                <button class="buy-btn">Ajouter au panier</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x300?text=Produit+2" alt="Produit">
+                <h3>Sac en Cuir</h3>
+                <p class="price">850.00 €</p>
+                <button class="buy-btn">Ajouter au panier</button>
+            </div>
+
+            </section>
+
+        <section class="support-section">
+            <h2>Besoin d'aide ?</h2>
+            <p>Notre service client est disponible 24h/7j pour vous accompagner.</p>
+            <a href="https://t.me/VOTRE_PSEUDO" class="support-btn">Contactez le SAV sur Telegram</a>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
