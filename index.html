@@ -1,18 +1,86 @@
-<script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-
-        // --- CONFIGURATION DES BOUTONS ---
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUXURY SHOP</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --gold: #c5a059; --bg: #0f0f0f; --card: rgba(255,255,255,0.05); }
+        body { font-family: 'Georgia', serif; margin: 0; padding: 15px; background: #0f0f0f; color: white; padding-bottom: 100px; }
+        .header { text-align: center; padding: 20px 0; }
+        .logo { font-size: 28px; letter-spacing: 5px; color: var(--gold); font-weight: bold; margin: 0; }
+        .slogan { font-size: 10px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
         
-        // On remet le bouton SAV (Secondary Button)
-        tg.SecondaryButton.setParams({ 
-            text: "💬 CONTACT SAV", 
-            is_visible: true, 
-            color: "#222222",
-            text_color: "#c5a059"
-        });
+        /* Menu Catégories - TES RUBRIQUES */
+        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .cat-card { position: relative; height: 150px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .cat-title { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: var(--gold); letter-spacing: 1px; }
+
+        /* Grille Produits */
+        #products-section { display: none; }
+        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .product-card { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 20px; display: none; flex-direction: column; }
+        .modal.open { display: flex; }
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; margin-top: 20px; cursor: pointer; }
+        .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .size-opt { border: 1px solid #444; padding: 8px 12px; border-radius: 5px; cursor: pointer; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="logo">LUXURY SHOP</h1>
+        <div class="slogan">L'Art du Luxe</div>
+    </div>
+    
+    <div id="home-page">
+        <div id="categories-menu">
+            <div class="cat-card" onclick="showCategory('Habille')">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400"><div class="cat-title">PRÊT-À-PORTER</div>
+            </div>
+            <div class="cat-card" onclick="showCategory('Accessoire')">
+                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400"><div class="cat-title">ACCESSOIRES</div>
+            </div>
+            <div class="cat-card" onclick="showCategory('Parfum')">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400"><div class="cat-title">PARFUMS</div>
+            </div>
+            <div class="cat-card" onclick="showCategory('Chaussures')">
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400"><div class="cat-title">CHAUSSURES</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="products-section">
+        <button onclick="goBack()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 10px; border-radius:5px; cursor:pointer;">← Retour</button>
+        <h3 id="cat-label" style="color:var(--gold); text-align:center;"></h3>
+        <div id="grid"></div>
+    </div>
+
+    <div id="cart-modal" class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="color:var(--gold);">MON PANIER</h2>
+            <span onclick="closeModal()" style="font-size:30px; cursor:pointer;">✕</span>
+        </div>
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
+        <div style="font-size:1.2em; padding:15px 0; border-top:1px solid var(--gold);">Total : <span id="total-price">0</span> €</div>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <span onclick="closeModal()" style="align-self:flex-end; font-size:30px; cursor:pointer;">✕</span>
+        <div id="product-detail"></div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp; tg.expand(); tg.ready();
+        
+        // CONFIG DES BOUTONS (Main = Panier, Secondary = SAV)
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222", text_color: "#c5a059" });
 
         const products = [
             { id: 1, category: "Habille", name: "Veste Luxe", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L"] },
@@ -29,13 +97,11 @@
             document.getElementById('products-section').style.display = 'block';
             document.getElementById('cat-label').innerText = cat.toUpperCase();
             renderGrid(products.filter(p => p.category === cat));
-            tg.BackButton.show();
         }
 
         function goBack() {
             document.getElementById('home-page').style.display = 'block';
             document.getElementById('products-section').style.display = 'none';
-            tg.BackButton.hide();
         }
 
         function renderGrid(data) {
@@ -65,17 +131,12 @@
 
         function updateUI() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
-            if (count > 0) { 
-                tg.MainButton.setText(`VOIR LE PANIER (${count})`); 
-                tg.MainButton.show(); 
-            } else {
-                tg.MainButton.hide();
-            }
+            if (count > 0) { tg.MainButton.setText(`VOIR LE PANIER (${count})`); tg.MainButton.show(); } else tg.MainButton.hide();
         }
 
         function showCart() {
             let total = 0;
-            let html = cart.length ? "" : "<p style='text-align:center;'>Panier vide</p>";
+            let html = cart.length ? "" : "<p>Vide</p>";
             cart.forEach((item, index) => {
                 total += item.price * item.qty;
                 html += `<div class="cart-item"><div><b>${item.name} ${item.size ? `[${item.size}]` : ''}</b><br>${item.price}€ x ${item.qty}</div><button onclick="remove(${index})" style="background:none; border:none; color:red;">✕</button></div>`;
@@ -89,22 +150,15 @@
         function remove(i) { cart.splice(i, 1); showCart(); updateUI(); }
         function closeModal() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('open')); updateUI(); }
 
-        // --- GESTION DES CLICS SUR LES BOUTONS DU BAS ---
-        
-        // Clic sur "VOIR PANIER" ou "COMMANDER"
+        // ACTIONS DES BOUTONS
         tg.onEvent('mainButtonClicked', () => {
-            if (!document.getElementById('cart-modal').classList.contains('open')) {
-                showCart();
-            } else {
-                tg.sendData(JSON.stringify(cart)); // Envoi au bot
-                tg.close();
-            }
+            if (!document.getElementById('cart-modal').classList.contains('open')) showCart();
+            else { tg.sendData(JSON.stringify(cart)); tg.close(); }
         });
 
-        // Clic sur "CONTACT SAV"
         tg.onEvent('secondaryButtonClicked', () => {
             tg.openTelegramLink("https://t.me/toulouse315"); 
         });
-
-        tg.onEvent('backButtonClicked', goBack);
     </script>
+</body>
+</html>
