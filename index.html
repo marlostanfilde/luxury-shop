@@ -65,6 +65,9 @@
         .modal.open { display: flex; }
         .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Style pour les tailles */
+        .size-opt { border: 1px solid #444; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; text-align: center; }
     </style>
 </head>
 <body>
@@ -137,7 +140,16 @@
         const user = tg.initDataUnsafe?.user;
         if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
 
+        // Configuration des boutons
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        
+        // --- ON REMET LE BOUTON SAV ICI ---
+        tg.SecondaryButton.setParams({ 
+            text: "💬 CONTACT SAV", 
+            is_visible: true, 
+            color: "#222222",
+            text_color: "#c5a059"
+        });
 
         const products = [
             { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
@@ -182,7 +194,7 @@
         function openProduct(id) {
             const p = products.find(i => i.id === id);
             selectedSize = null;
-            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" style="border:1px solid #444; padding:10px 15px; border-radius:8px; cursor:pointer; color:white;" class="size-opt">${s}</div>`).join('')}</div>` : "";
+            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" class="size-opt">${s}</div>`).join('')}</div>` : "";
 
             document.getElementById('product-detail-content').innerHTML = `
                 <img src="${p.img}" style="width:100%; border-radius:15px; height:280px; object-fit:cover; border:1px solid rgba(197,160,89,0.3);">
@@ -194,8 +206,9 @@
             `;
             document.getElementById('product-modal').classList.add('open');
             window.selectSize = (el, s) => {
-                document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; });
+                document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; b.style.border = '1px solid #444'; });
                 el.style.background = 'var(--gold)';
+                el.style.border = '1px solid var(--gold)';
                 selectedSize = s;
             };
         }
@@ -253,6 +266,10 @@
                 tg.sendData(JSON.stringify(cart));
                 tg.close();
             }
+        });
+
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315"); 
         });
 
         tg.onEvent('backButtonClicked', goBack);
