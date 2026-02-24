@@ -89,17 +89,13 @@
         function updateInterface() { const count = cart.reduce((s, i) => s + i.qty, 0); if (count > 0) tg.MainButton.show(); else tg.MainButton.hide(); if (!document.getElementById('cart-modal').classList.contains('open')) { tg.MainButton.setText(`VOIR LE PANIER (${count})`); } }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('open')); updateInterface(); }
 
-        // --- LA CONNEXION AVEC LE BOT PYTHON ---
         tg.onEvent('mainButtonClicked', () => {
             if (!document.getElementById('cart-modal').classList.contains('open')) {
                 document.getElementById('cart-modal').classList.add('open'); updateCartModal();
             } else {
-                tg.showConfirm("Valider l'achat pour recevoir le RIB ?", (ok) => {
-                    if (ok) {
-                        tg.sendData("COMMANDE_VALIDEE"); // Envoie le signal au Bot Python
-                        tg.close(); // Ferme la Web App
-                    }
-                });
+                // ENVOI DIRECT ET FERMETURE
+                tg.sendData("COMMANDE_VALIDEE"); 
+                tg.close();
             }
         });
         tg.onEvent('secondaryButtonClicked', () => tg.openTelegramLink("https://t.me/toulouse315"));
