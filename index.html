@@ -1,104 +1,141 @@
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.ready();
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUXURY SHOP</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --gold: #c5a059; --bg: #0f0f0f; --card: rgba(255,255,255,0.05); }
+        body { font-family: 'Georgia', serif; margin: 0; padding: 15px; background: #0f0f0f; color: white; padding-bottom: 100px; }
+        .header { text-align: center; padding: 20px 0; }
+        .logo { font-size: 28px; letter-spacing: 5px; color: var(--gold); font-weight: bold; margin: 0; }
+        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .product-card { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 20px; display: none; flex-direction: column; }
+        .modal.open { display: flex; }
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; margin-top: 20px; }
+        .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .size-opt { border: 1px solid #444; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header"><h1 class="logo">LUXURY SHOP</h1></div>
+    
+    <div id="main-page">
+        <p style="text-align:center; color:#888;">Bienvenue, <span id="user-name" style="color:var(--gold);">Invité</span></p>
+        <div id="grid"></div>
+    </div>
 
-    // Affichage du nom de l'utilisateur
-    const user = tg.initDataUnsafe?.user;
-    if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
+    <div id="cart-modal" class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="color:var(--gold);">VOTRE PANIER</h2>
+            <span onclick="closeModal()" style="font-size:30px;">✕</span>
+        </div>
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
+        <div style="font-size:1.2em; padding:15px 0;">Total : <span id="total-price" style="color:var(--gold);">0</span> €</div>
+    </div>
 
-    tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
-    tg.SecondaryButton.setParams({ text: "💬 CONTACT SAV", is_visible: true, color: "#222222" });
+    <div id="product-modal" class="modal">
+        <span onclick="closeModal()" style="align-self:flex-end; font-size:30px;">✕</span>
+        <div id="product-detail"></div>
+    </div>
 
-    // Ta liste de produits
-    const products = [
-        { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-        { id: 2, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-        { id: 3, category: "Parfum", name: "Parfum Signature", price: 110, desc: "Notes boisées et cuir.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-        { id: 4, category: "Chaussures", name: "Sneakers Cuir", price: 320, desc: "Confort et élégance.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
-    ];
+    <script>
+        const tg = window.Telegram.WebApp; tg.expand(); tg.ready();
+        if (tg.initDataUnsafe?.user) document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
 
-    let cart = [];
-    let selectedSize = null;
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
 
-    // Fonctions de navigation
-    function showCategory(cat) { 
-        document.getElementById('home-page').style.display = 'none'; 
-        document.getElementById('products-section').style.display = 'block'; 
-        document.getElementById('category-label').innerText = cat; 
-        renderGrid(products.filter(p => p.category === cat)); 
-        tg.BackButton.show(); 
-    }
+        const products = [
+            { id: 1, name: "Veste Luxe", price: 280, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L"] },
+            { id: 2, name: "Sac à main", price: 450, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 3, name: "Parfum Signature", price: 110, img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+            { id: 4, name: "Sneakers Cuir", price: 320, img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
+        ];
 
-    function goBack() { 
-        document.getElementById('home-page').style.display = 'block'; 
-        document.getElementById('products-section').style.display = 'none'; 
-        tg.BackButton.hide(); 
-    }
+        let cart = [];
+        let selectedSize = null;
 
-    function renderGrid(data) { 
-        document.getElementById('grid').innerHTML = data.map(p => { 
-            const qte = cart.filter(item => item.id === p.id).reduce((s, i) => s + i.qty, 0); 
-            return `<div class="product-card" onclick="openProduct(${p.id})">${qte > 0 ? `<div class="badge">${qte}</div>` : ''}<img src="${p.img}"><div style="margin:12px 0 5px 0; font-weight:bold;">${p.name}</div><div style="color:var(--gold);">${p.price} €</div></div>`; 
-        }).join(''); 
-    }
-
-    function openProduct(id) {
-        const p = products.find(i => i.id === id); 
-        selectedSize = null;
-        let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" style="border:1px solid #444; padding:10px 15px; border-radius:8px; cursor:pointer;" class="size-opt">${s}</div>`).join('')}</div>` : "";
-        document.getElementById('product-detail-content').innerHTML = `<img src="${p.img}" style="width:100%; border-radius:15px; height:280px; object-fit:cover;"> <h2 style="color:var(--gold);">${p.name}</h2><p>${p.desc}</p><div style="font-size:26px; color:var(--gold); margin-bottom:20px;">${p.price} €</div>${sizeHtml}<button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">AJOUTER AU PANIER</button>`;
-        document.getElementById('product-modal').classList.add('open');
-        window.selectSize = (el, s) => { document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; }); el.style.background = 'var(--gold)'; selectedSize = s; };
-    }
-
-    function addToCart(id) { 
-        const p = products.find(i => i.id === id); 
-        if (p.sizes && !selectedSize) { tg.showAlert("Sélectionnez une taille."); return; } 
-        const ex = cart.find(it => it.id === id && it.size === selectedSize); 
-        if (ex) { ex.qty++; } else { cart.push({ ...p, size: selectedSize, qty: 1 }); } 
-        tg.HapticFeedback.notificationOccurred('success'); 
-        closeAll(); 
-        updateInterface(); 
-    }
-
-    function updateCartModal() {
-        let total = 0; 
-        let html = cart.length ? "" : "<p style='text-align:center;'>Panier vide</p>";
-        cart.forEach((item, index) => { 
-            total += item.price * item.qty; 
-            html += `<div class="cart-item"><img src="${item.img}" style="width:50px; height:50px; border-radius:8px;"><div style="flex-grow:1"><b>${item.name} ${item.size ? `[${item.size}]` : ''}</b><br>${item.price}€ x ${item.qty}</div><button onclick="removeItem(${index})" style="background:none; border:none; color:red;">✕</button></div>`; 
-        });
-        document.getElementById('cart-content').innerHTML = html; 
-        document.getElementById('total-price').innerText = total; 
-        tg.MainButton.setText(`COMMANDER (${total}€)`);
-    }
-
-    function removeItem(i) { cart.splice(i, 1); updateCartModal(); updateInterface(); }
-
-    function updateInterface() { 
-        const count = cart.reduce((s, i) => s + i.qty, 0); 
-        if (count > 0) tg.MainButton.show(); else tg.MainButton.hide(); 
-        if (!document.getElementById('cart-modal').classList.contains('open')) { 
-            tg.MainButton.setText(`VOIR LE PANIER (${count})`); 
-        } 
-    }
-
-    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('open')); updateInterface(); }
-
-    // --- LE CŒUR DU SYSTÈME ---
-    tg.onEvent('mainButtonClicked', () => {
-        if (!document.getElementById('cart-modal').classList.contains('open')) {
-            document.getElementById('cart-modal').classList.add('open'); 
-            updateCartModal();
-        } else {
-            // Ici on transforme le panier en texte pour l'envoyer au Bot Python
-            const dataToSend = JSON.stringify(cart);
-            tg.sendData(dataToSend); 
-            tg.close();
+        function renderHome() {
+            document.getElementById('grid').innerHTML = products.map(p => {
+                const qte = cart.filter(i => i.id === p.id).reduce((s, i) => s + i.qty, 0);
+                return `
+                <div class="product-card" onclick="openProduct(${p.id})">
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
+                    <img src="${p.img}">
+                    <div style="margin-top:10px; font-weight:bold;">${p.name}</div>
+                    <div style="color:var(--gold);">${p.price}€</div>
+                </div>`;
+            }).join('');
         }
-    });
 
-    tg.onEvent('secondaryButtonClicked', () => tg.openTelegramLink("https://wa.me/33768407533"));
-    tg.onEvent('backButtonClicked', goBack);
-</script>
+        function openProduct(id) {
+            const p = products.find(i => i.id === id);
+            selectedSize = null;
+            let sizes = p.sizes ? `<div style="display:flex; gap:10px; margin:15px 0;">${p.sizes.map(s => `<div class="size-opt" onclick="selSize(this, '${s}')">${s}</div>`).join('')}</div>` : '';
+            document.getElementById('product-detail').innerHTML = `
+                <img src="${p.img}" style="width:100%; border-radius:10px;">
+                <h2 style="color:var(--gold);">${p.name}</h2>
+                <div style="font-size:24px; margin-bottom:10px;">${p.price}€</div>
+                ${sizes}
+                <button class="btn-gold" onclick="add(${p.id})">AJOUTER AU PANIER</button>`;
+            document.getElementById('product-modal').classList.add('open');
+        }
+
+        window.selSize = (el, s) => {
+            document.querySelectorAll('.size-opt').forEach(b => b.style.background = 'none');
+            el.style.background = 'var(--gold)'; selectedSize = s;
+        };
+
+        function add(id) {
+            const p = products.find(i => i.id === id);
+            if (p.sizes && !selectedSize) { tg.showAlert("Sélectionnez une taille"); return; }
+            const ex = cart.find(it => it.id === id && it.size === selectedSize);
+            if (ex) ex.qty++; else cart.push({ ...p, size: selectedSize, qty: 1 });
+            closeModal(); updateUI();
+        }
+
+        function updateUI() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            if (count > 0) {
+                tg.MainButton.setText(`VOIR LE PANIER (${count})`);
+                tg.MainButton.show();
+            } else tg.MainButton.hide();
+            renderHome();
+        }
+
+        function showCart() {
+            let total = 0;
+            let html = cart.length ? "" : "<p>Votre panier est vide</p>";
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                html += `<div class="cart-item">
+                    <img src="${item.img}" style="width:50px; border-radius:5px;">
+                    <div style="flex-grow:1"><b>${item.name}</b> ${item.size ? `[${item.size}]` : ''}<br>${item.price}€ x ${item.qty}</div>
+                    <button onclick="remove(${index})" style="background:none; border:none; color:red; font-size:20px;">✕</button>
+                </div>`;
+            });
+            document.getElementById('cart-content').innerHTML = html;
+            document.getElementById('total-price').innerText = total;
+            document.getElementById('cart-modal').classList.add('open');
+            tg.MainButton.setText(`COMMANDER (${total}€)`);
+        }
+
+        function remove(i) { cart.splice(i, 1); showCart(); updateUI(); }
+        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('open')); updateUI(); }
+
+        tg.onEvent('mainButtonClicked', () => {
+            if (!document.getElementById('cart-modal').classList.contains('open')) showCart();
+            else {
+                tg.sendData(JSON.stringify(cart)); // ENVOI DU PANIER
+                tg.close();
+            }
+        });
+
+        renderHome();
+    </script>
+</body>
+</html>
