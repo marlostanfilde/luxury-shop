@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LUXURY SHOP</title>
+    <title>LUXURY SHOP - ADMIN FUSION</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { 
@@ -15,49 +15,45 @@
         }
         
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Georgia', serif; 
             margin: 0; padding: 15px; 
             background: radial-gradient(circle at top, var(--bg-top) 0%, var(--bg-bottom) 70%);
             background-attachment: fixed;
             color: var(--text-white); 
             padding-bottom: 100px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .hidden { display: none !important; }
 
         /* Header */
-        .header { text-align: center; padding: 20px 0; position: relative; }
-        .logo { font-size: 24px; letter-spacing: 5px; color: var(--gold); margin: 0; font-weight: bold; text-transform: uppercase; }
-        .admin-toggle { position: absolute; top: 0; right: 0; font-size: 10px; color: #444; padding: 10px; cursor: pointer; }
+        .header { text-align: center; padding: 20px 0 10px 0; position: relative; }
+        .logo { font-size: 32px; letter-spacing: 6px; color: var(--gold); margin: 0; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .admin-toggle { position: absolute; top: 0; right: 0; padding: 10px; cursor: pointer; opacity: 0.3; font-size: 20px; }
 
-        /* Categories */
-        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .cat-card { position: relative; height: 160px; border-radius: 15px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); transition: 0.3s; }
-        .cat-card:active img { transform: scale(1.05); }
-        .cat-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: center; color: var(--gold); font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        /* Style Boutique */
+        .welcome-area { text-align: center; margin: 15px 0; }
+        .search-box { margin: 20px auto; background: rgba(255,255,255,0.07); border-radius: 12px; display: flex; align-items: center; padding: 12px; border: 1px solid rgba(197, 160, 89, 0.2); }
+        #search-input { background: none; border: none; color: white; width: 100%; outline: none; }
+        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .cat-card { position: relative; height: 150px; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .cat-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; background: rgba(0,0,0,0.7); text-align: center; color: var(--gold); font-size: 12px; font-weight: bold; }
 
-        /* Grid Produits */
-        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .product-card { background: var(--card-bg); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
-        .prod-name { font-size: 14px; margin: 8px 0 4px; font-weight: 500; }
-        .prod-price { color: var(--gold); font-weight: bold; font-size: 15px; }
+        /* Style Panneau Admin */
+        .admin-panel { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-top: 20px; }
+        .admin-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #111; color: var(--gold); box-sizing: border-box; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn-adm { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-        /* Modals */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f0f0f; z-index: 9999; padding: 20px; display: none; flex-direction: column; }
+        /* Modals & Products */
+        #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .product-card { background: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 25px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
-        .close-btn { align-self: flex-end; font-size: 30px; color: var(--gold); padding: 10px; cursor: pointer; }
-        
-        .btn-gold { background: var(--gold); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; width: 100%; margin-top: auto; cursor: pointer; }
-        .size-opt { border: 1px solid #444; padding: 10px; border-radius: 8px; cursor: pointer; flex: 1; text-align: center; }
-
-        /* Admin */
-        .admin-card { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); }
-        .admin-input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        .admin-btn { width: 100%; padding: 12px; margin-bottom: 8px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -67,76 +63,77 @@
         <h1 class="logo">LUXURY SHOP</h1>
     </div>
 
-    <div id="client-view">
+    <div id="client-section">
         <div id="home-page">
-            <h2 style="text-align: center; font-weight: 300; font-size: 18px;">Collections Exclusives</h2>
+            <div class="welcome-area">
+                <h2 style="font-weight: 300;">Bienvenue <span id="welcome-name" style="color:var(--gold);">Invité</span></h2>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Quel modèle recherchez-vous ?">
+            </div>
             <div id="categories-menu">
                 <div class="cat-card" onclick="showCategory('Habille')">
-                    <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400">
-                    <div class="cat-title">PRÊT-À-PORTER</div>
+                    <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400"><div class="cat-title">PRÊT-À-PORTER</div>
                 </div>
                 <div class="cat-card" onclick="showCategory('Accessoire')">
-                    <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400">
-                    <div class="cat-title">ACCESSOIRES</div>
+                    <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400"><div class="cat-title">ACCESSOIRES</div>
                 </div>
                 <div class="cat-card" onclick="showCategory('Parfum')">
-                    <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400">
-                    <div class="cat-title">PARFUMS</div>
+                    <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400"><div class="cat-title">PARFUMS</div>
                 </div>
                 <div class="cat-card" onclick="showCategory('Chaussures')">
-                    <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400">
-                    <div class="cat-title">CHAUSSURES</div>
+                    <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400"><div class="cat-title">CHAUSSURES</div>
                 </div>
             </div>
         </div>
 
         <div id="products-section" class="hidden">
-            <div onclick="goBack()" style="color:var(--gold); margin-bottom:20px; cursor:pointer; font-size: 14px;">← RETOUR</div>
-            <h3 id="category-label" style="text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--gold); padding-left: 10px;"></h3>
+            <button onclick="goBack()" style="background:none; border:none; color:white; padding: 10px 0; cursor:pointer;">← Retour</button>
+            <h3 id="category-label" style="color: var(--gold); text-transform: uppercase;"></h3>
             <div id="grid"></div>
         </div>
     </div>
 
-    <div id="admin-view" class="hidden">
-        <h2 style="text-align:center;">PANNEAU ADMIN</h2>
-        <div class="admin-card">
-            <input type="number" id="clientId" class="admin-input" placeholder="ID Telegram du client">
-            <button class="admin-btn" style="background:#2980b9" onclick="adminNotify('paye')">✅ PAIEMENT REÇU</button>
-            <button class="admin-btn" style="background:#f39c12" onclick="adminNotify('prep')">📦 PRÉPARATION</button>
-            <button class="admin-btn" style="background:#d35400" onclick="adminNotify('exp')">✈️ EXPÉDIÉ</button>
-            <button class="admin-btn" style="background:#27ae60" onclick="adminNotify('fini')">🎁 LIVRÉ</button>
+    <div id="admin-section" class="hidden">
+        <h2 style="text-align:center; color:var(--gold);">PANNEAU GESTION</h2>
+        <div class="admin-panel">
+            <label>ID Telegram Client :</label>
+            <input type="number" id="clientId" class="admin-input" placeholder="Coller l'ID ici...">
+            
+            <div class="btn-group">
+                <button class="btn-adm" style="background:#3498db" onclick="sendAdminMsg('paye', this)">💳 Paiement Reçu</button>
+                <button class="btn-adm" style="background:#f1c40f; color:black" onclick="sendAdminMsg('prep', this)">📦 En Préparation</button>
+                <button class="btn-adm" style="background:#e67e22" onclick="sendAdminMsg('exp', this)">🚀 Colis Expédié</button>
+                <button class="btn-adm" style="background:#2ecc71" onclick="sendAdminMsg('fini', this)">🎉 Commande Terminée</button>
+            </div>
         </div>
-        <p style="text-align:center; color:#666; margin-top:30px;" onclick="toggleAdmin()">Quitter le mode admin</p>
+        <p style="text-align:center; color:#666; margin-top:20px;" onclick="toggleAdmin()">← Retour Boutique</p>
     </div>
 
     <div id="product-modal" class="modal">
-        <span class="close-btn" onclick="closeModal()">✕</span>
-        <div id="product-detail-content" style="display: flex; flex-direction: column; height: 100%;"></div>
+        <span onclick="closeAll()" style="align-self:flex-end; font-size:30px; cursor:pointer;">✕</span>
+        <div id="product-detail-content"></div>
     </div>
 
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="color:var(--gold)">VOTRE PANIER</h3>
-            <span class="close-btn" onclick="closeModal()">✕</span>
+            <h3 style="color:var(--gold);">VOTRE PANIER</h3>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
         <div id="cart-content" style="flex-grow:1; overflow-y:auto; margin-top:20px;"></div>
-        <div style="font-size:1.4em; padding:20px 0; border-top:1px solid #333; text-align: right;">
-            TOTAL: <span id="total-price" style="color:var(--gold)">0</span>€
-        </div>
-        <button class="btn-gold" onclick="sendOrder()">COMMANDER VIA TELEGRAM</button>
+        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid #333;">Total : <span id="total-price" style="color:var(--gold);">0</span> €</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        const TOKEN = 'TON_TOKEN_BOT_ICI'; // <-- METS TON TOKEN ICI
 
-        // --- CONFIGURATION ---
-        const BOT_TOKEN = 'TON_TOKEN_BOT_ICI'; // À remplir avec ton token @BotFather
         const products = [
-            { id: 1, category: "Habille", name: "Veste Signature", price: 280, desc: "Laine italienne haute qualité.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, category: "Accessoire", name: "Pochette Cuir", price: 450, desc: "Cuir pleine fleur noir mat.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 3, category: "Parfum", name: "Élixir N°1", price: 110, desc: "Notes de bois de santal et ambre.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-            { id: 4, category: "Chaussures", name: "Sneaker Luxe", price: 320, desc: "Semelle confort, cuir blanc.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
+            { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L"] },
+            { id: 2, category: "Accessoire", name: "Sac Noir", price: 450, desc: "Cuir véritable.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 3, category: "Parfum", name: "Signature", price: 110, desc: "Notes boisées.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+            { id: 4, category: "Chaussures", name: "Sneakers", price: 320, desc: "Confort premium.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
         ];
 
         let cart = [];
@@ -144,129 +141,130 @@
 
         // --- NAVIGATION ---
         function toggleAdmin() {
-            document.getElementById('client-view').classList.toggle('hidden');
-            document.getElementById('admin-view').classList.toggle('hidden');
+            document.getElementById('client-section').classList.toggle('hidden');
+            document.getElementById('admin-section').classList.toggle('hidden');
+            tg.MainButton.hide();
         }
 
         function showCategory(cat) {
             document.getElementById('home-page').classList.add('hidden');
             document.getElementById('products-section').classList.remove('hidden');
             document.getElementById('category-label').innerText = cat;
-            const filtered = products.filter(p => p.category === cat);
-            
-            const grid = document.getElementById('grid');
-            grid.innerHTML = filtered.map(p => `
-                <div class="product-card" onclick="openProduct(${p.id})">
-                    <img src="${p.img}">
-                    <div class="prod-name">${p.name}</div>
-                    <div class="prod-price">${p.price} €</div>
-                </div>
-            `).join('');
+            renderGrid(products.filter(p => p.category === cat));
+            tg.BackButton.show();
         }
 
         function goBack() {
             document.getElementById('home-page').classList.remove('hidden');
             document.getElementById('products-section').classList.add('hidden');
+            tg.BackButton.hide();
         }
 
-        // --- PRODUITS ---
+        // --- LOGIQUE BOUTIQUE ---
+        function renderGrid(data) {
+            document.getElementById('grid').innerHTML = data.map(p => {
+                const qte = cart.filter(item => item.id === p.id).length;
+                return `
+                <div class="product-card" onclick="openProduct(${p.id})">
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
+                    <img src="${p.img}">
+                    <div style="margin-top:8px; font-weight:bold;">${p.name}</div>
+                    <div style="color:var(--gold);">${p.price} €</div>
+                </div>`;
+            }).join('');
+        }
+
         function openProduct(id) {
             const p = products.find(i => i.id === id);
             selectedSize = null;
             document.getElementById('product-detail-content').innerHTML = `
                 <img src="${p.img}" style="width:100%; border-radius:15px; height:250px; object-fit:cover;">
-                <h2 style="color:var(--gold); margin:20px 0 10px;">${p.name}</h2>
-                <p style="color:#aaa; line-height:1.6;">${p.desc}</p>
-                <div style="font-size:26px; font-weight:bold; margin:15px 0;">${p.price} €</div>
-                ${p.sizes ? `
-                    <p>Choisir une taille :</p>
-                    <div style="display:flex; gap:10px; margin-bottom:20px;">
-                        ${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" class="size-opt">${s}</div>`).join('')}
-                    </div>` : ''}
+                <h2 style="color:var(--gold); margin:15px 0;">${p.name}</h2>
+                <p style="color:#aaa;">${p.desc}</p>
+                <div style="font-size:24px; color:var(--gold); margin:15px 0;">${p.price} €</div>
+                ${p.sizes ? `<div style="display:flex; gap:10px; margin-bottom:20px;">${p.sizes.map(s => `<div onclick="selSize(this, '${s}')" style="border:1px solid #444; padding:10px; flex:1; text-align:center; border-radius:8px;">${s}</div>`).join('')}</div>` : ''}
                 <button onclick="addToCart(${p.id})" class="btn-gold">AJOUTER AU PANIER</button>
             `;
             document.getElementById('product-modal').classList.add('open');
         }
 
-        function selectSize(el, s) {
-            document.querySelectorAll('.size-opt').forEach(b => b.style.borderColor = '#444');
-            el.style.borderColor = '#c5a059';
+        window.selSize = (el, s) => {
+            document.querySelectorAll('.modal div').forEach(d => d.style.borderColor = "#444");
+            el.style.borderColor = "var(--gold)";
             selectedSize = s;
-        }
+        };
 
         function addToCart(id) {
             const p = products.find(i => i.id === id);
             cart.push({ ...p, size: selectedSize });
             tg.HapticFeedback.notificationOccurred('success');
-            closeModal();
-            updateMainButton();
+            closeAll();
+            updateInterface();
         }
 
-        function updateMainButton() {
+        function updateInterface() {
             if (cart.length > 0) {
                 tg.MainButton.setText(`VOIR LE PANIER (${cart.length})`);
                 tg.MainButton.show();
+            } else {
+                tg.MainButton.hide();
             }
         }
 
-        function closeModal() {
+        function closeAll() {
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
         }
 
-        // --- PANIER ET COMMANDE ---
-        tg.onEvent('mainButtonClicked', () => {
-            document.getElementById('cart-modal').classList.add('open');
-            let total = cart.reduce((s, i) => s + i.price, 0);
-            document.getElementById('total-price').innerText = total;
-            document.getElementById('cart-content').innerHTML = cart.map((i, index) => `
-                <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid #222;">
-                    <div>
-                        <b>${i.name}</b><br>
-                        <small style="color:#888;">${i.size ? 'Taille: '+i.size : 'Unique'}</small>
-                    </div>
-                    <span>${i.price}€</span>
-                </div>
-            `).join('');
-        });
-
-        function sendOrder() {
-            const text = "Nouvelle commande !"; // Logique simplifiée
-            tg.sendData(JSON.stringify({order: cart})); 
-        }
-
-        // --- SAV & INITIALISATION ---
-        tg.SecondaryButton.setParams({
-            text: "CONTACT SAV",
-            is_visible: true,
-            color: "#111111",
-            text_color: "#c5a059"
-        });
-
-        tg.onEvent('secondaryButtonClicked', () => {
-            tg.openTelegramLink("https://t.me/toulouse315");
-        });
-
-        // --- ADMIN NOTIF ---
-        async function adminNotify(etape) {
+        // --- LOGIQUE ADMIN ---
+        async function sendAdminMsg(type, btn) {
             const id = document.getElementById('clientId').value;
-            if (!id) { tg.showAlert("Entrez un ID Client"); return; }
-            
-            let msg = "";
-            if(etape === 'paye') msg = "✅ *Paiement Reçu !*";
-            if(etape === 'prep') msg = "📦 *Commande en préparation...*";
-            if(etape === 'exp') msg = "🚀 *Colis expédié !*";
-            if(etape === 'fini') msg = "🎁 *Livré !* Merci de votre confiance.";
+            if (!id) { tg.showAlert("ID Client manquant !"); return; }
 
+            let txt = "";
+            if(type === 'paye') txt = "✅ *Paiement reçu !* Votre commande est validée.";
+            if(type === 'prep') txt = "📦 *Préparation !* Nous préparons votre colis.";
+            if(type === 'exp') {
+                let s = prompt("Numéro de suivi :");
+                txt = "🚀 *Expédié !* \nSuivi : `" + (s || "Non fourni") + "`";
+            }
+            if(type === 'fini') txt = "🎉 *Livré !* Merci de votre confiance.";
+
+            btn.disabled = true;
             try {
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: id, text: msg, parse_mode: "Markdown" })
+                    body: JSON.stringify({ chat_id: id, text: txt, parse_mode: "Markdown" })
                 });
-                tg.showAlert("Notification envoyée !");
-            } catch(e) { tg.showAlert("Erreur d'envoi"); }
+                if(res.ok) tg.showAlert("Message envoyé avec succès !");
+                else tg.showAlert("Erreur : Vérifiez votre Token ou l'ID.");
+            } catch(e) { tg.showAlert("Erreur réseau."); }
+            btn.disabled = false;
         }
 
+        // Telegram Events
+        tg.onEvent('mainButtonClicked', () => {
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                document.getElementById('cart-modal').classList.add('open');
+                let total = cart.reduce((s, i) => s + i.price, 0);
+                document.getElementById('total-price').innerText = total;
+                document.getElementById('cart-content').innerHTML = cart.map(i => `
+                    <div style="padding:10px; border-bottom:1px solid #333;">
+                        <b>${i.name}</b> ${i.size ? `[${i.size}]` : ''} - ${i.price}€
+                    </div>`).join('');
+                tg.MainButton.setText("COMMANDER");
+            } else {
+                tg.sendData(JSON.stringify(cart));
+                tg.close();
+            }
+        });
+
+        tg.onEvent('backButtonClicked', goBack);
+        tg.SecondaryButton.setParams({ text: "SAV CONTACT", is_visible: true, color: "#111", text_color: "#c5a059" });
+        tg.onEvent('secondaryButtonClicked', () => tg.openTelegramLink("https://t.me/toulouse315"));
+        
+        const user = tg.initDataUnsafe?.user;
+        if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
     </script>
 </body>
 </html>
