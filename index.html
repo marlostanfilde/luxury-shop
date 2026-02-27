@@ -22,166 +22,257 @@
             color: var(--text-white); 
             padding-bottom: 100px;
             min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        .header { text-align: center; padding: 30px 0 10px 0; }
+        .logo { font-size: 32px; letter-spacing: 6px; color: var(--gold); margin: 0; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .slogan { font-size: 11px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
 
-        .header { text-align: center; padding: 20px 0 10px 0; }
-        .logo { font-size: 28px; letter-spacing: 5px; color: var(--gold); margin: 0; font-weight: bold; text-transform: uppercase; }
-        .slogan { font-size: 10px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
-
+        .welcome-area { text-align: center; margin: 20px 0; }
+        #welcome-name { font-weight: bold; color: var(--gold); }
+        
         .search-box { 
             margin: 20px auto; background: rgba(255,255,255,0.07); border-radius: 12px; 
             display: flex; align-items: center; padding: 12px; border: 1px solid rgba(197, 160, 89, 0.2);
+            max-width: 500px;
         }
         #search-input { background: none; border: none; color: white; width: 100%; outline: none; font-size: 15px; }
 
-        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
         .cat-card { 
-            position: relative; height: 160px; border-radius: 12px; overflow: hidden;
+            position: relative; height: 180px; border-radius: 15px; overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.2s;
         }
-        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.3s; }
-        .cat-card:active img { transform: scale(1.1); }
+        .cat-card:active { transform: scale(0.97); }
+        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
         .cat-title { 
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 10px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: center; 
-            font-size: 11px; font-weight: bold; letter-spacing: 1px; color: var(--gold);
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); text-align: center; 
+            font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
         }
 
+        #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .product-card { 
-            background: var(--card-bg); border-radius: 12px; padding: 10px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1); position: relative;
+            background: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); position: relative; backdrop-filter: blur(5px);
         }
-        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
-        .badge { 
-            position: absolute; top: -5px; right: -5px; background: var(--gold); color: black; 
-            border-radius: 50%; width: 22px; height: 22px; font-size: 11px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a1a; 
-        }
+        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a1a; }
 
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f0f0f; z-index: 9999; padding: 20px; display: none; flex-direction: column; }
-        .modal.open { display: flex; animation: fadeIn 0.3s ease; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 25px; display: none; flex-direction: column; }
+        .modal.open { display: flex; }
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .btn-gold { background: var(--gold); color: #000; border: none; padding: 15px; border-radius: 10px; font-weight: bold; width: 100%; margin-top: 15px; }
-        .size-opt { border: 1px solid #444; padding: 8px; border-radius: 5px; cursor: pointer; flex: 1; text-align: center; }
-        .selected-size { background: var(--gold); color: black; border-color: var(--gold); }
+        /* Style pour les tailles */
+        .size-opt { border: 1px solid #444; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 class="logo">Luxury Shop</h1>
-        <div class="slogan">L'Excellence à votre portée</div>
+        <h1 class="logo">LUXURY SHOP</h1>
+        <div class="slogan">L'Art du Luxe</div>
     </div>
 
-    <div id="home-page" class="fade-in">
+    <div id="home-page">
+        <div class="welcome-area">
+            <h2 style="font-weight: 300; margin-bottom: 5px;">Bienvenue <span id="welcome-name">Invité</span></h2>
+            <p style="color: #888; font-size: 14px; margin: 0;">Sélection exclusive de pièces rares.</p>
+        </div>
+
         <div class="search-box">
             <span style="margin-right: 10px; opacity: 0.6;">🔍</span>
-            <input type="text" id="search-input" placeholder="Rechercher un modèle..." oninput="handleSearch(this.value)">
+            <input type="text" id="search-input" placeholder="Quel modèle recherchez-vous ?">
         </div>
 
         <div id="categories-menu">
             <div class="cat-card" onclick="showCategory('Habille')">
-                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600">
                 <div class="cat-title">PRÊT-À-PORTER</div>
             </div>
             <div class="cat-card" onclick="showCategory('Accessoire')">
-                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400">
+                <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?w=600">
                 <div class="cat-title">ACCESSOIRES</div>
             </div>
             <div class="cat-card" onclick="showCategory('Parfum')">
-                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=600">
                 <div class="cat-title">PARFUMS</div>
             </div>
             <div class="cat-card" onclick="showCategory('Chaussures')">
-                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400">
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600">
                 <div class="cat-title">CHAUSSURES</div>
             </div>
         </div>
     </div>
 
-    <div id="products-section" style="display:none;" class="fade-in">
-        <h3 id="category-label" style="text-align:center; color: var(--gold); letter-spacing: 2px;"></h3>
+    <div id="products-section">
+        <div style="display:flex; align-items:center; gap:12px; margin: 25px 0;">
+            <button onclick="goBack()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 8px 15px; border-radius:8px; cursor:pointer;">← Retour</button>
+            <h3 id="category-label" style="margin:0; text-transform: uppercase; letter-spacing: 2px; color: var(--gold);"></h3>
+        </div>
         <div id="grid"></div>
     </div>
 
-    <div id="product-modal" class="modal">
-        <div id="product-detail-content" style="overflow-y:auto; flex-grow:1;"></div>
+    <div id="cart-modal" class="modal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="color:var(--gold); letter-spacing:2px;">VOTRE PANIER</h3>
+            <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
+        </div>
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto; margin-top:20px;"></div>
+        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid rgba(197,160,89,0.3);">
+            Total : <span id="total-price" style="color:var(--gold); font-weight:bold;">0</span> €
+        </div>
     </div>
 
-    <div id="cart-modal" class="modal">
-        <h3 style="color:var(--gold); border-bottom: 1px solid #333; padding-bottom:10px;">VOTRE PANIER</h3>
-        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div id="cart-total" style="padding: 15px 0; font-size: 18px; font-weight: bold; border-top: 1px solid #333;">
-            Total: <span id="total-price" style="color:var(--gold)">0</span> €
-        </div>
+    <div id="product-modal" class="modal">
+        <span onclick="closeAll()" style="align-self:flex-end; font-size:30px; cursor:pointer;">✕</span>
+        <div id="product-detail-content"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        const user = tg.initDataUnsafe?.user;
+        if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
+
+        // Configuration des boutons
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        
+        // --- ON REMET LE BOUTON SAV ICI ---
+        tg.SecondaryButton.setParams({ 
+            text: "💬 CONTACT SAV", 
+            is_visible: true, 
+            color: "#222222",
+            text_color: "#c5a059"
+        });
 
         const products = [
-            { id: 1, category: "Habille", name: "Veste Laine Italienne", price: 280, desc: "Coupe ajustée, laine vierge.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L"] },
-            { id: 2, category: "Accessoire", name: "Sac Cuir Noir", price: 450, desc: "Finition or, cuir pleine fleur.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 3, category: "Parfum", name: "Éclat d'Ambre", price: 115, desc: "Notes de tête : Bergamote.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-            { id: 4, category: "Chaussures", name: "Derbies Vernis", price: 320, desc: "Élégance intemporelle.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
+            { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
+            { id: 2, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 3, category: "Parfum", name: "Parfum Signature", price: 110, desc: "Notes boisées et cuir.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+            { id: 4, category: "Chaussures", name: "Sneakers Cuir", price: 320, desc: "Confort et élégance.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
         ];
 
         let cart = [];
-        let currentCategory = null;
-        let tempSelectedSize = null;
-
-        // Configuration Initiale
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#000000' });
-        tg.SecondaryButton.setParams({ text: "CONTACT SAV", is_visible: true, color: "#1a1a1a", text_color: "#c5a059" });
+        let selectedSize = null;
 
         function showCategory(cat) {
-            currentCategory = cat;
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('products-section').style.display = 'block';
-            document.getElementById('category-label').innerText = cat === 'Habille' ? 'PRÊT-À-PORTER' : cat.toUpperCase();
+            let label = cat;
+            if (cat === 'Habille') label = 'Prêt-à-Porter';
+            document.getElementById('category-label').innerText = label;
             renderGrid(products.filter(p => p.category === cat));
             tg.BackButton.show();
         }
 
-        function handleSearch(query) {
-            if(!query) {
-                if(currentCategory) showCategory(currentCategory);
-                else {
-                    document.getElementById('products-section').style.display = 'none';
-                    document.getElementById('home-page').style.display = 'block';
-                }
-                return;
-            }
-            document.getElementById('home-page').style.display = 'none';
-            document.getElementById('products-section').style.display = 'block';
-            document.getElementById('category-label').innerText = "RÉSULTATS";
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
-            renderGrid(filtered);
-            tg.BackButton.show();
+        function goBack() {
+            document.getElementById('home-page').style.display = 'block';
+            document.getElementById('products-section').style.display = 'none';
+            tg.BackButton.hide();
         }
 
         function renderGrid(data) {
             const grid = document.getElementById('grid');
             grid.innerHTML = data.map(p => {
-                const count = cart.filter(i => i.id === p.id).reduce((s, i) => s + i.qty, 0);
+                const qte = cart.filter(item => item.id === p.id).reduce((s, i) => s + i.qty, 0);
                 return `
                 <div class="product-card" onclick="openProduct(${p.id})">
-                    ${count > 0 ? `<div class="badge">${count}</div>` : ''}
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}">
-                    <div style="margin:8px 0 3px 0; font-size:13px; font-weight:bold;">${p.name}</div>
-                    <div style="color:var(--gold); font-size:14px;">${p.price} €</div>
+                    <div style="margin:12px 0 5px 0; font-weight:bold; font-size:14px;">${p.name}</div>
+                    <div style="color:var(--gold); font-weight:bold;">${p.price} €</div>
                 </div>`;
             }).join('');
         }
 
         function openProduct(id) {
             const p = products.find(i => i.id === id);
-            tempSelectedSize = null;
-            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:15px 0;">${p.sizes.map(
+            selectedSize = null;
+            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" class="size-opt">${s}</div>`).join('')}</div>` : "";
+
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.img}" style="width:100%; border-radius:15px; height:280px; object-fit:cover; border:1px solid rgba(197,160,89,0.3);">
+                <h2 style="color:var(--gold); margin:20px 0 10px 0;">${p.name}</h2>
+                <p style="color:#888; font-size:14px; line-height:1.6;">${p.desc}</p>
+                <div style="font-size:26px; color:var(--gold); margin-bottom:20px; font-weight:bold;">${p.price} €</div>
+                ${sizeHtml}
+                <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">AJOUTER AU PANIER</button>
+            `;
+            document.getElementById('product-modal').classList.add('open');
+            window.selectSize = (el, s) => {
+                document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; b.style.border = '1px solid #444'; });
+                el.style.background = 'var(--gold)';
+                el.style.border = '1px solid var(--gold)';
+                selectedSize = s;
+            };
+        }
+
+        function addToCart(id) {
+            const p = products.find(i => i.id === id);
+            if (p.sizes && !selectedSize) { tg.showAlert("Veuillez sélectionner une taille."); return; }
+            const existing = cart.find(item => item.id === id && item.size === selectedSize);
+            if (existing) { existing.qty++; } else { cart.push({ ...p, size: selectedSize, qty: 1 }); }
+            tg.HapticFeedback.notificationOccurred('success');
+            closeAll();
+            updateInterface();
+        }
+
+        function updateCartModal() {
+            let total = 0;
+            let html = cart.length ? "" : "<p style='text-align:center; color:#666;'>Votre panier est vide</p>";
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                html += `
+                <div class="cart-item">
+                    <img src="${item.img}" style="width:55px; height:55px; border-radius:8px; object-fit:cover;">
+                    <div style="flex-grow:1">
+                        <div style="font-weight:bold; font-size:15px;">${item.name} ${item.size ? `[${item.size}]` : ''}</div>
+                        <div style="color:var(--gold); font-size:14px;">${item.price}€ x ${item.qty}</div>
+                    </div>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4444; font-size:18px;">✕</button>
+                </div>`;
+            });
+            document.getElementById('cart-content').innerHTML = html;
+            document.getElementById('total-price').innerText = total;
+            tg.MainButton.setText(`COMMANDER (${total}€)`);
+        }
+
+        function removeItem(i) { cart.splice(i, 1); updateCartModal(); updateInterface(); }
+
+        function updateInterface() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            if (count > 0) tg.MainButton.show(); else tg.MainButton.hide();
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                tg.MainButton.setText(`VOIR LE PANIER (${count})`);
+            }
+        }
+
+        function closeAll() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
+            updateInterface();
+        }
+
+        tg.onEvent('mainButtonClicked', () => {
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                document.getElementById('cart-modal').classList.add('open');
+                updateCartModal();
+            } else {
+                tg.sendData(JSON.stringify(cart));
+                tg.close();
+            }
+        });
+
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315"); 
+        });
+
+        tg.onEvent('backButtonClicked', goBack);
+    </script>
+</body>
+</html>
