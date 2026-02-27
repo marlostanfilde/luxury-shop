@@ -16,17 +16,15 @@
         }
         
         body { 
-            font-family: 'Montserrat', sans-serif; 
+            font-family: 'Montserrat', 'Georgia', serif; 
             margin: 0; padding: 15px; 
             background: radial-gradient(circle at top, var(--bg-top) 0%, var(--bg-bottom) 70%);
             background-attachment: fixed;
             color: var(--text-white); 
             padding-bottom: 100px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* --- HEADER & LOGO --- */
         .header { text-align: center; padding: 30px 0 10px 0; }
         .logo { font-size: 32px; letter-spacing: 6px; color: var(--gold); margin: 0; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .slogan { font-size: 11px; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 5px; }
@@ -34,7 +32,6 @@
         .welcome-area { text-align: center; margin: 20px 0; }
         #welcome-name { font-weight: bold; color: var(--gold); }
         
-        /* --- RECHERCHE --- */
         .search-box { 
             margin: 20px auto; background: rgba(255,255,255,0.07); border-radius: 12px; 
             display: flex; align-items: center; padding: 12px; border: 1px solid rgba(197, 160, 89, 0.2);
@@ -42,50 +39,34 @@
         }
         #search-input { background: none; border: none; color: white; width: 100%; outline: none; font-size: 15px; }
 
-        /* --- CATEGORIES AVEC ANIMATION ZOOM --- */
         #categories-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
         .cat-card { 
             position: relative; height: 180px; border-radius: 15px; overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: transform 0.2s;
         }
-        .cat-card img { 
-            width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); 
-            transition: transform 0.6s ease;
-        }
-        .cat-card:hover img { transform: scale(1.1); }
+        .cat-card:active { transform: scale(0.97); }
+        .cat-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
         .cat-title { 
             position: absolute; bottom: 0; left: 0; right: 0; padding: 12px;
             background: linear-gradient(transparent, rgba(0,0,0,0.8)); text-align: center; 
             font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
-            transition: letter-spacing 0.3s ease;
         }
-        .cat-card:hover .cat-title { letter-spacing: 3px; }
 
-        /* --- AVIS CLIENTS AVEC ANIMATION FADE-IN --- */
+        /* --- STYLE DES AVIS CLIENTS --- */
         .reviews-section { margin-top: 50px; padding: 20px 0; border-top: 1px solid rgba(197, 160, 89, 0.2); }
         .reviews-header { text-align: center; margin-bottom: 25px; }
-        .reviews-header h2 { font-size: 18px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin: 0;}
+        .reviews-header h2 { font-size: 18px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
         .review-card { 
             background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 15px;
             border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(5px);
-            animation: fadeIn 0.8s ease backwards;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .review-card:nth-child(1) { animation-delay: 0.2s; }
-        .review-card:nth-child(2) { animation-delay: 0.4s; }
-        .review-card:nth-child(3) { animation-delay: 0.6s; }
-
         .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .review-stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
         .verified-badge { color: #44bd32; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .review-text { font-size: 13px; color: #ccc; line-height: 1.5; font-style: italic; margin: 0; }
+        .review-text { font-size: 13px; color: #ccc; line-height: 1.5; font-style: italic; }
         .review-author { font-size: 11px; color: var(--gold); margin-top: 10px; font-weight: bold; text-align: right; }
 
-        /* --- PRODUITS --- */
         #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .product-card { 
@@ -95,31 +76,11 @@
         .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
         .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid #1a1a1a; }
 
-        /* --- MODALES --- */
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0f0f0f; z-index: 9999; padding: 25px; display: none; flex-direction: column; }
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #121212; z-index: 9999; padding: 25px; display: none; flex-direction: column; }
         .modal.open { display: flex; }
-        
-        /* --- BOUTON LUXE AVEC EFFET SHINE --- */
-        .btn-gold { 
-            background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; 
-            font-weight: bold; cursor: pointer; text-transform: uppercase; 
-            position: relative; overflow: hidden; transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
-        }
-        .btn-gold:active { transform: scale(0.96); }
-        .btn-gold::after {
-            content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
-            background: rgba(255, 255, 255, 0.2); transform: rotate(30deg);
-            animation: shine 4s infinite;
-        }
-        @keyframes shine {
-            0% { left: -60%; }
-            15% { left: 120%; }
-            100% { left: 120%; }
-        }
-
+        .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .size-opt { border: 1px solid #444; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; transition: 0.3s; }
+        .size-opt { border: 1px solid #444; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; text-align: center; }
     </style>
 </head>
 <body>
@@ -136,7 +97,8 @@
         </div>
 
         <div class="search-box">
-            <input type="text" id="search-input" placeholder="Rechercher un modèle...">
+            <span style="margin-right: 10px; opacity: 0.6;">🔍</span>
+            <input type="text" id="search-input" placeholder="Quel modèle recherchez-vous ?">
         </div>
 
         <div id="categories-menu">
@@ -159,53 +121,86 @@
         </div>
 
         <section class="reviews-section">
-            <div class="reviews-header"><h2>Avis Clients</h2></div>
-            <div class="review-card">
-                <div class="review-top"><span class="review-stars">★★★★★</span><span class="verified-badge">✓ Vérifié</span></div>
-                <p class="review-text">"Qualité incroyable, livraison rapide et soignée. Parfait !"</p>
-                <div class="review-author">Marc A.</div>
+            <div class="reviews-header">
+                <h2>Avis Clients</h2>
+                <div style="font-size: 12px; color: #888;">Note moyenne : 4.9/5</div>
             </div>
+
             <div class="review-card">
-                <div class="review-top"><span class="review-stars">★★★★☆</span><span class="verified-badge">✓ Vérifié</span></div>
-                <p class="review-text">"Très beaux articles. Un petit délai sur la livraison mais le SAV est top."</p>
-                <div class="review-author">Sophie L.</div>
+                <div class="review-top">
+                    <span class="review-stars">★★★★★</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Qualité exceptionnelle. La veste est encore plus belle en vrai que sur les photos. Service client très réactif."</p>
+                <p class="review-author">Jean-Christophe M.</p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-stars">★★★★☆</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Très satisfait de mon parfum Signature. Seul bémol, la livraison a pris un jour de plus que prévu, mais le colis était très bien emballé."</p>
+                <p class="review-author">Elena K.</p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-stars">★★★★★</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Incroyable ! Les sneakers sont d'un confort rare pour du cuir. Je recommande Luxury Shop sans hésiter."</p>
+                <p class="review-author">Thomas V.</p>
             </div>
         </section>
     </div>
 
     <div id="products-section">
         <div style="display:flex; align-items:center; gap:12px; margin: 25px 0;">
-            <button onclick="goBack()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 8px 15px; border-radius:8px;">← Retour</button>
-            <h3 id="category-label" style="margin:0; text-transform: uppercase; color: var(--gold);"></h3>
+            <button onclick="goBack()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 8px 15px; border-radius:8px; cursor:pointer;">← Retour</button>
+            <h3 id="category-label" style="margin:0; text-transform: uppercase; letter-spacing: 2px; color: var(--gold);"></h3>
         </div>
         <div id="grid"></div>
     </div>
 
-    <div id="product-modal" class="modal">
-        <span onclick="closeAll()" style="align-self:flex-end; font-size:30px; cursor:pointer; color:var(--gold);">✕</span>
-        <div id="product-detail-content"></div>
-    </div>
-
     <div id="cart-modal" class="modal">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="color:var(--gold);">MON PANIER</h3>
+            <h3 style="color:var(--gold); letter-spacing:2px;">VOTRE PANIER</h3>
             <span onclick="closeAll()" style="font-size:30px; cursor:pointer;">✕</span>
         </div>
-        <div id="cart-content" style="flex-grow:1; overflow-y:auto;"></div>
-        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid var(--gold);">
+        <div id="cart-content" style="flex-grow:1; overflow-y:auto; margin-top:20px;"></div>
+        <div style="font-size:1.3em; padding:20px 0; border-top:1px solid rgba(197,160,89,0.3);">
             Total : <span id="total-price" style="color:var(--gold); font-weight:bold;">0</span> €
         </div>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <span onclick="closeAll()" style="align-self:flex-end; font-size:30px; cursor:pointer;">✕</span>
+        <div id="product-detail-content"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        const user = tg.initDataUnsafe?.user;
+        if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
+
+        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
+        
+        tg.SecondaryButton.setParams({ 
+            text: "💬 CONTACT SAV", 
+            is_visible: true, 
+            color: "#222222",
+            text_color: "#c5a059"
+        });
 
         const products = [
             { id: 1, category: "Habille", name: "Veste Luxe", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, category: "Accessoire", name: "Sac Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 3, category: "Parfum", name: "Signature", price: 110, desc: "Notes boisées.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-            { id: 4, category: "Chaussures", name: "Sneakers", price: 320, desc: "Confort absolu.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
+            { id: 2, category: "Accessoire", name: "Sac à main Noir", price: 450, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 3, category: "Parfum", name: "Parfum Signature", price: 110, desc: "Notes boisées et cuir.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+            { id: 4, category: "Chaussures", name: "Sneakers Cuir", price: 320, desc: "Confort et élégance.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" }
         ];
 
         let cart = [];
@@ -214,7 +209,9 @@
         function showCategory(cat) {
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('products-section').style.display = 'block';
-            document.getElementById('category-label').innerText = cat;
+            let label = cat;
+            if (cat === 'Habille') label = 'Prêt-à-Porter';
+            document.getElementById('category-label').innerText = label;
             renderGrid(products.filter(p => p.category === cat));
             tg.BackButton.show();
         }
@@ -227,39 +224,45 @@
 
         function renderGrid(data) {
             const grid = document.getElementById('grid');
-            grid.innerHTML = data.map(p => `
+            grid.innerHTML = data.map(p => {
+                const qte = cart.filter(item => item.id === p.id).reduce((s, i) => s + i.qty, 0);
+                return `
                 <div class="product-card" onclick="openProduct(${p.id})">
+                    ${qte > 0 ? `<div class="badge">${qte}</div>` : ''}
                     <img src="${p.img}">
-                    <div style="margin:10px 0 5px 0; font-weight:bold;">${p.name}</div>
-                    <div style="color:var(--gold);">${p.price} €</div>
-                </div>`).join('');
+                    <div style="margin:12px 0 5px 0; font-weight:bold; font-size:14px;">${p.name}</div>
+                    <div style="color:var(--gold); font-weight:bold;">${p.price} €</div>
+                </div>`;
+            }).join('');
         }
 
         function openProduct(id) {
             const p = products.find(i => i.id === id);
             selectedSize = null;
-            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:15px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" class="size-opt">${s}</div>`).join('')}</div>` : "";
+            let sizeHtml = p.sizes ? `<div style="display:flex; gap:10px; margin:20px 0; justify-content:center;">${p.sizes.map(s => `<div onclick="selectSize(this, '${s}')" class="size-opt">${s}</div>`).join('')}</div>` : "";
 
             document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.img}" style="width:100%; border-radius:15px; height:250px; object-fit:cover;">
-                <h2 style="color:var(--gold);">${p.name}</h2>
-                <p style="color:#aaa; font-size:14px;">${p.desc}</p>
-                <div style="font-size:24px; color:var(--gold); font-weight:bold; margin-bottom:15px;">${p.price} €</div>
+                <img src="${p.img}" style="width:100%; border-radius:15px; height:280px; object-fit:cover; border:1px solid rgba(197,160,89,0.3);">
+                <h2 style="color:var(--gold); margin:20px 0 10px 0;">${p.name}</h2>
+                <p style="color:#888; font-size:14px; line-height:1.6;">${p.desc}</p>
+                <div style="font-size:26px; color:var(--gold); margin-bottom:20px; font-weight:bold;">${p.price} €</div>
                 ${sizeHtml}
-                <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">Ajouter au panier</button>`;
+                <button onclick="addToCart(${p.id})" class="btn-gold" style="width:100%">AJOUTER AU PANIER</button>
+            `;
             document.getElementById('product-modal').classList.add('open');
+            window.selectSize = (el, s) => {
+                document.querySelectorAll('.size-opt').forEach(b => { b.style.background = 'none'; b.style.border = '1px solid #444'; });
+                el.style.background = 'var(--gold)';
+                el.style.border = '1px solid var(--gold)';
+                selectedSize = s;
+            };
         }
-
-        window.selectSize = (el, s) => {
-            document.querySelectorAll('.size-opt').forEach(b => b.style.background = 'none');
-            el.style.background = 'var(--gold)';
-            selectedSize = s;
-        };
 
         function addToCart(id) {
             const p = products.find(i => i.id === id);
-            if (p.sizes && !selectedSize) { tg.showAlert("Sélectionnez une taille !"); return; }
-            cart.push({ ...p, size: selectedSize, qty: 1 });
+            if (p.sizes && !selectedSize) { tg.showAlert("Veuillez sélectionner une taille."); return; }
+            const existing = cart.find(item => item.id === id && item.size === selectedSize);
+            if (existing) { existing.qty++; } else { cart.push({ ...p, size: selectedSize, qty: 1 }); }
             tg.HapticFeedback.notificationOccurred('success');
             closeAll();
             updateInterface();
@@ -267,28 +270,31 @@
 
         function updateCartModal() {
             let total = 0;
-            let html = cart.map((item, index) => {
-                total += item.price;
-                return `<div class="cart-item">
-                    <img src="${item.img}" style="width:50px; border-radius:5px;">
-                    <div style="flex-grow:1; font-size:14px;">${item.name} ${item.size ? `(${item.size})` : ''}</div>
-                    <div style="color:var(--gold);">${item.price}€</div>
-                    <button onclick="removeItem(${index})" style="background:none; border:none; color:red; margin-left:10px;">✕</button>
+            let html = cart.length ? "" : "<p style='text-align:center; color:#666;'>Votre panier est vide</p>";
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                html += `
+                <div class="cart-item">
+                    <img src="${item.img}" style="width:55px; height:55px; border-radius:8px; object-fit:cover;">
+                    <div style="flex-grow:1">
+                        <div style="font-weight:bold; font-size:15px;">${item.name} ${item.size ? `[${item.size}]` : ''}</div>
+                        <div style="color:var(--gold); font-size:14px;">${item.price}€ x ${item.qty}</div>
+                    </div>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4444; font-size:18px;">✕</button>
                 </div>`;
-            }).join('');
-            document.getElementById('cart-content').innerHTML = html || "<p style='text-align:center; color:#555;'>Vide</p>";
+            });
+            document.getElementById('cart-content').innerHTML = html;
             document.getElementById('total-price').innerText = total;
-            tg.MainButton.setText(`VALIDER (${total}€)`);
+            tg.MainButton.setText(`COMMANDER (${total}€)`);
         }
 
         function removeItem(i) { cart.splice(i, 1); updateCartModal(); updateInterface(); }
 
         function updateInterface() {
-            if (cart.length > 0) {
-                tg.MainButton.show();
-                tg.MainButton.setText(`PANIER (${cart.length})`);
-            } else {
-                tg.MainButton.hide();
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            if (count > 0) tg.MainButton.show(); else tg.MainButton.hide();
+            if (!document.getElementById('cart-modal').classList.contains('open')) {
+                tg.MainButton.setText(`VOIR LE PANIER (${count})`);
             }
         }
 
@@ -303,14 +309,21 @@
                 modal.classList.add('open');
                 updateCartModal();
             } else {
-                const totalFinal = cart.reduce((sum, item) => sum + item.price, 0);
-                tg.sendData(JSON.stringify({ items: cart, totalPrice: totalFinal }));
+                const totalFinal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                const dataAEnvoyer = {
+                    items: cart,
+                    totalPrice: totalFinal
+                };
+                tg.sendData(JSON.stringify(dataAEnvoyer));
                 tg.close();
             }
         });
 
+        tg.onEvent('secondaryButtonClicked', () => {
+            tg.openTelegramLink("https://t.me/toulouse315"); 
+        });
+
         tg.onEvent('backButtonClicked', goBack);
-        tg.ready();
     </script>
 </body>
 </html>
