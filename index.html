@@ -53,13 +53,14 @@
             font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
         }
 
+        /* --- SECTION AVIS CLIENTS ÉTENDUE --- */
         .reviews-section { margin-top: 50px; padding: 20px 0; border-top: 1px solid rgba(197, 160, 89, 0.2); }
         .review-card { 
-            background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 15px;
+            background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px;
             border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(5px);
         }
-        .review-stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
-        .verified-badge { color: #44bd32; font-size: 10px; font-weight: bold; }
+        .review-stars { color: var(--gold); font-size: 12px; letter-spacing: 2px; }
+        .verified-badge { color: #44bd32; font-size: 9px; font-weight: bold; text-transform: uppercase; }
 
         #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -112,16 +113,36 @@
         </div>
 
         <section class="reviews-section">
-            <div class="reviews-header" style="text-align:center; margin-bottom:20px;">
-                <h2 style="color:var(--gold); font-size:16px; letter-spacing:2px;">AVIS CLIENTS</h2>
-            </div>
+            <h2 style="color:var(--gold); font-size:16px; letter-spacing:2px; text-align:center; margin-bottom:20px;">AVIS DE NOS CLIENTS</h2>
+            
             <div class="review-card">
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="review-stars">★★★★★</span>
-                    <span class="verified-badge">✓ Vérifié</span>
-                </div>
-                <p style="font-size:13px; font-style:italic; margin:10px 0;">"Qualité incroyable, livraison soignée. Parfait."</p>
-                <p style="font-size:11px; color:var(--gold); text-align:right;">- Jean-Christophe M.</p>
+                <div style="display:flex; justify-content:space-between;"><span class="review-stars">★★★★★</span><span class="verified-badge">✓ Vérifié</span></div>
+                <p style="font-size:12px; font-style:italic; margin:8px 0;">"Qualité incroyable. Reçu en 4 jours à Paris. La veste est sublime."</p>
+                <p style="font-size:10px; color:var(--gold); text-align:right;">- Jean-Christophe M.</p>
+            </div>
+
+            <div class="review-card">
+                <div style="display:flex; justify-content:space-between;"><span class="review-stars">★★★★★</span><span class="verified-badge">✓ Vérifié</span></div>
+                <p style="font-size:12px; font-style:italic; margin:8px 0;">"Les parfums sentent divinement bon. Service client réactif sur WhatsApp."</p>
+                <p style="font-size:10px; color:var(--gold); text-align:right;">- Sarah L.</p>
+            </div>
+
+            <div class="review-card">
+                <div style="display:flex; justify-content:space-between;"><span class="review-stars">★★★★☆</span><span class="verified-badge">✓ Vérifié</span></div>
+                <p style="font-size:12px; font-style:italic; margin:8px 0;">"Sneakers confortables et authentiques. Un peu de délai sur la livraison mais ça vaut le coup."</p>
+                <p style="font-size:10px; color:var(--gold); text-align:right;">- Thomas V.</p>
+            </div>
+
+            <div class="review-card">
+                <div style="display:flex; justify-content:space-between;"><span class="review-stars">★★★★★</span><span class="verified-badge">✓ Vérifié</span></div>
+                <p style="font-size:12px; font-style:italic; margin:8px 0;">"Le sac est d'une finition parfaite. On sent le vrai cuir. Merci !"</p>
+                <p style="font-size:10px; color:var(--gold); text-align:right;">- Elena K.</p>
+            </div>
+
+            <div class="review-card">
+                <div style="display:flex; justify-content:space-between;"><span class="review-stars">★★★★★</span><span class="verified-badge">✓ Vérifié</span></div>
+                <p style="font-size:12px; font-style:italic; margin:8px 0;">"Habitué des grandes marques, Luxury Shop est à la hauteur. Je recommande."</p>
+                <p style="font-size:10px; color:var(--gold); text-align:right;">- Marc-Antoine G.</p>
             </div>
         </section>
     </div>
@@ -155,42 +176,30 @@
         tg.expand();
         tg.ready();
 
-        const user = tg.initDataUnsafe?.user;
-        if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
-
-        tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
-        
-        tg.SecondaryButton.setParams({ 
-            text: "💬 CONTACT SAV", 
-            is_visible: true, 
-            color: "#222222",
-            text_color: "#c5a059"
-        });
-
         const products = [
-            // PRÊT-À-PORTER
-            { id: 1, category: "Habille", name: "Veste Laine", price: 280, desc: "Laine italienne premium.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", sizes: ["S", "M", "L", "XL"] },
-            { id: 2, category: "Habille", name: "Chemise Soie", price: 195, desc: "Soie naturelle fine.", img: "https://images.unsplash.com/photo-1596755094514-f87034a26cc1?w=400", sizes: ["S", "M", "L"] },
-            { id: 3, category: "Habille", name: "Pantalon Droit", price: 210, desc: "Coupe classique élégante.", img: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400", sizes: ["40", "42", "44"] },
-            { id: 4, category: "Habille", name: "Manteau Long", price: 450, desc: "Cachemire noble.", img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400", sizes: ["M", "L", "XL"] },
+            // PRÊT-À-PORTER (Habille)
+            { id: 1, category: "Habille", name: "Veste en Laine", price: 280, desc: "Coupe ajustée, laine premium italienne.", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500", sizes: ["S", "M", "L", "XL"] },
+            { id: 2, category: "Habille", name: "Chemise Soie", price: 195, desc: "100% soie, légèreté et élégance.", img: "https://images.unsplash.com/photo-1596755094514-f87034a26cc1?w=500", sizes: ["S", "M", "L"] },
+            { id: 3, category: "Habille", name: "Pantalon Slim", price: 210, desc: "Coupe moderne, confort absolu.", img: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500", sizes: ["40", "42", "44"] },
+            { id: 4, category: "Habille", name: "Manteau Long", price: 450, desc: "Mélange cachemire, style intemporel.", img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500", sizes: ["M", "L", "XL"] },
             
             // ACCESSOIRES
-            { id: 5, category: "Accessoire", name: "Sac Noir Cuir", price: 420, desc: "Cuir véritable fait main.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 6, category: "Accessoire", name: "Ceinture Or", price: 145, desc: "Boucle laiton poli.", img: "https://images.unsplash.com/photo-1624222247344-550fbad09490?w=400" },
-            { id: 7, category: "Accessoire", name: "Portefeuille", price: 95, desc: "Design minimaliste.", img: "https://images.unsplash.com/photo-1627123430984-705199f74d61?w=400" },
-            { id: 8, category: "Accessoire", name: "Lunettes", price: 185, desc: "Protection UV totale.", img: "https://images.unsplash.com/photo-1511499767390-90342f5b89a7?w=400" },
+            { id: 5, category: "Accessoire", name: "Sac à Main Noir", price: 420, desc: "Cuir grainé, finitions dorées.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500" },
+            { id: 6, category: "Accessoire", name: "Ceinture Or", price: 145, desc: "Boucle laiton, cuir de haute qualité.", img: "https://images.unsplash.com/photo-1624222247344-550fbad09490?w=500" },
+            { id: 7, category: "Accessoire", name: "Portefeuille", price: 95, desc: "Compact, design minimaliste.", img: "https://images.unsplash.com/photo-1627123430984-705199f74d61?w=500" },
+            { id: 8, category: "Accessoire", name: "Lunettes Luxe", price: 185, desc: "Protection UV400, monture légère.", img: "https://images.unsplash.com/photo-1511499767390-90342f5b89a7?w=500" },
             
             // PARFUMS
-            { id: 9, category: "Parfum", name: "Signature", price: 110, desc: "Notes boisées.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-            { id: 10, category: "Parfum", name: "Nuit Intense", price: 130, desc: "Ambre et épices.", img: "https://images.unsplash.com/photo-1557170334-a7c3a4e22411?w=400" },
-            { id: 11, category: "Parfum", name: "Essence Rare", price: 155, desc: "Fleurs précieuses.", img: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
-            { id: 12, category: "Parfum", name: "Oud Mystique", price: 180, desc: "Bois d'oud pur.", img: "https://images.unsplash.com/photo-1585232351009-aa87416fca90?w=400" },
+            { id: 9, category: "Parfum", name: "Signature", price: 110, desc: "Notes boisées, sillage puissant.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500" },
+            { id: 10, category: "Parfum", name: "Nuit Intense", price: 130, desc: "Ambre et épices d'Orient.", img: "https://images.unsplash.com/photo-1557170334-a7c3a4e22411?w=500" },
+            { id: 11, category: "Parfum", name: "Essence Rare", price: 155, desc: "Édition limitée, fleurs précieuses.", img: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500" },
+            { id: 12, category: "Parfum", name: "Oud Mystique", price: 180, desc: "Bois d'oud pur, rareté absolue.", img: "https://images.unsplash.com/photo-1585232351009-aa87416fca90?w=500" },
             
             // CHAUSSURES
-            { id: 13, category: "Chaussures", name: "Sneakers White", price: 310, desc: "Cuir blanc luxe.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" },
-            { id: 14, category: "Chaussures", name: "Bottines", price: 385, desc: "Daim marron.", img: "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=400" },
-            { id: 15, category: "Chaussures", name: "Mocassins", price: 275, desc: "Confort et style.", img: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400" },
-            { id: 16, category: "Chaussures", name: "Derbies", price: 340, desc: "Cuir vernis noir.", img: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400" }
+            { id: 13, category: "Chaussures", name: "Sneakers White", price: 310, desc: "Cuir blanc, style urbain chic.", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500" },
+            { id: 14, category: "Chaussures", name: "Bottines Chelsea", price: 385, desc: "Daim véritable, fabrication artisanale.", img: "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=500" },
+            { id: 15, category: "Chaussures", name: "Mocassins", price: 275, desc: "Cuir souple, élégance quotidienne.", img: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500" },
+            { id: 16, category: "Chaussures", name: "Derbies Vernis", price: 340, desc: "Brillance miroir, soirée prestige.", img: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500" }
         ];
 
         let cart = [];
@@ -288,10 +297,7 @@
 
         function search() {
             const query = document.getElementById('search-input').value.toLowerCase();
-            if(query === "") { 
-                goBack();
-                return;
-            }
+            if(query === "") { goBack(); return; }
             const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
             document.getElementById('home-page').style.display = 'none';
             document.getElementById('products-section').style.display = 'block';
