@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LUXURY SHOP</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { 
             --gold: #c5a059; 
@@ -15,7 +16,7 @@
         }
         
         body { 
-            font-family: 'Georgia', serif; 
+            font-family: 'Montserrat', 'Georgia', serif; 
             margin: 0; padding: 15px; 
             background: radial-gradient(circle at top, var(--bg-top) 0%, var(--bg-bottom) 70%);
             background-attachment: fixed;
@@ -52,6 +53,20 @@
             font-size: 13px; font-weight: bold; letter-spacing: 1.5px; color: var(--gold);
         }
 
+        /* --- STYLE DES AVIS CLIENTS --- */
+        .reviews-section { margin-top: 50px; padding: 20px 0; border-top: 1px solid rgba(197, 160, 89, 0.2); }
+        .reviews-header { text-align: center; margin-bottom: 25px; }
+        .reviews-header h2 { font-size: 18px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+        .review-card { 
+            background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(5px);
+        }
+        .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .review-stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
+        .verified-badge { color: #44bd32; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .review-text { font-size: 13px; color: #ccc; line-height: 1.5; font-style: italic; }
+        .review-author { font-size: 11px; color: var(--gold); margin-top: 10px; font-weight: bold; text-align: right; }
+
         #products-section { display: none; }
         #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .product-card { 
@@ -65,8 +80,6 @@
         .modal.open { display: flex; }
         .btn-gold { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .cart-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        
-        /* Style pour les tailles */
         .size-opt { border: 1px solid #444; padding: 10px 15px; border-radius: 8px; cursor: pointer; color: white; text-align: center; }
     </style>
 </head>
@@ -106,6 +119,40 @@
                 <div class="cat-title">CHAUSSURES</div>
             </div>
         </div>
+
+        <section class="reviews-section">
+            <div class="reviews-header">
+                <h2>Avis Clients</h2>
+                <div style="font-size: 12px; color: #888;">Note moyenne : 4.9/5</div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-stars">★★★★★</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Qualité exceptionnelle. La veste est encore plus belle en vrai que sur les photos. Service client très réactif."</p>
+                <p class="review-author">Jean-Christophe M.</p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-stars">★★★★☆</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Très satisfait de mon parfum Signature. Seul bémol, la livraison a pris un jour de plus que prévu, mais le colis était très bien emballé."</p>
+                <p class="review-author">Elena K.</p>
+            </div>
+
+            <div class="review-card">
+                <div class="review-top">
+                    <span class="review-stars">★★★★★</span>
+                    <span class="verified-badge">✓ Achat vérifié</span>
+                </div>
+                <p class="review-text">"Incroyable ! Les sneakers sont d'un confort rare pour du cuir. Je recommande Luxury Shop sans hésiter."</p>
+                <p class="review-author">Thomas V.</p>
+            </div>
+        </section>
     </div>
 
     <div id="products-section">
@@ -140,10 +187,8 @@
         const user = tg.initDataUnsafe?.user;
         if (user?.first_name) document.getElementById('welcome-name').innerText = user.first_name;
 
-        // Configuration des boutons
         tg.MainButton.setParams({ color: '#c5a059', text_color: '#ffffff' });
         
-        // --- ON REMET LE BOUTON SAV ICI ---
         tg.SecondaryButton.setParams({ 
             text: "💬 CONTACT SAV", 
             is_visible: true, 
@@ -258,25 +303,22 @@
             updateInterface();
         }
 
-      tg.onEvent('mainButtonClicked', () => {
-    const modal = document.getElementById('cart-modal');
-    if (!modal.classList.contains('open')) {
-        modal.classList.add('open');
-        updateCartModal();
-    } else {
-        // ON CALCULE LE TOTAL
-        const totalFinal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        tg.onEvent('mainButtonClicked', () => {
+            const modal = document.getElementById('cart-modal');
+            if (!modal.classList.contains('open')) {
+                modal.classList.add('open');
+                updateCartModal();
+            } else {
+                const totalFinal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                const dataAEnvoyer = {
+                    items: cart,
+                    totalPrice: totalFinal
+                };
+                tg.sendData(JSON.stringify(dataAEnvoyer));
+                tg.close();
+            }
+        });
 
-        // ON ENVOIE EXACTEMENT CE QUE TON PYTHON CHERCHE
-        const dataAEnvoyer = {
-            items: cart,           // Ton Python fait data.get("items")
-            totalPrice: totalFinal // Ton Python fait data.get("totalPrice")
-        };
-
-        tg.sendData(JSON.stringify(dataAEnvoyer));
-        tg.close();
-    }
-});
         tg.onEvent('secondaryButtonClicked', () => {
             tg.openTelegramLink("https://t.me/toulouse315"); 
         });
