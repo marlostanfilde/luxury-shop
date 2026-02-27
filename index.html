@@ -258,30 +258,21 @@
             updateInterface();
         }
 
-       // Trouvez cette section à la fin de votre fichier index.html
-tg.onEvent('mainButtonClicked', () => {
+      tg.onEvent('mainButtonClicked', () => {
     const modal = document.getElementById('cart-modal');
-    
     if (!modal.classList.contains('open')) {
-        // Si le panier n'est pas encore affiché, on l'ouvre
         modal.classList.add('open');
         updateCartModal();
     } else {
-        // --- C'EST CETTE PARTIE QUI ENVOIE LES INFOS AU BOT ---
-        
-        // 1. On prépare la liste des produits en texte lisible
-        const listeProduits = cart.map(item => `${item.name} (x${item.qty})`).join(", ");
-        
-        // 2. On calcule le prix total
+        // ON CALCULE LE TOTAL
         const totalFinal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        
-        // 3. On crée l'objet "paquet" que le Python va ouvrir
+
+        // ON ENVOIE EXACTEMENT CE QUE TON PYTHON CHERCHE
         const dataAEnvoyer = {
-            panier: listeProduits, // Le Python lira "panier"
-            totalPrice: totalFinal  // Le Python lira "totalPrice"
+            items: cart,           // Ton Python fait data.get("items")
+            totalPrice: totalFinal // Ton Python fait data.get("totalPrice")
         };
 
-        // 4. On envoie tout d'un coup
         tg.sendData(JSON.stringify(dataAEnvoyer));
         tg.close();
     }
