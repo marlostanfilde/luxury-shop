@@ -13,7 +13,6 @@
     --gold: #C5A059;
     --black: #050505;
     --grey: #1a1a1a;
-    --light-grey: #2a2a2a;
 }
 
 body {
@@ -21,10 +20,8 @@ body {
     font-family: 'Montserrat', sans-serif;
     background: var(--black);
     color: white;
-    -webkit-font-smoothing: antialiased;
 }
 
-/* HEADER */
 .header {
     padding: 40px 20px;
     text-align: center;
@@ -38,7 +35,6 @@ body {
     color: var(--gold);
 }
 
-/* TABS */
 .tabs {
     display: flex;
     overflow-x: auto;
@@ -65,7 +61,6 @@ body {
     border-color: var(--gold);
 }
 
-/* GRID */
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -78,11 +73,6 @@ body {
     border-radius: 10px;
     padding: 12px;
     text-align: center;
-    transition: 0.3s;
-}
-
-.card:active {
-    transform: scale(0.97);
 }
 
 .card img {
@@ -144,6 +134,8 @@ body {
     <div class="tab" data-cat="horlogerie">Horlogerie</div>
     <div class="tab" data-cat="maroquinerie">Maroquinerie</div>
     <div class="tab" data-cat="joaillerie">Joaillerie</div>
+    <div class="tab" data-cat="parfumerie">Parfumerie</div>
+    <div class="tab" data-cat="edition">Éditions Limitées</div>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -153,37 +145,36 @@ body {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* =========================
-   CONFIG
-========================= */
+/* PRODUITS COMPLETS */
 
 const PRODUCTS = [
+
 { id:1, cat:"horlogerie", brand:"ROLEX", name:"Submariner Date", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
 { id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30 Togo", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
 { id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love Or", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
-{ id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" }
-];
+{ id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" },
 
-/* =========================
-   STATE
-========================= */
+{ id:5, cat:"parfumerie", brand:"DIOR", name:"Sauvage Elixir", price:210, img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+{ id:6, cat:"parfumerie", brand:"CHANEL", name:"Bleu de Chanel Parfum", price:185, img:"https://images.unsplash.com/photo-1619994403073-2cec3f3e4b04?w=400" },
+
+{ id:7, cat:"maroquinerie", brand:"LOUIS VUITTON", name:"Keepall 50", price:2450, img:"https://images.unsplash.com/photo-1593032465171-8c0e9c6cbb3f?w=400" },
+{ id:8, cat:"joaillerie", brand:"BVLGARI", name:"B.Zero1 Ring", price:3200, img:"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400" },
+
+{ id:9, cat:"horlogerie", brand:"PATEK PHILIPPE", name:"Nautilus 5711", price:120000, img:"https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=400" },
+
+{ id:10, cat:"edition", brand:"RICHARD MILLE", name:"RM 07-01 Limited", price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
+{ id:11, cat:"edition", brand:"HERMÈS", name:"Birkin Himalaya", price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" }
+
+];
 
 let state = {
     cart: JSON.parse(localStorage.getItem("cart")) || [],
     category: "all"
 };
 
-/* =========================
-   UTILS
-========================= */
-
 function formatPrice(p){
     return p.toLocaleString("fr-FR") + " €";
 }
-
-/* =========================
-   RENDER
-========================= */
 
 function renderProducts(){
     const grid = document.getElementById("grid");
@@ -196,7 +187,7 @@ function renderProducts(){
     list.forEach(p=>{
         grid.innerHTML += `
         <div class="card">
-            <img src="${p.img}" alt="">
+            <img src="${p.img}">
             <div class="card-brand">${p.brand}</div>
             <div class="card-name">${p.name}</div>
             <div class="card-price">${formatPrice(p.price)}</div>
@@ -224,10 +215,6 @@ function updateCartUI(){
     tg.MainButton.show();
 }
 
-/* =========================
-   ACTIONS
-========================= */
-
 function addToCart(id){
     const product = PRODUCTS.find(p=>p.id===id);
     state.cart.push(product);
@@ -236,47 +223,34 @@ function addToCart(id){
     updateCartUI();
 }
 
-/* =========================
-   EVENTS
-========================= */
-
 document.querySelectorAll(".tab").forEach(tab=>{
     tab.addEventListener("click", ()=>{
         document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
         tab.classList.add("active");
         state.category = tab.dataset.cat;
         renderProducts();
-        tg.HapticFeedback.impactOccurred("light");
     });
 });
 
 tg.onEvent("mainButtonClicked", ()=>{
     const total = state.cart.reduce((s,i)=>s+i.price,0);
 
-    const payload = {
-        user_id: tg.initDataUnsafe?.user?.id,
-        client: tg.initDataUnsafe?.user?.first_name,
-        items: state.cart.map(i=>({id:i.id})), // sécurisé
-        total: total
-    };
-
     tg.showConfirm(`Confirmer la demande pour ${formatPrice(total)} ?`, ok=>{
         if(ok){
-            tg.sendData(JSON.stringify(payload));
+            tg.sendData(JSON.stringify({
+                user_id: tg.initDataUnsafe?.user?.id,
+                items: state.cart.map(i=>({id:i.id})),
+                total: total
+            }));
         }
     });
 });
-
-/* =========================
-   INIT
-========================= */
 
 function init(){
     if(tg.initDataUnsafe?.user){
         document.getElementById("greeting").innerText =
         "BIENVENUE, " + tg.initDataUnsafe.user.first_name.toUpperCase();
     }
-
     renderProducts();
     updateCartUI();
 }
