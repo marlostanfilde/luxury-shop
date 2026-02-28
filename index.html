@@ -2,109 +2,158 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAISON LUXE | Officiel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAISON LUXE | HAUTE COUTURE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --black: #050505; --dark: #121212; --border: rgba(212, 175, 55, 0.3); --glass: rgba(255, 255, 255, 0.03); }
-        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--black); color: white; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
+        :root { --gold: #C5A059; --black: #080808; --gray: #1a1a1a; --text: #f4f4f4; }
         
-        /* HEADER */
-        .header { text-align: center; padding: 40px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(to bottom, #1a1a1a, var(--black)); }
-        .logo { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 8px; color: var(--gold); margin: 0; }
-        
-        /* NAVIGATION CATEGORIES */
-        .categories { display: flex; justify-content: center; gap: 15px; margin: 20px 0; overflow-x: auto; padding: 10px; }
-        .cat-btn { background: none; border: 1px solid var(--border); color: #888; padding: 8px 15px; font-size: 10px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
-        .cat-btn.active { border-color: var(--gold); color: var(--gold); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Montserrat', sans-serif; margin: 0; background: var(--black); 
+            color: var(--text); overflow-x: hidden; line-height: 1.6;
+        }
 
-        /* GRILLE */
-        .container { padding: 15px; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .product-card { background: var(--glass); border: 1px solid var(--border); padding: 10px; text-align: center; }
-        .product-card img { width: 100%; height: 150px; object-fit: cover; margin-bottom: 10px; }
-        .p-brand { font-size: 8px; color: #666; letter-spacing: 1px; }
-        .p-name { font-size: 10px; margin: 5px 0; height: 25px; overflow: hidden; }
-        .p-price { color: var(--gold); font-size: 12px; font-weight: 600; }
+        /* --- HEADER ULTRA LUXE --- */
+        .header { 
+            padding: 60px 20px 30px; text-align: center; 
+            background: radial-gradient(circle at top, #1c1c1c 0%, var(--black) 70%);
+        }
+        .logo { 
+            font-family: 'Cinzel', serif; font-size: 32px; letter-spacing: 12px; 
+            color: var(--gold); margin: 0; text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .line { width: 40px; height: 1px; background: var(--gold); margin: 15px auto; opacity: 0.6; }
 
-        /* MODALE */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 10000; display: none; flex-direction: column; padding: 25px; box-sizing: border-box; }
-        .modal.open { display: flex; }
-        .btn-gold { background: var(--gold); color: black; border: none; padding: 18px; font-weight: bold; width: 100%; letter-spacing: 2px; margin-top: auto; cursor: pointer; }
+        /* --- FILTRES PROFESSIONNELS --- */
+        .nav-container { position: sticky; top: 0; z-index: 100; background: rgba(8,8,8,0.8); backdrop-filter: blur(20px); padding: 10px 0; border-bottom: 1px solid rgba(197, 160, 89, 0.1); }
+        .categories { display: flex; gap: 25px; overflow-x: auto; padding: 10px 25px; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-btn { 
+            white-space: nowrap; background: none; border: none; color: #555; 
+            font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 5px 0;
+        }
+        .cat-btn.active { color: var(--gold); border-bottom: 1px solid var(--gold); }
+
+        /* --- GRILLE PRODUITS "GALLERY" --- */
+        .container { padding: 20px; animation: fadeIn 1s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .product-card { background: none; position: relative; transition: transform 0.3s ease; }
+        .product-card:active { transform: scale(0.96); }
         
-        /* CONCIERGERIE FIXE */
-        .concierge-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5,5,5,0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; backdrop-filter: blur(10px); }
-        .contact-link { text-decoration: none; color: white; font-size: 8px; letter-spacing: 1px; text-align: center; }
-        .contact-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; }
+        .img-wrapper { position: relative; overflow: hidden; aspect-ratio: 4/5; background: var(--gray); margin-bottom: 12px; }
+        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease; }
+        
+        .p-info { text-align: left; }
+        .p-brand { font-size: 9px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; font-weight: 700; }
+        .p-name { font-size: 13px; color: #fff; margin: 4px 0; font-weight: 300; opacity: 0.9; }
+        .p-price { font-size: 12px; font-weight: 600; color: #fff; }
+
+        /* --- MODALE FULLSCREEN --- */
+        .modal { 
+            position: fixed; inset: 0; background: var(--black); z-index: 2000; 
+            display: none; flex-direction: column; overflow-y: auto;
+        }
+        .modal.open { display: flex; animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .modal-hero { width: 100%; aspect-ratio: 1/1; position: relative; }
+        .modal-hero img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-content { padding: 40px 30px; text-align: center; }
+        
+        .btn-buy { 
+            background: var(--gold); color: #000; border: none; padding: 22px; 
+            font-size: 12px; font-weight: 700; letter-spacing: 3px; width: 100%;
+            margin-top: 40px; text-transform: uppercase; border-radius: 2px;
+        }
+
+        /* --- STATUS BAR --- */
+        .status-bar { padding: 15px; font-size: 9px; text-align: center; color: #444; letter-spacing: 2px; border-top: 1px solid #1a1a1a; margin-top: 50px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1 class="logo">MAISON LUXE</h1>
-        <div id="user-greeting" style="font-size: 9px; color: var(--gold); margin-top: 15px; letter-spacing: 3px;">BIENVENUE</div>
+        <div class="line"></div>
+        <div id="user-greeting" style="font-size: 10px; letter-spacing: 4px; color: #666;">MEMBRE PRIVILÈGE</div>
     </header>
 
-    <div class="categories" id="cat-list">
-        <button class="cat-btn active" onclick="filterCat('all')">TOUT</button>
-        <button class="cat-btn" onclick="filterCat('Horlogerie')">MONTRES</button>
-        <button class="cat-btn" onclick="filterCat('Maroquinerie')">SACS</button>
+    <div class="nav-container">
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCat('all', this)">Collection</button>
+            <button class="cat-btn" onclick="filterCat('Horlogerie', this)">Horlogerie</button>
+            <button class="cat-btn" onclick="filterCat('Maroquinerie', this)">Maroquinerie</button>
+            <button class="cat-btn" onclick="filterCat('Vêtements', this)">Couture</button>
+        </div>
     </div>
 
     <div class="container">
         <div id="grid" class="product-grid"></div>
-    </div>
-
-    <div class="concierge-bar">
-        <a href="https://t.me/ton_pseudo" class="contact-link"><i>👤</i>CONCIERGE</a>
-        <div class="contact-link" onclick="tg.showAlert('Certificat d\'authenticité inclus.')"><i>🛡️</i>GARANTIE</div>
+        <div class="status-bar">© 2026 MAISON LUXE - PARIS</div>
     </div>
 
     <div id="product-modal" class="modal">
-        <div id="modal-body" style="text-align:center; flex-grow: 1;"></div>
-        <button id="add-btn" class="btn-gold">AJOUTER À LA SÉLECTION</button>
+        <div id="modal-hero" class="modal-hero"></div>
+        <div class="modal-content">
+            <div id="modal-brand" class="p-brand"></div>
+            <h2 id="modal-title" style="font-family:'Cinzel'; font-size:24px; margin:15px 0;"></h2>
+            <p id="modal-desc" style="font-size:14px; color:#888; font-weight:300; margin-bottom:30px;"></p>
+            <div id="modal-price" style="font-size:22px; font-weight:500;"></div>
+            <button id="add-btn" class="btn-buy">Acquérir cette pièce</button>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.enableClosingConfirmation(); // Demande confirmation avant de fermer l'app (Plus Pro)
 
         let cart = [];
         const products = [
-            { id: 1, cat: "Vêtements", brand: "HERMÈS", name: "Blazer Laine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=400" },
-            { id: 2, cat: "Horlogerie", brand: "ROLEX", name: "Oyster Perpetual", price: 8400, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
-            { id: 3, cat: "Maroquinerie", brand: "DIOR", name: "Sac Lady Noir", price: 4200, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 4, cat: "Beauté", brand: "CHANEL", name: "Parfum N°5", price: 185, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" }
+            { id: 1, cat: "Vêtements", brand: "Hermès", name: "Blazer en Laine", price: 1250, desc: "Coupe ajustée, laine vierge italienne. Un classique intemporel.", img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=800" },
+            { id: 2, cat: "Horlogerie", brand: "Rolex", name: "Oyster Perpetual", price: 8400, desc: "Acier Oystersteel haute résistance. Cadran bleu azur.", img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800" },
+            { id: 3, cat: "Maroquinerie", brand: "Dior", name: "Sac Lady Dior", price: 4200, desc: "Cuir d'agneau noir, surpiqûres Cannage emblématiques.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800" },
+            { id: 4, cat: "Horlogerie", brand: "Patek Philippe", name: "Nautilus 5711", price: 95000, desc: "L'excellence horlogère. Mouvement automatique.", img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800" }
         ];
 
         function renderGrid(filter = 'all') {
             const grid = document.getElementById('grid');
             const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+            
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card" onclick="openProduct(${p.id})">
-                    <img src="${p.img}">
-                    <div class="p-brand">${p.brand}</div>
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price} €</div>
+                    <div class="img-wrapper">
+                        <img src="${p.img}" loading="lazy">
+                    </div>
+                    <div class="p-info">
+                        <div class="p-brand">${p.brand}</div>
+                        <div class="p-name">${p.name}</div>
+                        <div class="p-price">${p.price.toLocaleString()} €</div>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function filterCat(cat) {
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        function filterCat(cat, el) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            tg.HapticFeedback.impactOccurred('light');
             renderGrid(cat);
         }
 
         function openProduct(id) {
             const p = products.find(x => x.id === id);
-            document.getElementById('modal-body').innerHTML = `
-                <img src="${p.img}" style="width:100%; margin-bottom:20px;">
-                <div style="font-size:10px; color:#666;">${p.brand}</div>
-                <h2 style="font-family:'Cinzel'; color:var(--gold);">${p.name}</h2>
-                <div style="font-size:22px; color:var(--gold); margin:20px 0;">${p.price} €</div>
-            `;
+            document.getElementById('modal-hero').innerHTML = `<img src="${p.img}">`;
+            document.getElementById('modal-brand').innerText = p.brand;
+            document.getElementById('modal-title').innerText = p.name;
+            document.getElementById('modal-desc').innerText = p.desc;
+            document.getElementById('modal-price').innerText = `${p.price.toLocaleString()} €`;
+            
             document.getElementById('add-btn').onclick = () => addToCart(p);
             document.getElementById('product-modal').classList.add('open');
             tg.BackButton.show();
@@ -120,25 +169,19 @@
             tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('product-modal').classList.remove('open');
             tg.BackButton.hide();
-            updateMainButton();
-        }
-
-        function updateMainButton() {
-            if (cart.length > 0) {
-                const total = cart.reduce((sum, i) => sum + i.price, 0);
-                tg.MainButton.setText(`VALIDER L'ACQUISITION (${total} €)`);
-                tg.MainButton.setParams({ color: "#D4AF37", text_color: "#000000" });
-                tg.MainButton.show();
-            }
+            
+            const total = cart.reduce((sum, i) => sum + i.price, 0);
+            tg.MainButton.setText(`PROCÉDER AU RÈGLEMENT (${total.toLocaleString()} €)`);
+            tg.MainButton.setParams({ color: "#C5A059", text_color: "#000000" });
+            tg.MainButton.show();
         }
 
         tg.onEvent('mainButtonClicked', () => {
-            const data = {
-                order: cart.map(i => i.name),
-                total: cart.reduce((sum, i) => sum + i.price, 0),
-                user: tg.initDataUnsafe?.user?.username || "Client"
-            };
-            tg.sendData(JSON.stringify(data));
+            tg.sendData(JSON.stringify({
+                type: "COMMANDE_PRESTIGE",
+                articles: cart.map(i => i.name),
+                montant: cart.reduce((sum, i) => sum + i.price, 0)
+            }));
         });
 
         // Init
