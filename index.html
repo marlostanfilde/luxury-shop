@@ -3,111 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MAISON LUXE | OFFICIEL</title>
+    <title>MAISON LUXE | HAUTE PERFORMANCE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --black: #050505; --dark-grey: #121212; --border: rgba(197, 160, 89, 0.2); }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 120px; overflow-x: hidden; }
+        :root { --gold: #C5A059; --black: #050505; --dark: #121212; --border: rgba(197, 160, 89, 0.2); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 140px; }
 
         /* HEADER */
-        .header { padding: 50px 20px 30px; border-bottom: 1px solid var(--border); text-align: center; background: linear-gradient(180deg, #111, var(--black)); }
-        .logo { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: 10px; color: var(--gold); text-transform: uppercase; }
-
-        /* NAVIGATION */
-        .nav-scroller { position: sticky; top: 0; z-index: 100; background: rgba(5,5,5,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-        .nav-tabs { display: flex; overflow-x: auto; padding: 15px 20px; gap: 25px; scrollbar-width: none; }
-        .nav-tabs::-webkit-scrollbar { display: none; }
-        .tab-item { color: #666; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; background: none; transition: 0.3s; padding-bottom: 5px; cursor: pointer; white-space: nowrap; }
-        .tab-item.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+        .logo { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: 10px; color: var(--gold); margin: 0; }
+        
+        /* CATEGORIES */
+        .nav-tabs { display: flex; overflow-x: auto; padding: 15px; gap: 20px; sticky; top: 0; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
+        .tab-btn { background: none; border: none; color: #666; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; white-space: nowrap; cursor: pointer; }
+        .tab-btn.active { color: var(--gold); border-bottom: 1px solid var(--gold); }
 
         /* GRID */
-        .container { padding: 20px; }
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .product-item { background: var(--dark-grey); border: 1px solid var(--border); padding: 15px; text-align: center; transition: 0.3s; }
-        .product-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 15px; }
-        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-        .p-name { font-size: 10px; font-weight: 300; margin: 5px 0; height: 24px; overflow: hidden; }
-        .p-price { font-size: 12px; font-weight: 600; }
+        .container { padding: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: var(--dark); border: 1px solid var(--border); padding: 10px; text-align: center; transition: 0.3s; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 2px; }
+        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-top: 10px; text-transform: uppercase; }
+        .p-name { font-size: 10px; font-weight: 300; margin: 5px 0; height: 25px; overflow: hidden; }
+        .p-price { font-size: 11px; font-weight: 700; }
 
-        /* PANIER VISUEL (AVANCÉ) */
-        .cart-section { margin-top: 40px; padding: 20px; background: #0a0a0a; border: 1px dashed var(--gold); display: none; border-radius: 4px; }
-        .cart-section.active { display: block; animation: slideUp 0.4s ease; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #222; }
-        .remove-item { color: #ff4444; font-size: 14px; cursor: pointer; padding-left: 10px; }
+        /* MODALE PRODUIT (ZOOM PHOTO) */
+        .modal { position: fixed; inset: 0; background: var(--black); z-index: 2000; display: none; flex-direction: column; overflow-y: auto; }
+        .modal.open { display: flex; }
+        .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-bottom: 1px solid var(--border); }
+        .modal-info { padding: 30px; text-align: center; }
+        .btn-add { background: var(--gold); color: black; border: none; padding: 20px; width: 100%; font-weight: 700; letter-spacing: 2px; cursor: pointer; margin-top: 20px; }
+
+        /* PANIER VISUEL */
+        .cart-box { margin: 20px 0; padding: 15px; border: 1px dashed var(--gold); background: #0a0a0a; display: none; }
+        .cart-box.active { display: block; }
+        .cart-item { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .del-btn { color: #ff4444; font-weight: bold; margin-left: 10px; }
 
         /* FOOTER & AVIS */
-        .reviews { margin-top: 40px; padding: 20px; background: rgba(197, 160, 89, 0.05); }
-        .review-card { font-size: 11px; font-style: italic; color: #888; margin-bottom: 10px; border-left: 2px solid var(--gold); padding-left: 10px; }
-
-        .footer-nav { position: fixed; bottom: 0; width: 100%; background: #0a0a0a; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 10px; z-index: 1000; }
-        .nav-link { color: #555; text-decoration: none; font-size: 9px; text-align: center; cursor: pointer; }
-        .nav-link i { display: block; font-size: 18px; margin-bottom: 5px; color: var(--gold); font-style: normal; }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .reviews { margin-top: 30px; padding: 15px; background: rgba(197, 160, 89, 0.05); font-size: 10px; border-radius: 5px; }
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
+        .nav-link { color: #555; text-decoration: none; font-size: 8px; text-align: center; cursor: pointer; }
+        .nav-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; font-style: normal; }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="logo">Maison Luxe</div>
-        <p id="welcome-txt" style="font-size: 9px; color: #666; margin-top: 15px; letter-spacing: 3px;">BIENVENUE DANS VOTRE ESPACE PRIVÉ</p>
+        <h1 class="logo">MAISON LUXE</h1>
+        <div id="user-tag" style="font-size: 9px; color: #444; margin-top: 10px; letter-spacing: 3px;">MEMBRE PRIVILÈGE</div>
     </header>
 
-    <div class="nav-scroller">
-        <div class="nav-tabs">
-            <button class="tab-item active" onclick="switchCategory('all', this)">Collection</button>
-            <button class="tab-item" onclick="switchCategory('horlogerie', this)">Horlogerie</button>
-            <button class="tab-item" onclick="switchCategory('maroquinerie', this)">Maroquinerie</button>
-            <button class="tab-item" onclick="switchCategory('joaillerie', this)">Joaillerie</button>
-            <button class="tab-item" onclick="switchCategory('couture', this)">Haute Couture</button>
-        </div>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="filter('all', this)">Tous</button>
+        <button class="tab-btn" onclick="filter('Horlogerie', this)">Horlogerie</button>
+        <button class="tab-btn" onclick="filter('Maroquinerie', this)">Maroquinerie</button>
+        <button class="tab-btn" onclick="filter('Joaillerie', this)">Joaillerie</button>
     </div>
 
     <div class="container">
-        <div id="main-grid" class="grid-container"></div>
+        <div id="product-grid" class="grid"></div>
 
-        <div id="cart-ui" class="cart-section">
-            <h3 style="font-family:'Cinzel'; font-size:12px; color:var(--gold); margin-top:0;">VOTRE SÉLECTION</h3>
+        <div id="cart-recap" class="cart-box">
+            <h3 style="font-family:'Cinzel'; font-size:11px; color:var(--gold); margin-top:0;">VOTRE PANIER</h3>
             <div id="cart-list"></div>
-            <div id="cart-total-display" style="text-align:right; font-weight:600; margin-top:15px; border-top:1px solid var(--gold); padding-top:10px; color:var(--gold);"></div>
+            <div id="cart-total" style="text-align:right; font-weight:700; margin-top:10px; color:var(--gold);"></div>
         </div>
 
         <div class="reviews">
-            <h3 style="font-family:'Cinzel'; font-size:11px; letter-spacing:2px; color:var(--gold);">TÉMOIGNAGES</h3>
-            <div class="review-card">"Un service d'exception pour une pièce rare. Livraison sécurisée sous 24h." - Marc A.</div>
+            <p><i>"Une expérience d'achat fluide. Ma Rolex est arrivée certifiée en 24h."</i> - Marc-Antoine.</p>
         </div>
     </div>
 
-    <nav class="footer-nav">
-        <a href="https://t.me/ton_pseudo" class="nav-link"><i>👤</i>CONCIERGE</a>
-        <div class="nav-link" onclick="tg.showAlert('Livraison sécurisée sous 24h-48h par transporteur privé.')"><i>📦</i>DÉLAIS</div>
+    <div class="footer-nav">
+        <div class="nav-link" onclick="tg.openTelegramLink('https://t.me/ton_pseudo')"><i>👤</i>CONCIERGE</div>
+        <div class="nav-link" onclick="tg.showAlert('Livraison sécurisée sous 24-48h par transporteur privé.')"><i>📦</i>DÉLAIS</div>
         <div class="nav-link" onclick="clearCart()"><i>🗑️</i>VIDER</div>
-    </nav>
+    </div>
+
+    <div id="modal" class="modal">
+        <img id="modal-img" src="" class="modal-img">
+        <div class="modal-info">
+            <div id="modal-brand" class="p-brand"></div>
+            <h2 id="modal-name" style="font-family:'Cinzel'; color:var(--gold); margin:10px 0;"></h2>
+            <div id="modal-price" style="font-size:20px; font-weight:700; margin-bottom:20px;"></div>
+            <p style="font-size:12px; color:#888;">Certificat d'authenticité et écrin d'origine inclus.</p>
+            <button id="add-to-cart-btn" class="btn-add">AJOUTER À LA SÉLECTION</button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const State = {
-            products: [
-                { id: 1, cat: 'horlogerie', brand: 'Rolex', name: 'Daytona Rainbow', price: 450000, img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600' },
-                { id: 2, cat: 'maroquinerie', brand: 'Hermès', name: 'Birkin Faubourg', price: 185000, img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600' },
-                { id: 3, cat: 'joaillerie', brand: 'Cartier', name: 'Bracelet Panthère', price: 72000, img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600' },
-                { id: 4, cat: 'couture', brand: 'Chanel', name: 'Veste Tweed Or', price: 8500, img: 'https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600' },
-                { id: 5, cat: 'horlogerie', brand: 'Patek Philippe', name: 'Nautilus 5712', price: 98000, img: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=600' }
-            ],
-            cart: [],
-            currentFilter: 'all'
-        };
+        let cart = [];
+        const products = [
+            { id: 1, cat: "Horlogerie", brand: "Rolex", name: "Daytona Panda", price: 38500, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800" },
+            { id: 2, cat: "Maroquinerie", brand: "Hermès", name: "Sac Birkin 30", price: 22000, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800" },
+            { id: 3, cat: "Joaillerie", brand: "Cartier", name: "Bracelet Love Or", price: 7500, img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800" },
+            { id: 4, cat: "Horlogerie", brand: "Patek Philippe", name: "Nautilus 5712", price: 98000, img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800" }
+        ];
 
-        function renderProducts() {
-            const container = document.getElementById('main-grid');
-            const items = State.currentFilter === 'all' ? State.products : State.products.filter(p => p.cat === State.currentFilter);
-            container.innerHTML = items.map(p => `
-                <div class="product-item" onclick="addProduct(${p.id})">
-                    <img src="${p.img}" class="product-img">
+        function render(cat = 'all') {
+            const grid = document.getElementById('product-grid');
+            const items = cat === 'all' ? products : products.filter(p => p.cat === cat);
+            grid.innerHTML = items.map(p => `
+                <div class="card" onclick="openProduct(${p.id})">
+                    <img src="${p.img}">
                     <div class="p-brand">${p.brand}</div>
                     <div class="p-name">${p.name}</div>
                     <div class="p-price">${p.price.toLocaleString()} €</div>
@@ -115,72 +119,82 @@
             `).join('');
         }
 
-        function addProduct(id) {
-            const p = State.products.find(x => x.id === id);
-            State.cart.push({...p, cartId: Date.now()}); // ID unique pour suppression
-            tg.HapticFeedback.notificationOccurred('success');
-            updateUI();
+        function filter(cat, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render(cat);
         }
 
-        function removeFromCart(cartId) {
-            State.cart = State.cart.filter(item => item.cartId !== cartId);
-            tg.HapticFeedback.impactOccurred('light');
-            updateUI();
+        function openProduct(id) {
+            const p = products.find(x => x.id === id);
+            document.getElementById('modal-img').src = p.img;
+            document.getElementById('modal-brand').innerText = p.brand;
+            document.getElementById('modal-name').innerText = p.name;
+            document.getElementById('modal-price').innerText = p.price.toLocaleString() + " €";
+            
+            document.getElementById('add-to-cart-btn').onclick = () => {
+                cart.push({...p, uid: Date.now()});
+                tg.HapticFeedback.notificationOccurred('success');
+                closeModal();
+                updateUI();
+            };
+            
+            document.getElementById('modal').classList.add('open');
+            tg.BackButton.show();
         }
 
-        function clearCart() {
-            State.cart = [];
+        function closeModal() { document.getElementById('modal').classList.remove('open'); tg.BackButton.hide(); }
+        tg.onEvent('backButtonClicked', closeModal);
+
+        function remove(uid) {
+            cart = cart.filter(i => i.uid !== uid);
             updateUI();
-            tg.MainButton.hide();
         }
 
         function updateUI() {
-            const cartUI = document.getElementById('cart-ui');
-            const cartList = document.getElementById('cart-list');
-            const totalDisplay = document.getElementById('cart-total-display');
+            const recap = document.getElementById('cart-recap');
+            const list = document.getElementById('cart-list');
+            const totalTxt = document.getElementById('cart-total');
             
-            if (State.cart.length > 0) {
-                cartUI.classList.add('active');
-                cartList.innerHTML = State.cart.map(item => `
+            if(cart.length > 0) {
+                recap.classList.add('active');
+                list.innerHTML = cart.map(i => `
                     <div class="cart-item">
-                        <span>${item.brand} ${item.name}</span>
-                        <span>${item.price.toLocaleString()} € <span class="remove-item" onclick="removeFromCart(${item.cartId})">✕</span></span>
+                        <span>${i.brand} - ${i.name}</span>
+                        <span>${i.price.toLocaleString()}€ <span class="del-btn" onclick="remove(${i.uid})">✕</span></span>
                     </div>
                 `).join('');
-                
-                const total = State.cart.reduce((s, i) => s + i.price, 0);
-                totalDisplay.innerText = `TOTAL : ${total.toLocaleString()} €`;
+                const total = cart.reduce((s, i) => s + i.price, 0);
+                totalTxt.innerText = "TOTAL : " + total.toLocaleString() + " €";
                 
                 tg.MainButton.setText(`VALIDER L'ACQUISITION (${total.toLocaleString()} €)`);
-                tg.MainButton.setParams({ color: '#C5A059', text_color: '#000000', is_visible: true });
+                tg.MainButton.show();
             } else {
-                cartUI.classList.remove('active');
+                recap.classList.remove('active');
                 tg.MainButton.hide();
             }
         }
 
-        function switchCategory(cat, btn) {
-            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            State.currentFilter = cat;
-            renderProducts();
-        }
+        function clearCart() { cart = []; updateUI(); tg.showAlert('Panier vidé.'); }
 
+        // --- ENVOI DE LA COMMANDE AU BOT ---
         tg.onEvent('mainButtonClicked', () => {
-            const total = State.cart.reduce((s, i) => s + i.price, 0);
+            const total = cart.reduce((s, i) => s + i.price, 0);
             const data = {
                 client: tg.initDataUnsafe?.user?.first_name || "Client Privé",
-                panier: State.cart.map(i => `${i.brand} ${i.name} (${i.price.toLocaleString()}€)`),
-                total_final: total.toLocaleString() + " €",
-                timestamp: new Date().toLocaleString()
+                panier: cart.map(i => `${i.brand} ${i.name} (${i.price.toLocaleString()}€)`),
+                total: total.toLocaleString() + " €",
+                raw_total: total
             };
+
+            // Envoi des données complètes au Bot
             tg.sendData(JSON.stringify(data));
         });
 
-        if (tg.initDataUnsafe?.user) {
-            document.getElementById('welcome-txt').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
+        if(tg.initDataUnsafe?.user) {
+            document.getElementById('user-tag').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
         }
-        renderProducts();
+        render();
     </script>
 </body>
 </html>
