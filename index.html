@@ -7,57 +7,59 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --black: #080808; --gray: #1a1a1a; --border: rgba(197, 160, 89, 0.2); }
+        :root { --gold: #C5A059; --black: #080808; --gray: #121212; --border: rgba(197, 160, 89, 0.15); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--black); color: white; padding-bottom: 120px; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--black); color: white; padding-bottom: 110px; }
 
         /* HEADER */
-        .header { padding: 50px 20px 20px; text-align: center; background: linear-gradient(to bottom, #151515, var(--black)); }
-        .logo { font-family: 'Cinzel', serif; font-size: 30px; letter-spacing: 10px; color: var(--gold); margin: 0; }
+        .header { padding: 50px 20px 25px; text-align: center; border-bottom: 1px solid var(--border); }
+        .logo { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 10px; color: var(--gold); margin: 0; }
         
-        /* NAV & FILTRES */
-        .nav-container { position: sticky; top: 0; z-index: 100; background: rgba(8,8,8,0.9); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); }
+        /* NAVIGATION */
+        .nav-container { position: sticky; top: 0; z-index: 100; background: rgba(8,8,8,0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); }
         .categories { display: flex; gap: 20px; overflow-x: auto; padding: 15px 20px; scrollbar-width: none; }
-        .cat-btn { background: none; border: none; color: #666; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-btn { background: none; border: none; color: #555; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; transition: 0.3s; }
         .cat-btn.active { color: var(--gold); }
 
-        /* GRILLE PRODUITS */
+        /* CATALOGUE */
         .container { padding: 20px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .product-card { background: var(--gray); border: 1px solid var(--border); padding: 10px; transition: 0.3s; }
-        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 10px; }
-        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-        .p-name { font-size: 11px; margin: 5px 0; font-weight: 300; height: 30px; overflow: hidden; }
-        .p-price { font-size: 12px; font-weight: 700; }
+        .product-card { background: var(--gray); border: 1px solid var(--border); padding: 10px; text-align: center; }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 12px; }
+        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .p-name { font-size: 11px; font-weight: 300; height: 30px; overflow: hidden; margin-bottom: 10px; }
+        .p-price { font-size: 13px; font-weight: 700; color: #fff; }
 
-        /* BARRE DE CONCIERGERIE (SAV) */
+        /* CONCIERGERIE (SANS WHATSAPP) */
         .concierge-bar { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: rgba(10,10,10,0.98); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; padding: 20px; z-index: 500;
         }
-        .sav-link { text-decoration: none; color: #fff; font-size: 9px; letter-spacing: 2px; text-align: center; opacity: 0.8; }
-        .sav-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; font-style: normal; }
+        .sav-link { text-decoration: none; color: #fff; font-size: 9px; letter-spacing: 2px; text-align: center; cursor: pointer; }
+        .sav-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 8px; font-style: normal; }
 
         /* MODALE PRODUIT */
-        .modal { position: fixed; inset: 0; background: var(--black); z-index: 1000; display: none; flex-direction: column; }
+        .modal { position: fixed; inset: 0; background: var(--black); z-index: 1000; display: none; flex-direction: column; overflow-y: auto; }
         .modal.open { display: flex; }
-        .modal-content { padding: 30px; text-align: center; flex-grow: 1; }
-        .btn-add { background: var(--gold); color: black; border: none; padding: 20px; width: 100%; font-weight: 700; letter-spacing: 2px; cursor: pointer; }
+        .modal-content { padding: 40px 30px; text-align: center; flex-grow: 1; }
+        .btn-add { background: var(--gold); color: black; border: none; padding: 20px; width: 100%; font-weight: 700; letter-spacing: 3px; cursor: pointer; margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1 class="logo">MAISON LUXE</h1>
-        <div id="user-greeting" style="font-size: 9px; letter-spacing: 3px; color: var(--gold); margin-top: 10px;">CHARGEMENT...</div>
+        <div id="user-greeting" style="font-size: 9px; letter-spacing: 3px; color: var(--gold); margin-top: 12px;">ESPACE PRIVILÈGE</div>
     </header>
 
     <div class="nav-container">
         <div class="categories">
-            <button class="cat-btn active" onclick="filterCat('all', this)">Tous les modèles</button>
+            <button class="cat-btn active" onclick="filterCat('all', this)">Tous</button>
             <button class="cat-btn" onclick="filterCat('Horlogerie', this)">Horlogerie</button>
             <button class="cat-btn" onclick="filterCat('Maroquinerie', this)">Maroquinerie</button>
+            <button class="cat-btn" onclick="filterCat('Couture', this)">Couture</button>
         </div>
     </div>
 
@@ -66,14 +68,14 @@
     </div>
 
     <div class="concierge-bar">
-        <a href="https://wa.me/33600000000" class="sav-link"><i>💬</i> WHATSAPP</a>
         <a href="https://t.me/ton_pseudo" class="sav-link"><i>👤</i> CONCIERGE</a>
-        <div class="sav-link" onclick="tg.showAlert('Garantie internationale de 24 mois incluse.')"><i>🛡️</i> GARANTIE</div>
+        <div class="sav-link" onclick="tg.showAlert('Chaque acquisition est accompagnée d\'un certificat d\'authenticité NFT.')"><i>🛡️</i> GARANTIE</div>
+        <div class="sav-link" onclick="tg.showAlert('Livraison sécurisée par transporteur privé sous 48h.')"><i>📦</i> LIVRAISON</div>
     </div>
 
     <div id="product-modal" class="modal">
         <div id="modal-body" class="modal-content"></div>
-        <button id="add-btn" class="btn-add">AJOUTER À LA SÉLECTION</button>
+        <button id="add-btn" class="btn-add">AJOUTER AU PANIER</button>
     </div>
 
     <script>
@@ -81,10 +83,14 @@
         tg.expand();
 
         let cart = [];
+        // CATALOGUE COMPLET
         const products = [
-            { id: 1, cat: "Horlogerie", brand: "Rolex", name: "Submariner Date", price: 14500, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600" },
-            { id: 2, cat: "Maroquinerie", brand: "Hermès", name: "Sac Birkin 30", price: 22000, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600" },
-            { id: 3, cat: "Horlogerie", brand: "Audemars Piguet", name: "Royal Oak", price: 45000, img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=600" }
+            { id: 1, cat: "Couture", brand: "Hermès", name: "Blazer en Laine Vierge", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600" },
+            { id: 2, cat: "Horlogerie", brand: "Rolex", name: "Oyster Perpetual 41", price: 8400, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600" },
+            { id: 3, cat: "Maroquinerie", brand: "Dior", name: "Sac Lady Dior Noir", price: 4200, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600" },
+            { id: 4, cat: "Couture", brand: "Chanel", name: "Parfum N°5 Grand Extrait", price: 185, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600" },
+            { id: 5, cat: "Horlogerie", brand: "Patek Philippe", name: "Nautilus 5711", price: 95000, img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=600" },
+            { id: 6, cat: "Maroquinerie", brand: "Hermès", name: "Sac Birkin 30 Togo", price: 21000, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600" } // Image placeholder
         ];
 
         function renderGrid(filter = 'all') {
@@ -92,7 +98,7 @@
             const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card" onclick="openProduct(${p.id})">
-                    <img src="${p.img}">
+                    <img src="${p.img}" loading="lazy">
                     <div class="p-brand">${p.brand}</div>
                     <div class="p-name">${p.name}</div>
                     <div class="p-price">${p.price.toLocaleString()} €</div>
@@ -104,16 +110,17 @@
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             renderGrid(cat);
+            tg.HapticFeedback.impactOccurred('light');
         }
 
         function openProduct(id) {
             const p = products.find(x => x.id === id);
             document.getElementById('modal-body').innerHTML = `
-                <img src="${p.img}" style="width:100%; margin-bottom:20px; border: 1px solid var(--border);">
+                <img src="${p.img}" style="width:100%; border:1px solid var(--border); margin-bottom:30px;">
                 <div class="p-brand">${p.brand}</div>
-                <h2 style="font-family:'Cinzel'; color:var(--gold);">${p.name}</h2>
-                <div style="font-size:24px; margin:20px 0;">${p.price.toLocaleString()} €</div>
-                <p style="font-size:12px; color:#888;">Pièce d'exception disponible immédiatement.</p>
+                <h2 style="font-family:'Cinzel'; color:var(--gold); margin:10px 0;">${p.name}</h2>
+                <div style="font-size:26px; font-weight:700; margin:25px 0;">${p.price.toLocaleString()} €</div>
+                <p style="font-size:13px; color:#777; line-height:1.8;">Pièce certifiée authentique par nos experts. Livraison discrète et assurée à l'international.</p>
             `;
             document.getElementById('add-btn').onclick = () => addToCart(p);
             document.getElementById('product-modal').classList.add('open');
@@ -130,32 +137,23 @@
             tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('product-modal').classList.remove('open');
             tg.BackButton.hide();
-            updateMainButton();
-        }
-
-        function updateMainButton() {
+            
             const total = cart.reduce((sum, i) => sum + i.price, 0);
-            tg.MainButton.setText(`VALIDER LA COMMANDE (${total.toLocaleString()} €)`);
+            tg.MainButton.setText(`VALIDER L'ACQUISITION (${total.toLocaleString()} €)`);
             tg.MainButton.setParams({ color: "#C5A059", text_color: "#000000" });
             tg.MainButton.show();
         }
 
-        // ENVOI COMPLET AU BOT
+        // ENVOI COMPLET POUR LE BOT
         tg.onEvent('mainButtonClicked', () => {
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            const recapCommande = {
-                client: tg.initDataUnsafe?.user?.first_name || "Client",
-                username: tg.initDataUnsafe?.user?.username || "N/A",
-                articles: cart.map(item => ({
-                    nom: item.name,
-                    marque: item.brand,
-                    prix: item.price.toLocaleString() + " €"
-                })),
-                total_a_payer: total.toLocaleString() + " €",
-                date: new Date().toLocaleString('fr-FR')
+            const data = {
+                client: tg.initDataUnsafe?.user?.first_name || "Anonyme",
+                user_id: tg.initDataUnsafe?.user?.id || "N/A",
+                panier: cart.map(i => ({ marque: i.brand, nom: i.name, prix: i.price + "€" })),
+                total_global: cart.reduce((sum, i) => sum + i.price, 0) + "€",
+                timestamp: new Date().toLocaleTimeString()
             };
-
-            tg.sendData(JSON.stringify(recapCommande));
+            tg.sendData(JSON.stringify(data));
         });
 
         if (tg.initDataUnsafe?.user) {
