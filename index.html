@@ -22,6 +22,7 @@ body {
     color: white;
 }
 
+/* Header */
 .header {
     padding: 40px 20px;
     text-align: center;
@@ -35,6 +36,7 @@ body {
     color: var(--gold);
 }
 
+/* Tabs */
 .tabs {
     display: flex;
     overflow-x: auto;
@@ -61,6 +63,7 @@ body {
     border-color: var(--gold);
 }
 
+/* Grid */
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -108,6 +111,7 @@ body {
     border-radius: 4px;
 }
 
+/* Cart badge */
 .cart-badge {
     position: fixed;
     bottom: 20px;
@@ -118,6 +122,26 @@ body {
     border-radius: 30px;
     font-weight: 600;
     display: none;
+    cursor: pointer;
+}
+
+/* Cart modal */
+#cartModal {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#000000ee;
+    z-index:1000;
+    padding:20px;
+    overflow:auto;
+}
+
+#cartModal > div {
+    max-width:500px;
+    margin:auto;
+    background:#111;
+    padding:20px;
+    border-radius:12px;
 }
 </style>
 </head>
@@ -139,32 +163,42 @@ body {
 </div>
 
 <div class="grid" id="grid"></div>
-<div class="cart-badge" id="cartBadge"></div>
+<div class="cart-badge" id="cartBadge">0 PIÈCE(S)</div>
+
+<!-- Cart modal -->
+<div id="cartModal">
+  <div>
+    <h2 style="color:#C5A059;text-align:center;">Votre Panier</h2>
+    <div id="cartItems"></div>
+    <div style="margin-top:15px;padding-top:10px;border-top:1px solid #333;">
+      <div id="deliveryInfo" style="font-size:12px;color:#aaa;margin-bottom:10px;"></div>
+      <div id="savInfo" style="font-size:12px;color:#aaa;margin-bottom:15px;">
+        🛡 SAV Premium : Assistance 7j/7 • Garantie internationale 2 ans
+      </div>
+      <button onclick="closeCart()" style="width:100%;padding:10px;border:none;background:#C5A059;color:black;font-weight:600;border-radius:6px;">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* PRODUITS COMPLETS */
-
+/* =========================
+   PRODUITS
+========================= */
 const PRODUCTS = [
-
 { id:1, cat:"horlogerie", brand:"ROLEX", name:"Submariner Date", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
 { id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30 Togo", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
 { id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love Or", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
 { id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" },
-
 { id:5, cat:"parfumerie", brand:"DIOR", name:"Sauvage Elixir", price:210, img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
 { id:6, cat:"parfumerie", brand:"CHANEL", name:"Bleu de Chanel Parfum", price:185, img:"https://images.unsplash.com/photo-1619994403073-2cec3f3e4b04?w=400" },
-
 { id:7, cat:"maroquinerie", brand:"LOUIS VUITTON", name:"Keepall 50", price:2450, img:"https://images.unsplash.com/photo-1593032465171-8c0e9c6cbb3f?w=400" },
 { id:8, cat:"joaillerie", brand:"BVLGARI", name:"B.Zero1 Ring", price:3200, img:"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400" },
-
 { id:9, cat:"horlogerie", brand:"PATEK PHILIPPE", name:"Nautilus 5711", price:120000, img:"https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=400" },
-
 { id:10, cat:"edition", brand:"RICHARD MILLE", name:"RM 07-01 Limited", price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
 { id:11, cat:"edition", brand:"HERMÈS", name:"Birkin Himalaya", price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" }
-
 ];
 
 let state = {
@@ -172,19 +206,19 @@ let state = {
     category: "all"
 };
 
-function formatPrice(p){
-    return p.toLocaleString("fr-FR") + " €";
-}
+/* =========================
+   UTILS
+========================= */
+function formatPrice(p){ return p.toLocaleString("fr-FR")+" €"; }
 
+/* =========================
+   RENDER
+========================= */
 function renderProducts(){
     const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    const list = state.category === "all"
-        ? PRODUCTS
-        : PRODUCTS.filter(p => p.cat === state.category);
-
-    list.forEach(p=>{
+    grid.innerHTML="";
+    const list = state.category==="all"?PRODUCTS:PRODUCTS.filter(p=>p.cat===state.category);
+    list.forEach((p)=>{
         grid.innerHTML += `
         <div class="card">
             <img src="${p.img}">
@@ -200,41 +234,87 @@ function renderProducts(){
 function updateCartUI(){
     const badge = document.getElementById("cartBadge");
     const total = state.cart.reduce((s,i)=>s+i.price,0);
-
-    if(state.cart.length === 0){
-        badge.style.display="none";
-        tg.MainButton.hide();
-        return;
+    if(state.cart.length===0){
+        badge.style.display="none"; tg.MainButton.hide(); return;
     }
-
     badge.style.display="block";
     badge.innerText = `${state.cart.length} PIÈCE(S) • ${formatPrice(total)}`;
-
-    tg.MainButton.text = `FINALISER (${formatPrice(total)})`;
+    badge.onclick=openCart;
+    tg.MainButton.text=`FINALISER (${formatPrice(total)})`;
     tg.MainButton.setParams({color:"#C5A059",text_color:"#000000"});
     tg.MainButton.show();
 }
 
+/* =========================
+   ACTIONS
+========================= */
 function addToCart(id){
-    const product = PRODUCTS.find(p=>p.id===id);
+    const product=PRODUCTS.find(p=>p.id===id);
     state.cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(state.cart));
+    localStorage.setItem("cart",JSON.stringify(state.cart));
     tg.HapticFeedback.notificationOccurred("success");
     updateCartUI();
 }
 
 document.querySelectorAll(".tab").forEach(tab=>{
-    tab.addEventListener("click", ()=>{
+    tab.addEventListener("click",()=>{
         document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
         tab.classList.add("active");
-        state.category = tab.dataset.cat;
+        state.category=tab.dataset.cat;
         renderProducts();
     });
 });
 
-tg.onEvent("mainButtonClicked", ()=>{
-    const total = state.cart.reduce((s,i)=>s+i.price,0);
+/* =========================
+   PANIER MODAL
+========================= */
+function openCart(){
+    const modal=document.getElementById("cartModal");
+    const container=document.getElementById("cartItems");
+    const delivery=document.getElementById("deliveryInfo");
+    container.innerHTML="";
+    if(state.cart.length===0){
+        container.innerHTML="<p style='text-align:center;color:#777;'>Panier vide</p>";
+        delivery.innerHTML="";
+        modal.style.display="block";
+        return;
+    }
+    let total=0, maxDelay=0;
+    state.cart.forEach((item,index)=>{
+        total+=item.price;
+        let delayText="", delayDays=0;
+        if(item.cat==="horlogerie"){delayText="7-14 jours ouvrés";delayDays=14;}
+        if(item.cat==="maroquinerie"){delayText="5-10 jours ouvrés";delayDays=10;}
+        if(item.cat==="joaillerie"){delayText="10-15 jours ouvrés";delayDays=15;}
+        if(item.cat==="parfumerie"){delayText="3-5 jours ouvrés";delayDays=5;}
+        if(item.cat==="edition"){delayText="15-30 jours (pièce exclusive)";delayDays=30;}
+        if(delayDays>maxDelay) maxDelay=delayDays;
+        container.innerHTML+=`
+        <div style="margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #222;">
+            <div style="font-size:12px;color:#C5A059;">${item.brand}</div>
+            <div style="font-size:13px;">${item.name}</div>
+            <div style="font-weight:600;">${formatPrice(item.price)}</div>
+            <div style="font-size:11px;color:#777;">Livraison estimée : ${delayText}</div>
+            <button onclick="removeItem(${index})" style="margin-top:5px;font-size:10px;background:none;border:none;color:#ff4d4d;">Retirer</button>
+        </div>
+        `;
+    });
+    delivery.innerHTML=`🚚 Livraison maximale estimée : ${maxDelay} jours ouvrés`;
+    modal.style.display="block";
+}
+function closeCart(){document.getElementById("cartModal").style.display="none";}
+function removeItem(index){
+    state.cart.splice(index,1);
+    localStorage.setItem("cart",JSON.stringify(state.cart));
+    updateCartUI();
+    openCart();
+}
 
+/* =========================
+   TELEGRAM MAINBUTTON
+========================= */
+tg.onEvent("mainButtonClicked",()=>{
+    const total=state.cart.reduce((s,i)=>s+i.price,0);
     tg.showConfirm(`Confirmer la demande pour ${formatPrice(total)} ?`, ok=>{
         if(ok){
             tg.sendData(JSON.stringify({
@@ -246,15 +326,17 @@ tg.onEvent("mainButtonClicked", ()=>{
     });
 });
 
+/* =========================
+   INIT
+========================= */
 function init(){
     if(tg.initDataUnsafe?.user){
-        document.getElementById("greeting").innerText =
-        "BIENVENUE, " + tg.initDataUnsafe.user.first_name.toUpperCase();
+        document.getElementById("greeting").innerText=
+        "BIENVENUE, "+tg.initDataUnsafe.user.first_name.toUpperCase();
     }
     renderProducts();
     updateCartUI();
 }
-
 init();
 </script>
 
