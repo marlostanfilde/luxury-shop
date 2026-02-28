@@ -1,147 +1,288 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MAISON LUXE | SYSTÈME AVANCÉ</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold: #C5A059; --black: #050505; --grey: #1a1a1a; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 100px; }
-        
-        /* Header Luxe */
-        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(197, 160, 89, 0.2); }
-        .logo { font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 8px; color: var(--gold); }
-        
-        /* Tabs */
-        .tabs { display: flex; overflow-x: auto; padding: 20px; gap: 15px; sticky; top: 0; background: var(--black); z-index: 10; }
-        .tab { padding: 8px 15px; border: 1px solid #333; border-radius: 20px; font-size: 10px; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
-        .tab.active { background: var(--gold); color: black; border-color: var(--gold); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>MAISON LUXE</title>
 
-        /* Grille de produits */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .card { background: var(--grey); padding: 15px; border-radius: 8px; text-align: center; }
-        .card img { width: 100%; border-radius: 5px; margin-bottom: 10px; }
-        .card-brand { color: var(--gold); font-size: 9px; letter-spacing: 2px; }
-        .card-name { font-size: 11px; margin: 5px 0; height: 30px; }
-        .card-price { font-weight: bold; color: white; }
-        
-        /* Bouton Ajouter */
-        .add-btn { margin-top: 10px; width: 100%; padding: 8px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 4px; font-size: 10px; cursor: pointer; transition: 0.3s; }
-        .add-btn:active { background: var(--gold); color: black; }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;500;600&display=swap" rel="stylesheet">
 
-        /* Badge Panier */
-        .cart-status { position: fixed; bottom: 20px; right: 20px; background: var(--gold); color: black; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: pop 0.3s ease; }
-        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
-    </style>
+<style>
+:root {
+    --gold: #C5A059;
+    --black: #050505;
+    --grey: #1a1a1a;
+    --light-grey: #2a2a2a;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--black);
+    color: white;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* HEADER */
+.header {
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(197,160,89,0.2);
+}
+
+.logo {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 8px;
+    font-size: 20px;
+    color: var(--gold);
+}
+
+/* TABS */
+.tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    background: var(--black);
+    z-index: 10;
+}
+
+.tab {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    font-size: 10px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--gold);
+    color: black;
+    border-color: var(--gold);
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+}
+
+.card {
+    background: var(--grey);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.card:active {
+    transform: scale(0.97);
+}
+
+.card img {
+    width: 100%;
+    border-radius: 6px;
+}
+
+.card-brand {
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-top: 6px;
+}
+
+.card-name {
+    font-size: 11px;
+    margin: 6px 0;
+    min-height: 28px;
+}
+
+.card-price {
+    font-weight: 600;
+}
+
+.add-btn {
+    margin-top: 8px;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-size: 10px;
+    border-radius: 4px;
+}
+
+.cart-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--gold);
+    color: black;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    display: none;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="header">
-        <div class="logo">MAISON LUXE</div>
-        <div id="user-greeting" style="font-size: 10px; color: #666; margin-top: 10px;">CHARGEMENT...</div>
-    </div>
+<div class="header">
+    <div class="logo">MAISON LUXE</div>
+    <div id="greeting" style="font-size:10px;color:#777;margin-top:8px;">CHARGEMENT...</div>
+</div>
 
-    <div class="tabs" id="tabs-container">
-        <div class="tab active" onclick="filter('all')">Tous</div>
-        <div class="tab" onclick="filter('horlogerie')">Horlogerie</div>
-        <div class="tab" onclick="filter('maroquinerie')">Maroquinerie</div>
-        <div class="tab" onclick="filter('joaillerie')">Joaillerie</div>
-    </div>
+<div class="tabs">
+    <div class="tab active" data-cat="all">Tous</div>
+    <div class="tab" data-cat="horlogerie">Horlogerie</div>
+    <div class="tab" data-cat="maroquinerie">Maroquinerie</div>
+    <div class="tab" data-cat="joaillerie">Joaillerie</div>
+</div>
 
-    <div class="grid" id="product-grid"></div>
-    <div class="cart-status" id="cart-badge">0 ARTICLES</div>
+<div class="grid" id="grid"></div>
+<div class="cart-badge" id="cartBadge"></div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-        const PRODUCTS = [
-            { id: 1, cat: 'horlogerie', brand: 'ROLEX', name: 'Submariner Date', price: 14500, img: 'https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400' },
-            { id: 2, cat: 'maroquinerie', brand: 'HERMÈS', name: 'Birkin 30 Togo', price: 22000, img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400' },
-            { id: 3, cat: 'joaillerie', brand: 'CARTIER', name: 'Bracelet Love Or', price: 7800, img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400' },
-            { id: 4, cat: 'horlogerie', brand: 'AP', name: 'Royal Oak Blue', price: 55000, img: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400' }
-        ];
+/* =========================
+   CONFIG
+========================= */
 
-        let cart = [];
+const PRODUCTS = [
+{ id:1, cat:"horlogerie", brand:"ROLEX", name:"Submariner Date", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
+{ id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30 Togo", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+{ id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love Or", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
+{ id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" }
+];
 
-        // Initialisation
-        function init() {
-            if (tg.initDataUnsafe?.user) {
-                document.getElementById('user-greeting').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
-            }
-            renderProducts('all');
+/* =========================
+   STATE
+========================= */
+
+let state = {
+    cart: JSON.parse(localStorage.getItem("cart")) || [],
+    category: "all"
+};
+
+/* =========================
+   UTILS
+========================= */
+
+function formatPrice(p){
+    return p.toLocaleString("fr-FR") + " €";
+}
+
+/* =========================
+   RENDER
+========================= */
+
+function renderProducts(){
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    const list = state.category === "all"
+        ? PRODUCTS
+        : PRODUCTS.filter(p => p.cat === state.category);
+
+    list.forEach(p=>{
+        grid.innerHTML += `
+        <div class="card">
+            <img src="${p.img}" alt="">
+            <div class="card-brand">${p.brand}</div>
+            <div class="card-name">${p.name}</div>
+            <div class="card-price">${formatPrice(p.price)}</div>
+            <button class="add-btn" onclick="addToCart(${p.id})">ACQUÉRIR</button>
+        </div>
+        `;
+    });
+}
+
+function updateCartUI(){
+    const badge = document.getElementById("cartBadge");
+    const total = state.cart.reduce((s,i)=>s+i.price,0);
+
+    if(state.cart.length === 0){
+        badge.style.display="none";
+        tg.MainButton.hide();
+        return;
+    }
+
+    badge.style.display="block";
+    badge.innerText = `${state.cart.length} PIÈCE(S) • ${formatPrice(total)}`;
+
+    tg.MainButton.text = `FINALISER (${formatPrice(total)})`;
+    tg.MainButton.setParams({color:"#C5A059",text_color:"#000000"});
+    tg.MainButton.show();
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+function addToCart(id){
+    const product = PRODUCTS.find(p=>p.id===id);
+    state.cart.push(product);
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    tg.HapticFeedback.notificationOccurred("success");
+    updateCartUI();
+}
+
+/* =========================
+   EVENTS
+========================= */
+
+document.querySelectorAll(".tab").forEach(tab=>{
+    tab.addEventListener("click", ()=>{
+        document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+        state.category = tab.dataset.cat;
+        renderProducts();
+        tg.HapticFeedback.impactOccurred("light");
+    });
+});
+
+tg.onEvent("mainButtonClicked", ()=>{
+    const total = state.cart.reduce((s,i)=>s+i.price,0);
+
+    const payload = {
+        user_id: tg.initDataUnsafe?.user?.id,
+        client: tg.initDataUnsafe?.user?.first_name,
+        items: state.cart.map(i=>({id:i.id})), // sécurisé
+        total: total
+    };
+
+    tg.showConfirm(`Confirmer la demande pour ${formatPrice(total)} ?`, ok=>{
+        if(ok){
+            tg.sendData(JSON.stringify(payload));
         }
+    });
+});
 
-        function renderProducts(category) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-            
-            const filtered = category === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === category);
-            
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${p.img}" alt="${p.name}">
-                        <div class="card-brand">${p.brand}</div>
-                        <div class="card-name">${p.name}</div>
-                        <div class="card-price">${p.price.toLocaleString()} €</div>
-                        <button class="add-btn" onclick="addToCart(${p.id})">ACQUÉRIR</button>
-                    </div>
-                `;
-            });
-        }
+/* =========================
+   INIT
+========================= */
 
-        function filter(cat) {
-            renderProducts(cat);
-            // Mise à jour visuelle des tabs
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        }
+function init(){
+    if(tg.initDataUnsafe?.user){
+        document.getElementById("greeting").innerText =
+        "BIENVENUE, " + tg.initDataUnsafe.user.first_name.toUpperCase();
+    }
 
-        function addToCart(id) {
-            const product = PRODUCTS.find(p => p.id === id);
-            cart.push(product);
-            tg.HapticFeedback.notificationOccurred('success');
-            updateUI();
-        }
+    renderProducts();
+    updateCartUI();
+}
 
-        function updateUI() {
-            const badge = document.getElementById('cart-badge');
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
+init();
+</script>
 
-            if (cart.length > 0) {
-                badge.style.display = 'block';
-                badge.innerText = `${cart.length} PIÈCE${cart.length > 1 ? 'S' : ''}`;
-                
-                // Configurer le bouton principal de Telegram (MainButton)
-                tg.MainButton.text = `FINALISER L'ACQUISITION (${total.toLocaleString()} €)`;
-                tg.MainButton.show();
-                tg.MainButton.setParams({ color: '#C5A059', text_color: '#000000' });
-            }
-        }
-
-        // Événement quand on clique sur le gros bouton "Finaliser" de Telegram
-        tg.onEvent('mainButtonClicked', function() {
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            const orderData = {
-                client: tg.initDataUnsafe?.user?.first_name || "Anonyme",
-                user_id: tg.initDataUnsafe?.user?.id,
-                items: cart.map(i => ({ name: i.name, price: i.price })),
-                total: total
-            };
-
-            tg.showConfirm(`Envoyer la demande d'acquisition pour ${total.toLocaleString()} € ?`, (ok) => {
-                if (ok) {
-                    // C'est ICI que les données partent vers le bot
-                    tg.sendData(JSON.stringify(orderData));
-                }
-            });
-        });
-
-        init();
-    </script>
 </body>
 </html>
