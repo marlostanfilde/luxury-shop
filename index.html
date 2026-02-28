@@ -3,48 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MAISON LUXE PRO</title>
+    <title>MAISON LUXE | OFFICIAL</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --black: #050505; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 100px; }
-        .header { padding: 30px; text-align: center; border-bottom: 1px solid rgba(197,160,89,0.2); }
-        .logo { font-family: 'Cinzel', serif; letter-spacing: 8px; color: var(--gold); }
+        :root { --gold: #C5A059; --black: #050505; --gray: #121212; --border: rgba(197,160,89,0.2); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 120px; }
+
+        /* HEADER */
+        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(to bottom, #111, var(--black)); }
+        .logo { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 10px; color: var(--gold); margin: 0; }
         
-        /* Nav ultra-rapide */
-        .nav { display: flex; overflow-x: auto; padding: 10px; gap: 15px; position: sticky; top: 0; background: rgba(5,5,5,0.9); z-index: 10; border-bottom: 1px solid #222; }
-        .nav button { background: none; border: none; color: #666; font-size: 10px; letter-spacing: 1px; white-space: nowrap; cursor: pointer; }
-        .nav button.active { color: var(--gold); font-weight: bold; }
+        /* NAV */
+        .nav-scroll { position: sticky; top: 0; z-index: 100; background: rgba(5,5,5,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+        .categories { display: flex; gap: 20px; overflow-x: auto; padding: 15px 20px; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-btn { background: none; border: none; color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .cat-btn.active { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 5px; }
 
-        /* Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .item { background: #111; padding: 10px; border: 1px solid #222; text-align: center; }
-        .item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-        .item-name { font-size: 10px; margin: 5px 0; height: 25px; overflow: hidden; }
-        .item-price { color: var(--gold); font-weight: bold; font-size: 11px; }
+        /* GRID */
+        .container { padding: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: var(--gray); border: 1px solid var(--border); padding: 10px; text-align: center; }
+        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 2px; }
+        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-top: 10px; text-transform: uppercase; }
+        .p-name { font-size: 10px; font-weight: 300; margin: 5px 0; height: 25px; overflow: hidden; }
+        .p-price { font-size: 11px; font-weight: 700; color: #fff; }
 
-        /* Panier */
-        .cart-ui { margin: 15px; padding: 15px; border: 1px dashed var(--gold); display: none; font-size: 11px; }
-        .cart-ui.show { display: block; }
+        /* PANIER VISUEL */
+        .cart-ui { margin-top: 25px; padding: 15px; border: 1px dashed var(--gold); background: #0a0a0a; display: none; }
+        .cart-ui.active { display: block; }
+        .cart-item { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+
+        /* FOOTER */
+        .footer { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
+        .f-link { color: #444; text-decoration: none; font-size: 8px; text-align: center; cursor: pointer; }
+        .f-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; font-style: normal; }
     </style>
 </head>
 <body>
 
-    <div class="header"><div class="logo">MAISON LUXE</div></div>
+    <header class="header">
+        <h1 class="logo">MAISON LUXE</h1>
+        <div id="user-name" style="font-size: 9px; color: #444; margin-top: 10px; letter-spacing: 3px;">MEMBRE PRIVILÈGE</div>
+    </header>
 
-    <div class="nav" id="cat-nav">
-        <button class="active" onclick="render('all')">TOUT</button>
-        <button onclick="render('Habille')">HABILLEMENT</button>
-        <button onclick="render('Chaussures')">SOULIERS</button>
-        <button onclick="render('Horlogerie')">HORLOGERIE</button>
+    <div class="nav-scroll">
+        <div class="categories" id="nav-btns">
+            <button class="cat-btn active" onclick="render('all', this)">Collection</button>
+            <button class="cat-btn" onclick="render('Habille', this)">Prêt-à-Porter</button>
+            <button class="cat-btn" onclick="render('Chaussures', this)">Souliers</button>
+            <button class="cat-btn" onclick="render('Horlogerie', this)">Horlogerie</button>
+            <button class="cat-btn" onclick="render('Maroquinerie', this)">Sacs</button>
+        </div>
     </div>
 
-    <div id="grid" class="grid"></div>
+    <div class="container">
+        <div id="product-grid" class="grid"></div>
 
-    <div id="cart-box" class="cart-ui">
-        <div style="color:var(--gold); margin-bottom:10px;">VOTRE SÉLECTION :</div>
-        <div id="cart-list"></div>
+        <div id="cart-box" class="cart-ui">
+            <div style="font-family:'Cinzel'; font-size:11px; color:var(--gold); margin-bottom:10px;">VOTRE SÉLECTION :</div>
+            <div id="cart-list"></div>
+            <div id="cart-total" style="text-align:right; font-weight:700; margin-top:10px; color:var(--gold); border-top:1px solid #333; padding-top:10px;"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="f-link" onclick="tg.openTelegramLink('https://t.me/ton_pseudo')"><i>👤</i>CONCIERGE</div>
+        <div class="f-link" onclick="tg.showAlert('Livraison sécurisée sous 24h-48h par transporteur privé.')"><i>📦</i>DÉLAIS</div>
+        <div class="f-link" onclick="clearCart()"><i>🗑️</i>VIDER</div>
     </div>
 
     <script>
@@ -53,54 +81,91 @@
 
         let cart = [];
         const products = [
-            { cat: 'Habille', b: 'Dior', n: 'Manteau Cachemire', p: 4500, i: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400' },
-            { cat: 'Chaussures', b: 'Berluti', n: 'Alessandro Edge', p: 1800, i: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400' },
-            { cat: 'Horlogerie', b: 'Rolex', n: 'Daytona Panda', p: 38500, i: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400' }
+            { id: 1, cat: "Habille", brand: "Hermès", name: "Blazer Laine Marine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=400" },
+            { id: 2, cat: "Chaussures", brand: "Loro Piana", name: "Summer Walk Suède", price: 850, img: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400" },
+            { id: 3, cat: "Horlogerie", brand: "Rolex", name: "Daytona Panda", price: 38500, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
+            { id: 4, cat: "Maroquinerie", brand: "Hermès", name: "Birkin 30 Togo", price: 21000, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 5, cat: "Chaussures", brand: "Berluti", name: "Richelieu Alessandro", price: 1800, img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" },
+            { id: 6, cat: "Habille", brand: "Dior", name: "Manteau Cachemire", price: 4500, img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400" }
         ];
 
-        function render(filter) {
-            // Gestion visuelle des boutons
-            const btns = document.querySelectorAll('#cat-nav button');
-            btns.forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+        // Fonction de rendu corrigée
+        function render(cat = 'all', btn = null) {
+            // Mise à jour visuelle des boutons
+            if(btn) {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
 
-            const items = filter === 'all' ? products : products.filter(x => x.cat === filter);
-            document.getElementById('grid').innerHTML = items.map((x, idx) => `
-                <div class="item" onclick="add(${idx})">
-                    <img src="${x.i}">
-                    <div style="font-size:8px; color:var(--gold)">${x.b}</div>
-                    <div class="item-name">${x.n}</div>
-                    <div class="item-price">${x.p.toLocaleString()} €</div>
+            const grid = document.getElementById('product-grid');
+            const items = cat === 'all' ? products : products.filter(p => p.cat === cat);
+            
+            grid.innerHTML = items.map(p => `
+                <div class="card" onclick="addToCart(${p.id})">
+                    <img src="${p.img}">
+                    <div class="p-brand">${p.brand}</div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price.toLocaleString()} €</div>
                 </div>
             `).join('');
         }
 
-        function add(idx) {
-            const p = products[idx];
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
             cart.push(p);
             tg.HapticFeedback.impactOccurred('medium');
-            
-            // Mise à jour Panier
-            document.getElementById('cart-box').classList.add('show');
-            document.getElementById('cart-list').innerHTML = cart.map(c => `• ${c.n} (${c.p}€)`).join('<br>');
-            
-            // Bouton Telegram
-            const total = cart.reduce((s, x) => s + x.p, 0);
-            tg.MainButton.setText(`ACQUÉRIR (${total.toLocaleString()} €)`);
-            tg.MainButton.show();
+            updateUI();
         }
 
+        function updateUI() {
+            const box = document.getElementById('cart-box');
+            const list = document.getElementById('cart-list');
+            const totalTxt = document.getElementById('cart-total');
+            
+            if(cart.length > 0) {
+                box.classList.add('active');
+                list.innerHTML = cart.map(i => `
+                    <div class="cart-item">
+                        <span>${i.brand} - ${i.name}</span>
+                        <span>${i.price.toLocaleString()} €</span>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((s, i) => s + i.price, 0);
+                totalTxt.innerText = `TOTAL : ${total.toLocaleString()} €`;
+                
+                tg.MainButton.setText(`VALIDER L'ACQUISITION (${total.toLocaleString()} €)`);
+                tg.MainButton.setParams({ color: "#C5A059", text_color: "#000000" });
+                tg.MainButton.show();
+            } else {
+                box.classList.remove('active');
+                tg.MainButton.hide();
+            }
+        }
+
+        function clearCart() {
+            cart = [];
+            updateUI();
+            tg.showAlert('Votre sélection a été réinitialisée.');
+        }
+
+        // ENVOI DE LA COMMANDE
         tg.onEvent('mainButtonClicked', () => {
-            const total = cart.reduce((s, x) => s + x.p, 0);
+            const total = cart.reduce((s, i) => s + i.price, 0);
             const data = {
-                user: tg.initDataUnsafe?.user?.first_name || "Client",
-                items: cart.map(c => c.n),
-                total: total + "€"
+                client: tg.initDataUnsafe?.user?.first_name || "Client Privé",
+                panier: cart.map(i => `${i.brand} ${i.name} (${i.price}€)`),
+                total: total.toLocaleString() + " €"
             };
             tg.sendData(JSON.stringify(data));
         });
 
-        render('all');
+        // Lancement immédiat au chargement
+        if(tg.initDataUnsafe?.user) {
+            document.getElementById('user-name').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
+        }
+        render('all'); 
+
     </script>
 </body>
 </html>
