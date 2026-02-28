@@ -3,271 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAISON LUXURY</title>
+    <title>MAISON LUXE | Officiel</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root { 
             --gold: #D4AF37; 
-            --gold-light: #F9E4B7;
-            --black: #050505;
-            --dark-grey: #121212;
+            --black: #050505; 
+            --dark: #121212; 
+            --border: rgba(212, 175, 55, 0.3);
             --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(212, 175, 55, 0.2);
         }
-        
+
         body { 
             font-family: 'Montserrat', sans-serif; 
-            margin: 0; padding: 0;
-            background-color: var(--black);
-            color: white; 
-            overflow-x: hidden;
+            margin: 0; background: var(--black); 
+            color: white; padding-bottom: 140px; 
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- HEADER PRESTIGE --- */
+        /* --- HEADER --- */
         .header { 
-            text-align: center; 
-            padding: 50px 20px 20px 20px;
+            text-align: center; padding: 50px 20px; 
+            border-bottom: 1px solid var(--border);
             background: linear-gradient(to bottom, #1a1a1a, var(--black));
         }
         .logo { 
-            font-family: 'Cinzel', serif;
-            font-size: 38px; 
-            letter-spacing: 10px; 
-            color: var(--gold); 
-            margin: 0; 
-            text-transform: uppercase;
+            font-family: 'Cinzel', serif; font-size: 32px; 
+            letter-spacing: 10px; color: var(--gold); margin: 0; 
         }
         .slogan { 
-            font-size: 9px; 
-            letter-spacing: 5px; 
-            color: var(--gold-light); 
-            text-transform: uppercase; 
-            margin-top: 10px;
-            opacity: 0.8;
+            font-size: 9px; letter-spacing: 5px; color: #888; 
+            text-transform: uppercase; margin-top: 10px; 
         }
 
+        /* --- CONTENU --- */
         .container { padding: 20px; }
-
-        /* --- SEARCH LUXE --- */
-        .search-box { 
-            margin: 10px 0 30px 0;
-            background: var(--dark-grey);
-            border: 1px solid var(--border);
-            border-radius: 0px; /* Le luxe aime les angles droits */
-            padding: 15px;
-            display: flex;
-        }
-        #search-input { 
-            background: none; border: none; color: white; width: 100%; 
-            outline: none; font-size: 14px; letter-spacing: 1px;
-            font-family: 'Montserrat';
+        
+        .welcome-msg {
+            text-align: center; font-size: 12px; letter-spacing: 2px;
+            margin-bottom: 30px; color: var(--gold); font-weight: 200;
         }
 
-        /* --- CATEGORIES --- */
-        #categories-menu { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
+        /* --- GRILLE PRODUITS --- */
+        .product-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
         }
-        .cat-card { 
-            position: relative; height: 220px; 
-            overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-        .cat-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; opacity: 0.6; }
-        .cat-card:hover img { transform: scale(1.1); opacity: 0.8; }
-        .cat-title { 
-            position: absolute; bottom: 20px; width: 100%;
-            text-align: center; font-family: 'Cinzel';
-            font-size: 14px; letter-spacing: 3px; color: var(--gold-light);
-        }
-
-        /* --- PRODUCT GRID --- */
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .product-card { 
-            background: none;
-            margin-bottom: 20px;
+            background: var(--glass); border: 1px solid var(--border); 
+            padding: 10px; text-align: center; transition: 0.3s;
         }
         .product-card img { 
-            width: 100%; height: 200px; object-fit: cover; 
-            border: 1px solid var(--border);
+            width: 100%; height: 180px; object-fit: cover; 
+            margin-bottom: 12px; filter: brightness(0.9);
         }
-        .product-info { padding: 10px 0; text-align: center; }
-        .p-name { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-        .p-price { color: var(--gold); font-weight: 600; font-size: 14px; }
+        .p-brand { font-size: 8px; letter-spacing: 2px; color: #666; margin-bottom: 5px; }
+        .p-name { font-size: 11px; letter-spacing: 1px; font-weight: 400; height: 30px; overflow: hidden; }
+        .p-price { color: var(--gold); font-weight: 600; margin-top: 10px; font-size: 14px; }
 
-        /* --- MODALS LUXE --- */
+        /* --- BARRE CONCIERGERIE FIXE --- */
+        .concierge-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around;
+            padding: 20px 0; z-index: 999;
+            backdrop-filter: blur(15px);
+        }
+        .contact-link {
+            text-decoration: none; color: white; font-size: 9px;
+            letter-spacing: 2px; display: flex; flex-direction: column; 
+            align-items: center; transition: 0.3s;
+        }
+        .contact-link i { 
+            font-size: 18px; color: var(--gold); margin-bottom: 8px; 
+        }
+
+        /* --- MODAL DETAIL --- */
         .modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--black); z-index: 9999; 
-            display: none; flex-direction: column;
-            animation: fadeIn 0.4s ease;
+            background: var(--black); z-index: 10000; 
+            display: none; flex-direction: column; padding: 30px; box-sizing: border-box; 
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal.open { display: flex; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .modal-content { padding: 30px; overflow-y: auto; flex-grow: 1; }
-        .close-btn { align-self: flex-end; padding: 20px; font-size: 24px; color: var(--gold); cursor: pointer; }
-
-        .btn-buy { 
-            background: var(--gold); color: black; border: none;
-            padding: 18px; font-weight: bold; width: 100%;
-            letter-spacing: 2px; font-family: 'Montserrat'; margin-top: 20px;
+        .close-btn { align-self: flex-end; font-size: 30px; color: var(--gold); cursor: pointer; }
+        .btn-gold { 
+            background: var(--gold); color: black; border: none; 
+            padding: 20px; font-weight: bold; width: 100%; 
+            letter-spacing: 3px; margin-top: 30px; font-family: 'Montserrat';
         }
 
-        /* --- REVIEWS --- */
-        .reviews-section { margin-top: 60px; border-top: 1px solid var(--border); padding-top: 40px; }
-        .review-card { 
-            background: var(--glass); border-left: 2px solid var(--gold);
-            padding: 20px; margin-bottom: 20px; font-size: 13px;
-        }
-
-        .badge-count {
-            background: var(--gold); color: black; font-size: 10px;
-            padding: 2px 6px; border-radius: 50%; position: absolute; top: 10px; right: 10px;
-        }
+        /* --- AVIS CLIENTS --- */
+        .reviews { margin-top: 50px; border-top: 1px solid var(--border); padding-top: 30px; }
+        .review-card { background: var(--glass); padding: 15px; margin-bottom: 15px; border-left: 1px solid var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <header class="header">
         <h1 class="logo">MAISON LUXE</h1>
-        <div class="slogan">L'Excellence Absolue</div>
+        <div class="slogan">L'Art de l'Excellence</div>
+    </header>
+
+    <div class="container">
+        <div class="welcome-msg" id="user-greeting">BIENVENUE DANS VOTRE ESPACE PRIVÉ</div>
+
+        <div id="grid" class="product-grid">
+            </div>
+
+        <section class="reviews">
+            <h3 style="font-family:'Cinzel'; font-size:14px; text-align:center; letter-spacing:3px; color:var(--gold);">Témoignages</h3>
+            <div class="review-card">
+                <div style="color:var(--gold); font-size:10px; margin-bottom:5px;">★★★★★</div>
+                <p style="font-size:11px; font-style:italic; margin:0;">"Service irréprochable et pièces d'une qualité rare. Je recommande la Maison Luxe."</p>
+                <p style="font-size:9px; text-align:right; margin-top:10px;">— Marc-Antoine D.</p>
+            </div>
+        </section>
     </div>
 
-    <div class="container" id="main-view">
-        <p style="text-align: center; font-weight: 200; font-size: 14px; letter-spacing: 2px;">
-            BIENVENU, <span id="user-name" style="color: var(--gold);">EXCELLENCE</span>
-        </p>
-
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="RECHERCHER UNE PIÈCE..." onkeyup="search()">
+    <div class="concierge-bar">
+        <a href="https://wa.me/33600000000" class="contact-link">
+            <i>💬</i> WHATSAPP
+        </a>
+        <a href="https://t.me/ton_pseudo" class="contact-link">
+            <i>👤</i> CONCIERGE
+        </a>
+        <div class="contact-link" onclick="tg.showAlert('Chaque pièce est livrée avec son certificat d\'authenticité.')">
+            <i>🛡️</i> GARANTIE
         </div>
-
-        <div id="categories-menu">
-            <div class="cat-card" onclick="showCategory('Habille')">
-                <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800">
-                <div class="cat-title">VESTIAIRE</div>
-            </div>
-            <div class="cat-card" onclick="showCategory('Accessoire')">
-                <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800">
-                <div class="cat-title">MAROQUINERIE</div>
-            </div>
-            <div class="cat-card" onclick="showCategory('Parfum')">
-                <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800">
-                <div class="cat-title">FRAGRANCES</div>
-            </div>
-            <div class="cat-card" onclick="showCategory('Chaussures')">
-                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800">
-                <div class="cat-title">SOULIERS</div>
-            </div>
-        </div>
-
-        <div class="reviews-section">
-            <h2 style="font-family: 'Cinzel'; text-align: center; font-size: 16px; margin-bottom: 30px; letter-spacing: 4px;">Témoignages</h2>
-            <div id="reviews-container"></div>
-        </div>
-    </div>
-
-    <div class="container" id="products-view" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h3 id="category-title" style="font-family: 'Cinzel'; letter-spacing: 3px; color: var(--gold);"></h3>
-            <button onclick="goBack()" style="background:none; border:none; color:white; border-bottom:1px solid white; padding-bottom:5px; font-size:10px; letter-spacing:2px;">RETOUR</button>
-        </div>
-        <div class="product-grid" id="grid"></div>
     </div>
 
     <div id="product-modal" class="modal">
         <span class="close-btn" onclick="closeModal()">✕</span>
-        <div class="modal-content" id="modal-body"></div>
+        <div id="modal-body" style="text-align:center; margin-top:20px;"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
-
-        // Personnalisation au nom de l'utilisateur
+        
+        // Nom de l'utilisateur
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name.toUpperCase();
+            document.getElementById('user-greeting').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
         }
+
+        let cart = [];
 
         const products = [
-            { id: 1, category: "Habille", name: "Blazer Cachemire", price: 890, desc: "Laine et cachemire précieux. Coupe italienne.", img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600" },
-            { id: 2, category: "Accessoire", name: "Sac Signature Noir", price: 1250, desc: "Cuir pleine fleur, bouclerie or 24k.", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600" },
-            { id: 9, category: "Parfum", name: "Oud Impérial", price: 245, desc: "Notes de bois d'agar et de rose noire.", img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600" },
-            { id: 13, category: "Chaussures", name: "Mocassins de Soirée", price: 560, desc: "Daim noir, montage Blake traditionnel.", img: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=600" }
+            { id: 1, brand: "HERMÈS", name: "Blazer en Laine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600" },
+            { id: 2, brand: "ROLEX", name: "Oyster Perpetual", price: 8400, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600" },
+            { id: 3, brand: "DIOR", name: "Sac Lady Noir", price: 4200, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600" },
+            { id: 4, brand: "CHANEL", name: "Parfum N°5", price: 185, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600" }
         ];
 
-        const reviews = [
-            { name: "Marc-Antoine D.", text: "Une qualité inégalée. Le service client est d'une discrétion et d'une efficacité rare.", stars: "★★★★★" },
-            { name: "Sophie H.", text: "Le sac est une merveille. La livraison à Monaco a été parfaite.", stars: "★★★★★" }
-        ];
-
-        function initReviews() {
-            document.getElementById('reviews-container').innerHTML = reviews.map(r => `
-                <div class="review-card">
-                    <div style="color:var(--gold); margin-bottom:10px;">${r.stars}</div>
-                    <p style="margin:0; font-style:italic; line-height:1.6;">"${r.text}"</p>
-                    <p style="text-align:right; font-size:10px; margin-top:15px; letter-spacing:1px;">— ${r.name}</p>
-                </div>
-            `).join('');
-        }
-        initReviews();
-
-        function showCategory(cat) {
-            tg.HapticFeedback.impactOccurred('medium');
-            document.getElementById('main-view').style.display = 'none';
-            document.getElementById('products-view').style.display = 'block';
-            document.getElementById('category-title').innerText = cat.toUpperCase();
-            
-            const filtered = products.filter(p => p.category === cat);
-            const grid = document.getElementById('grid');
-            grid.innerHTML = filtered.map(p => `
-                <div class="product-card" onclick="openProduct(${p.id})">
-                    <img src="${p.img}">
-                    <div class="product-info">
-                        <div class="p-name">${p.name}</div>
-                        <div class="p-price">${p.price} €</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function goBack() {
-            document.getElementById('main-view').style.display = 'block';
-            document.getElementById('products-view').style.display = 'none';
-        }
+        // Remplir la grille
+        const grid = document.getElementById('grid');
+        grid.innerHTML = products.map(p => `
+            <div class="product-card" onclick="openProduct(${p.id})">
+                <img src="${p.img}">
+                <div class="p-brand">${p.brand}</div>
+                <div class="p-name">${p.name}</div>
+                <div class="p-price">${p.price} €</div>
+            </div>
+        `).join('');
 
         function openProduct(id) {
             const p = products.find(x => x.id === id);
             document.getElementById('modal-body').innerHTML = `
                 <img src="${p.img}" style="width:100%; border:1px solid var(--border);">
-                <h2 style="font-family:'Cinzel'; color:var(--gold); margin-top:30px;">${p.name}</h2>
-                <p style="font-weight:200; line-height:1.8; color:#ccc;">${p.desc}</p>
+                <div style="font-size:10px; color:#666; margin-top:20px; letter-spacing:2px;">${p.brand}</div>
+                <h2 style="font-family:'Cinzel'; color:var(--gold); margin:10px 0;">${p.name}</h2>
+                <p style="font-size:12px; font-weight:200; line-height:1.6; color:#ccc;">Pièce d'exception sélectionnée par nos experts. Livraison sécurisée et assurée.</p>
                 <div style="font-size:24px; color:var(--gold); margin:30px 0;">${p.price} €</div>
-                <button class="btn-buy" onclick="addToCart('${p.name}', ${p.price})">AJOUTER À LA SÉLECTION</button>
+                <button class="btn-gold" onclick="addToCart(${p.id})">AJOUTER À LA SÉLECTION</button>
             `;
-            document.getElementById('product-modal').style.display = 'flex';
+            document.getElementById('product-modal').classList.add('open');
+            tg.HapticFeedback.impactOccurred('light');
         }
 
         function closeModal() {
-            document.getElementById('product-modal').style.display = 'none';
+            document.getElementById('product-modal').classList.remove('open');
         }
 
-        function addToCart(name, price) {
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            cart.push(p);
             tg.HapticFeedback.notificationOccurred('success');
-            tg.MainButton.setText(`COMMANDER : ${name} (${price}€)`);
-            tg.MainButton.show();
-            tg.MainButton.setParams({ color: "#D4AF37", text_color: "#000000" });
             closeModal();
+            
+            // Mise à jour du bouton natif Telegram
+            const total = cart.reduce((sum, i) => sum + i.price, 0);
+            tg.MainButton.setText(`VALIDER L'ACQUISITION (${total} €)`);
+            tg.MainButton.setParams({ color: "#D4AF37", text_color: "#000000" });
+            tg.MainButton.show();
         }
 
+        // --- ENVOI DE LA COMMANDE ---
         tg.onEvent('mainButtonClicked', () => {
-            tg.showConfirm("Voulez-vous confirmer cette acquisition ?", (ok) => {
-                if(ok) tg.close();
-            });
+            const items = cart.map(i => i.name).join(", ");
+            const total = cart.reduce((sum, i) => sum + i.price, 0);
+            
+            const payload = {
+                type: "COMMANDE_PRESTIGE",
+                client: tg.initDataUnsafe?.user?.first_name || "Anonyme",
+                articles: items,
+                total: total
+            };
+
+            // Envoie au Bot et ferme
+            tg.sendData(JSON.stringify(payload));
+            tg.close();
         });
 
     </script>
