@@ -2,169 +2,206 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MAISON LUXE | OFFICIAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAISON LUXE | SYSTÈME AVANCÉ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --black: #050505; --gray: #121212; --border: rgba(197,160,89,0.2); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 120px; }
+        /* DESIGN SYSTÈME */
+        :root { --gold: #C5A059; --black: #050505; --dark-grey: #121212; --accent: #1a1a1a; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: env(safe-area-inset-bottom); overflow-x: hidden; }
 
-        /* HEADER */
-        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid var(--border); background: linear-gradient(to bottom, #111, var(--black)); }
-        .logo { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 10px; color: var(--gold); margin: 0; }
+        /* ANIMATIONS */
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes shimmer { 0% { background-position: -468px 0; } 100% { background-position: 468px 0; } }
+
+        /* UI COMPONENTS */
+        .app-loader { position: fixed; inset: 0; background: var(--black); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+        .header { padding: 60px 20px 30px; border-bottom: 1px solid rgba(197, 160, 89, 0.1); text-align: center; background: linear-gradient(180deg, #111 0%, var(--black) 100%); }
+        .logo { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 12px; color: var(--gold); text-transform: uppercase; }
+
+        /* NAVIGATION PRO */
+        .nav-scroller { position: sticky; top: 0; z-index: 100; background: rgba(5,5,5,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-tabs { display: flex; overflow-x: auto; padding: 15px 20px; gap: 25px; scrollbar-width: none; }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .tab-item { color: #666; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; background: none; transition: 0.3s; padding-bottom: 5px; cursor: pointer; }
+        .tab-item.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+
+        /* GRID AVANCÉE */
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.05); }
+        .product-item { background: var(--black); padding: 25px 15px; text-align: center; position: relative; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .product-item:active { background: #0a0a0a; transform: scale(0.98); }
+        .product-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 20px; filter: grayscale(20%); transition: 0.5s; }
+        .product-item:hover .product-img { filter: grayscale(0%); transform: scale(1.05); }
         
-        /* NAV */
-        .nav-scroll { position: sticky; top: 0; z-index: 100; background: rgba(5,5,5,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-        .categories { display: flex; gap: 20px; overflow-x: auto; padding: 15px 20px; scrollbar-width: none; }
-        .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { background: none; border: none; color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; cursor: pointer; white-space: nowrap; }
-        .cat-btn.active { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 5px; }
+        /* CART DRAWER */
+        .cart-indicator { position: fixed; bottom: 100px; right: 20px; background: var(--gold); color: black; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999; transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .cart-indicator.show { transform: scale(1); }
 
-        /* GRID */
-        .container { padding: 15px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--gray); border: 1px solid var(--border); padding: 10px; text-align: center; }
-        .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 2px; }
-        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-top: 10px; text-transform: uppercase; }
-        .p-name { font-size: 10px; font-weight: 300; margin: 5px 0; height: 25px; overflow: hidden; }
-        .p-price { font-size: 11px; font-weight: 700; color: #fff; }
-
-        /* PANIER VISUEL */
-        .cart-ui { margin-top: 25px; padding: 15px; border: 1px dashed var(--gold); background: #0a0a0a; display: none; }
-        .cart-ui.active { display: block; }
-        .cart-item { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-
-        /* FOOTER */
-        .footer { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
-        .f-link { color: #444; text-decoration: none; font-size: 8px; text-align: center; cursor: pointer; }
-        .f-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; font-style: normal; }
+        /* FOOTER SAV */
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: #0a0a0a; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; padding: 15px 10px calc(15px + env(safe-area-inset-bottom)); }
+        .nav-link { color: #555; text-decoration: none; font-size: 9px; letter-spacing: 1px; text-align: center; transition: 0.3s; }
+        .nav-link i { display: block; font-size: 18px; margin-bottom: 5px; color: var(--gold); opacity: 0.6; }
+        .nav-link:hover { color: white; }
     </style>
 </head>
 <body>
 
+    <div id="loader" class="app-loader">
+        <div class="logo" style="font-size: 14px; letter-spacing: 5px;">Maison Luxe</div>
+    </div>
+
     <header class="header">
-        <h1 class="logo">MAISON LUXE</h1>
-        <div id="user-name" style="font-size: 9px; color: #444; margin-top: 10px; letter-spacing: 3px;">MEMBRE PRIVILÈGE</div>
+        <div class="logo">Maison Luxe</div>
+        <p id="welcome-txt" style="font-size: 9px; letter-spacing: 3px; color: #444; margin-top: 15px;">EST. 2026</p>
     </header>
 
-    <div class="nav-scroll">
-        <div class="categories" id="nav-btns">
-            <button class="cat-btn active" onclick="render('all', this)">Collection</button>
-            <button class="cat-btn" onclick="render('Habille', this)">Prêt-à-Porter</button>
-            <button class="cat-btn" onclick="render('Chaussures', this)">Souliers</button>
-            <button class="cat-btn" onclick="render('Horlogerie', this)">Horlogerie</button>
-            <button class="cat-btn" onclick="render('Maroquinerie', this)">Sacs</button>
+    <div class="nav-scroller">
+        <div class="nav-tabs">
+            <button class="tab-item active" onclick="switchCategory('all', this)">Tous</button>
+            <button class="tab-item" onclick="switchCategory('horlogerie', this)">Horlogerie</button>
+            <button class="tab-item" onclick="switchCategory('maroquinerie', this)">Maroquinerie</button>
+            <button class="tab-item" onclick="switchCategory('joaillerie', this)">Joaillerie</button>
+            <button class="tab-item" onclick="switchCategory('couture', this)">Haute Couture</button>
         </div>
     </div>
 
-    <div class="container">
-        <div id="product-grid" class="grid"></div>
-
-        <div id="cart-box" class="cart-ui">
-            <div style="font-family:'Cinzel'; font-size:11px; color:var(--gold); margin-bottom:10px;">VOTRE SÉLECTION :</div>
-            <div id="cart-list"></div>
-            <div id="cart-total" style="text-align:right; font-weight:700; margin-top:10px; color:var(--gold); border-top:1px solid #333; padding-top:10px;"></div>
+    <div id="main-grid" class="grid-container">
         </div>
-    </div>
 
-    <div class="footer">
-        <div class="f-link" onclick="tg.openTelegramLink('https://t.me/ton_pseudo')"><i>👤</i>CONCIERGE</div>
-        <div class="f-link" onclick="tg.showAlert('Livraison sécurisée sous 24h-48h par transporteur privé.')"><i>📦</i>DÉLAIS</div>
-        <div class="f-link" onclick="clearCart()"><i>🗑️</i>VIDER</div>
-    </div>
+    <div id="cart-badge" class="cart-indicator">0</div>
+
+    <nav class="footer-nav">
+        <a href="https://t.me/votre_pseudo" class="nav-link"><i>👤</i>CONCIERGE</a>
+        <div class="nav-link" onclick="tg.showAlert('Chaque pièce est accompagnée de ses papiers d\'origine et certifiée par notre comité d\'experts.')"><i>📜</i>AUTHENTICITÉ</div>
+        <div class="nav-link" onclick="tg.showPopup({title:'Assistance', message:'Notre conciergerie vous répond sous 15 minutes.', buttons:[{type:'close'}]})"><i>🕒</i>SUPPORT</div>
+    </nav>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
-        let cart = [];
-        const products = [
-            { id: 1, cat: "Habille", brand: "Hermès", name: "Blazer Laine Marine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=400" },
-            { id: 2, cat: "Chaussures", brand: "Loro Piana", name: "Summer Walk Suède", price: 850, img: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400" },
-            { id: 3, cat: "Horlogerie", brand: "Rolex", name: "Daytona Panda", price: 38500, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
-            { id: 4, cat: "Maroquinerie", brand: "Hermès", name: "Birkin 30 Togo", price: 21000, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-            { id: 5, cat: "Chaussures", brand: "Berluti", name: "Richelieu Alessandro", price: 1800, img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400" },
-            { id: 6, cat: "Habille", brand: "Dior", name: "Manteau Cachemire", price: 4500, img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400" }
-        ];
+        // ÉTAT DE L'APPLICATION (STATE MANAGEMENT)
+        const State = {
+            products: [
+                { id: 101, cat: 'horlogerie', brand: 'Rolex', name: 'Daytona Rainbow', price: 450000, img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600' },
+                { id: 102, cat: 'maroquinerie', brand: 'Hermès', name: 'Birkin Faubourg', price: 185000, img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600' },
+                { id: 103, cat: 'joaillerie', brand: 'Cartier', name: 'Bracelet Panthère', price: 72000, img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600' },
+                { id: 104, cat: 'couture', brand: 'Chanel', name: 'Veste Tweed Or', price: 8500, img: 'https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600' },
+                { id: 105, cat: 'horlogerie', brand: 'Patek Philippe', name: 'Aquanaut 5167', price: 68000, img: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=600' }
+            ],
+            cart: JSON.parse(localStorage.getItem('ml_cart')) || [],
+            currentFilter: 'all'
+        };
 
-        // Fonction de rendu corrigée
-        function render(cat = 'all', btn = null) {
-            // Mise à jour visuelle des boutons
-            if(btn) {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        // INITIALISATION
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            }, 1000);
+
+            if (tg.initDataUnsafe?.user) {
+                document.getElementById('welcome-txt').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
             }
 
-            const grid = document.getElementById('product-grid');
-            const items = cat === 'all' ? products : products.filter(p => p.cat === cat);
-            
-            grid.innerHTML = items.map(p => `
-                <div class="card" onclick="addToCart(${p.id})">
-                    <img src="${p.img}">
-                    <div class="p-brand">${p.brand}</div>
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price.toLocaleString()} €</div>
+            renderProducts();
+            updateCartUI();
+        };
+
+        // LOGIQUE DE RENDU
+        function renderProducts() {
+            const container = document.getElementById('main-grid');
+            const items = State.currentFilter === 'all' 
+                ? State.products 
+                : State.products.filter(p => p.cat === State.currentFilter);
+
+            container.innerHTML = items.map(p => `
+                <div class="product-item" onclick="showProductDetails(${p.id})">
+                    <img src="${p.img}" class="product-img" alt="${p.name}">
+                    <div style="font-size:8px; letter-spacing:2px; color:var(--gold); margin-bottom:5px;">${p.brand}</div>
+                    <div style="font-size:10px; font-weight:200; height:24px;">${p.name}</div>
+                    <div style="font-size:12px; font-weight:600; margin-top:10px;">${p.price.toLocaleString()} €</div>
                 </div>
             `).join('');
         }
 
-        function addToCart(id) {
-            const p = products.find(x => x.id === id);
-            cart.push(p);
-            tg.HapticFeedback.impactOccurred('medium');
-            updateUI();
+        function switchCategory(cat, btn) {
+            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            State.currentFilter = cat;
+            tg.HapticFeedback.impactOccurred('light');
+            renderProducts();
         }
 
-        function updateUI() {
-            const box = document.getElementById('cart-box');
-            const list = document.getElementById('cart-list');
-            const totalTxt = document.getElementById('cart-total');
+        // GESTION DU PANIER AVANCÉE
+        function showProductDetails(id) {
+            const p = State.products.find(x => x.id === id);
+            tg.showPopup({
+                title: p.brand,
+                message: `${p.name}\n\nPrix : ${p.price.toLocaleString()} €\n\nSouhaitez-vous ajouter cette pièce d'exception à votre sélection ?`,
+                buttons: [
+                    {id: 'add', type: 'default', text: 'Ajouter au panier'},
+                    {type: 'cancel', text: 'Retour'}
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'add') {
+                    State.cart.push(p);
+                    saveCart();
+                    updateCartUI();
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            });
+        }
+
+        function saveCart() {
+            localStorage.setItem('ml_cart', JSON.stringify(State.cart));
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            const count = State.cart.length;
             
-            if(cart.length > 0) {
-                box.classList.add('active');
-                list.innerHTML = cart.map(i => `
-                    <div class="cart-item">
-                        <span>${i.brand} - ${i.name}</span>
-                        <span>${i.price.toLocaleString()} €</span>
-                    </div>
-                `).join('');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.classList.add('show');
                 
-                const total = cart.reduce((s, i) => s + i.price, 0);
-                totalTxt.innerText = `TOTAL : ${total.toLocaleString()} €`;
-                
-                tg.MainButton.setText(`VALIDER L'ACQUISITION (${total.toLocaleString()} €)`);
-                tg.MainButton.setParams({ color: "#C5A059", text_color: "#000000" });
-                tg.MainButton.show();
+                const total = State.cart.reduce((s, i) => s + i.price, 0);
+                tg.MainButton.setParams({
+                    text: `FINALISER L'ACQUISITION (${total.toLocaleString()} €)`,
+                    color: '#C5A059',
+                    text_color: '#000000',
+                    is_visible: true
+                });
             } else {
-                box.classList.remove('active');
+                badge.classList.remove('show');
                 tg.MainButton.hide();
             }
         }
 
-        function clearCart() {
-            cart = [];
-            updateUI();
-            tg.showAlert('Votre sélection a été réinitialisée.');
-        }
-
-        // ENVOI DE LA COMMANDE
+        // COMMANDE FINALE (DATA PIPELINE)
         tg.onEvent('mainButtonClicked', () => {
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            const data = {
-                client: tg.initDataUnsafe?.user?.first_name || "Client Privé",
-                panier: cart.map(i => `${i.brand} ${i.name} (${i.price}€)`),
-                total: total.toLocaleString() + " €"
+            const total = State.cart.reduce((s, i) => s + i.price, 0);
+            const orderData = {
+                client_id: tg.initDataUnsafe?.user?.id,
+                client_name: tg.initDataUnsafe?.user?.first_name,
+                items: State.cart.map(i => ({ id: i.id, ref: i.name, val: i.price })),
+                total: total,
+                currency: "EUR"
             };
-            tg.sendData(JSON.stringify(data));
-        });
 
-        // Lancement immédiat au chargement
-        if(tg.initDataUnsafe?.user) {
-            document.getElementById('user-name').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
-        }
-        render('all'); 
+            // On vide le panier après envoi
+            tg.showConfirm("Confirmez-vous l'envoi de votre demande d'acquisition ?", (confirm) => {
+                if (confirm) {
+                    tg.sendData(JSON.stringify(orderData));
+                    State.cart = [];
+                    saveCart();
+                    tg.close();
+                }
+            });
+        });
 
     </script>
 </body>
