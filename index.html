@@ -2,132 +2,136 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAISON LUXE</title>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --gold: #C5A059;
-    --black: #050505;
-    --grey: #1a1a1a;
-    --light-grey: #2a2a2a;
+:root{
+ --gold:#C5A059;
+ --black:#050505;
+ --grey:#1a1a1a;
 }
 
-body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: var(--black);
-    color: white;
-    -webkit-font-smoothing: antialiased;
+body{
+ margin:0;
+ font-family:Montserrat;
+ background:var(--black);
+ color:white;
+ padding-bottom:120px;
 }
 
 /* HEADER */
-.header {
-    padding: 40px 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(197,160,89,0.2);
+.header{
+ text-align:center;
+ padding:30px 20px;
+ border-bottom:1px solid rgba(197,160,89,0.2);
 }
-
-.logo {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 8px;
-    font-size: 20px;
-    color: var(--gold);
-}
-
-/* TABS */
-.tabs {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 15px;
-    position: sticky;
-    top: 0;
-    background: var(--black);
-    z-index: 10;
-}
-
-.tab {
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 1px solid #333;
-    font-size: 10px;
-    text-transform: uppercase;
-    cursor: pointer;
-}
-
-.tab.active {
-    background: var(--gold);
-    color: black;
-    border-color: var(--gold);
+.logo{
+ font-family:Cinzel;
+ letter-spacing:8px;
+ color:var(--gold);
 }
 
 /* GRID */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 12px;
+.grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+ padding:15px;
 }
 
-.card {
-    background: var(--grey);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-    transition: 0.3s;
+.card{
+ background:var(--grey);
+ padding:12px;
+ border-radius:8px;
+ text-align:center;
 }
 
-.card:active {
-    transform: scale(0.97);
+.card img{
+ width:100%;
+ border-radius:6px;
 }
 
-.card img {
-    width: 100%;
-    border-radius: 6px;
+.add-btn{
+ margin-top:8px;
+ padding:8px;
+ width:100%;
+ border:1px solid var(--gold);
+ background:transparent;
+ color:var(--gold);
+ border-radius:4px;
 }
 
-.card-brand {
-    font-size: 9px;
-    color: var(--gold);
-    letter-spacing: 2px;
-    margin-top: 6px;
+/* PANIER BUTTON */
+.cart-floating{
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ background:var(--gold);
+ color:black;
+ padding:12px 18px;
+ border-radius:30px;
+ font-weight:600;
 }
 
-.card-name {
-    font-size: 11px;
-    margin: 6px 0;
-    min-height: 28px;
+/* OVERLAY PANIER */
+.overlay{
+ position:fixed;
+ top:0;
+ left:0;
+ width:100%;
+ height:100%;
+ background:#000;
+ z-index:100;
+ display:none;
+ flex-direction:column;
 }
 
-.card-price {
-    font-weight: 600;
+.overlay-header{
+ padding:20px;
+ border-bottom:1px solid #333;
+ font-weight:600;
 }
 
-.add-btn {
-    margin-top: 8px;
-    padding: 8px;
-    width: 100%;
-    border: 1px solid var(--gold);
-    background: transparent;
-    color: var(--gold);
-    font-size: 10px;
-    border-radius: 4px;
+.overlay-content{
+ flex:1;
+ overflow:auto;
+ padding:15px;
 }
 
-.cart-badge {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--gold);
-    color: black;
-    padding: 10px 18px;
-    border-radius: 30px;
-    font-weight: 600;
-    display: none;
+.cart-item{
+ background:#111;
+ padding:10px;
+ margin-bottom:10px;
+ border-radius:6px;
+ display:flex;
+ justify-content:space-between;
+}
+
+.remove{
+ color:red;
+ cursor:pointer;
+ font-size:12px;
+}
+
+/* FOOTER INFO */
+.footer{
+ padding:20px;
+ border-top:1px solid #222;
+ font-size:12px;
+ color:#aaa;
+}
+
+.support-btn{
+ margin-top:10px;
+ padding:10px;
+ width:100%;
+ background:var(--gold);
+ border:none;
+ border-radius:4px;
+ font-weight:600;
 }
 </style>
 </head>
@@ -135,153 +139,153 @@ body {
 <body>
 
 <div class="header">
-    <div class="logo">MAISON LUXE</div>
-    <div id="greeting" style="font-size:10px;color:#777;margin-top:8px;">CHARGEMENT...</div>
-</div>
-
-<div class="tabs">
-    <div class="tab active" data-cat="all">Tous</div>
-    <div class="tab" data-cat="horlogerie">Horlogerie</div>
-    <div class="tab" data-cat="maroquinerie">Maroquinerie</div>
-    <div class="tab" data-cat="joaillerie">Joaillerie</div>
+<div class="logo">MAISON LUXE</div>
+<div id="welcome" style="font-size:12px;color:#777;"></div>
 </div>
 
 <div class="grid" id="grid"></div>
-<div class="cart-badge" id="cartBadge"></div>
+
+<div class="cart-floating" onclick="openCart()" id="cartBtn">
+PANIER (0)
+</div>
+
+<!-- OVERLAY PANIER -->
+<div class="overlay" id="cartOverlay">
+<div class="overlay-header">
+VOTRE PANIER
+<span style="float:right;cursor:pointer" onclick="closeCart()">✕</span>
+</div>
+
+<div class="overlay-content" id="cartContent"></div>
+
+<div class="footer">
+🚚 Livraison estimée : 3 à 7 jours ouvrés  
+🔐 Paiement sécurisé  
+📦 Assurance incluse  
+
+<button class="support-btn" onclick="contactSupport()">CONTACTER LE SAV</button>
+</div>
+</div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* =========================
-   CONFIG
-========================= */
-
-const PRODUCTS = [
-{ id:1, cat:"horlogerie", brand:"ROLEX", name:"Submariner Date", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
-{ id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30 Togo", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-{ id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love Or", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
-{ id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" }
+/* PRODUITS */
+const PRODUCTS=[
+{ id:1, name:"Rolex Submariner", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
+{ id:2, name:"Birkin 30", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+{ id:3, name:"Bracelet Love", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" }
 ];
 
-/* =========================
-   STATE
-========================= */
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
-let state = {
-    cart: JSON.parse(localStorage.getItem("cart")) || [],
-    category: "all"
-};
+/* RENDER PRODUITS */
+function render(){
+ const grid=document.getElementById("grid");
+ grid.innerHTML="";
+ PRODUCTS.forEach(p=>{
+  grid.innerHTML+=`
+   <div class="card">
+    <img src="${p.img}">
+    <div>${p.name}</div>
+    <div>${p.price.toLocaleString("fr-FR")} €</div>
+    <button class="add-btn" onclick="add(${p.id})">AJOUTER</button>
+   </div>
+  `;
+ });
+}
+render();
 
-/* =========================
-   UTILS
-========================= */
-
-function formatPrice(p){
-    return p.toLocaleString("fr-FR") + " €";
+/* PANIER */
+function add(id){
+ const product=PRODUCTS.find(p=>p.id===id);
+ cart.push(product);
+ save();
+ updateCartButton();
+ tg.HapticFeedback.notificationOccurred("success");
 }
 
-/* =========================
-   RENDER
-========================= */
-
-function renderProducts(){
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    const list = state.category === "all"
-        ? PRODUCTS
-        : PRODUCTS.filter(p => p.cat === state.category);
-
-    list.forEach(p=>{
-        grid.innerHTML += `
-        <div class="card">
-            <img src="${p.img}" alt="">
-            <div class="card-brand">${p.brand}</div>
-            <div class="card-name">${p.name}</div>
-            <div class="card-price">${formatPrice(p.price)}</div>
-            <button class="add-btn" onclick="addToCart(${p.id})">ACQUÉRIR</button>
-        </div>
-        `;
-    });
+function remove(index){
+ cart.splice(index,1);
+ save();
+ renderCart();
+ updateCartButton();
 }
 
-function updateCartUI(){
-    const badge = document.getElementById("cartBadge");
-    const total = state.cart.reduce((s,i)=>s+i.price,0);
-
-    if(state.cart.length === 0){
-        badge.style.display="none";
-        tg.MainButton.hide();
-        return;
-    }
-
-    badge.style.display="block";
-    badge.innerText = `${state.cart.length} PIÈCE(S) • ${formatPrice(total)}`;
-
-    tg.MainButton.text = `FINALISER (${formatPrice(total)})`;
-    tg.MainButton.setParams({color:"#C5A059",text_color:"#000000"});
-    tg.MainButton.show();
+function save(){
+ localStorage.setItem("cart",JSON.stringify(cart));
 }
 
-/* =========================
-   ACTIONS
-========================= */
-
-function addToCart(id){
-    const product = PRODUCTS.find(p=>p.id===id);
-    state.cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(state.cart));
-    tg.HapticFeedback.notificationOccurred("success");
-    updateCartUI();
+function updateCartButton(){
+ document.getElementById("cartBtn").innerText=
+ "PANIER ("+cart.length+")";
 }
 
-/* =========================
-   EVENTS
-========================= */
-
-document.querySelectorAll(".tab").forEach(tab=>{
-    tab.addEventListener("click", ()=>{
-        document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-        tab.classList.add("active");
-        state.category = tab.dataset.cat;
-        renderProducts();
-        tg.HapticFeedback.impactOccurred("light");
-    });
-});
-
-tg.onEvent("mainButtonClicked", ()=>{
-    const total = state.cart.reduce((s,i)=>s+i.price,0);
-
-    const payload = {
-        user_id: tg.initDataUnsafe?.user?.id,
-        client: tg.initDataUnsafe?.user?.first_name,
-        items: state.cart.map(i=>({id:i.id})), // sécurisé
-        total: total
-    };
-
-    tg.showConfirm(`Confirmer la demande pour ${formatPrice(total)} ?`, ok=>{
-        if(ok){
-            tg.sendData(JSON.stringify(payload));
-        }
-    });
-});
-
-/* =========================
-   INIT
-========================= */
-
-function init(){
-    if(tg.initDataUnsafe?.user){
-        document.getElementById("greeting").innerText =
-        "BIENVENUE, " + tg.initDataUnsafe.user.first_name.toUpperCase();
-    }
-
-    renderProducts();
-    updateCartUI();
+function openCart(){
+ document.getElementById("cartOverlay").style.display="flex";
+ renderCart();
 }
 
-init();
+function closeCart(){
+ document.getElementById("cartOverlay").style.display="none";
+}
+
+function renderCart(){
+ const container=document.getElementById("cartContent");
+ container.innerHTML="";
+ if(cart.length===0){
+  container.innerHTML="<p>Votre panier est vide.</p>";
+  return;
+ }
+
+ let total=0;
+ cart.forEach((item,i)=>{
+  total+=item.price;
+  container.innerHTML+=`
+   <div class="cart-item">
+    <div>${item.name}</div>
+    <div>
+      ${item.price.toLocaleString("fr-FR")} €
+      <div class="remove" onclick="remove(${i})">Retirer</div>
+    </div>
+   </div>
+  `;
+ });
+
+ container.innerHTML+=`
+  <hr>
+  <h3>Total : ${total.toLocaleString("fr-FR")} €</h3>
+  <button class="support-btn" onclick="checkout(${total})">
+   FINALISER LA COMMANDE
+  </button>
+ `;
+}
+
+/* CHECKOUT */
+function checkout(total){
+ tg.showConfirm("Confirmer la commande ?", ok=>{
+  if(ok){
+   tg.sendData(JSON.stringify({
+    user:tg.initDataUnsafe?.user?.id,
+    items:cart,
+    total:total
+   }));
+  }
+ });
+}
+
+/* SUPPORT */
+function contactSupport(){
+ tg.openTelegramLink("https://t.me/TON_BOT_OU_SUPPORT");
+}
+
+/* INIT */
+updateCartButton();
+if(tg.initDataUnsafe?.user){
+ document.getElementById("welcome").innerText=
+ "Bienvenue "+tg.initDataUnsafe.user.first_name;
+}
 </script>
 
 </body>
