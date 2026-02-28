@@ -3,9 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Shop</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Luxury Shop | Maison de Haute Couture</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- STYLE LUXE MINIMALISTE --- */
+        :root {
+            --black: #121212;
+            --white: #ffffff;
+            --grey: #f4f4f4;
+            --dark-grey: #888888;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--grey);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 12px; /* Espacement luxe */
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--dark-grey);
+        }
+
+        /* Grille de produits */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 60px 40px;
+        }
+
+        /* Carte Produit */
+        .product-card {
+            position: relative;
+            text-align: left;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            background-color: var(--grey);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05); /* Zoom très léger et fluide */
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--black);
+            color: white;
+            font-size: 8px;
+            padding: 6px 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 5;
+        }
+
+        /* Infos Produit */
+        .brand {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--dark-grey);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 25px;
+        }
+
+        .product-card h3 {
+            font-size: 16px;
+            font-weight: 400;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 15px;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        /* Bouton */
+        .buy-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--black);
+            color: var(--black);
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .buy-btn:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* Section Support / Telegram */
+        .support-section {
+            text-align: center;
+            padding: 100px 20px;
+            background-color: var(--grey);
+            margin-top: 60px;
+        }
+
+        .support-section h2 {
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        .support-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: var(--black);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: opacity 0.3s;
+        }
+
+        .support-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
 
@@ -18,29 +183,34 @@
         <section class="product-grid">
             
             <div class="product-card">
-                <div class="product-badge">Premium</div>
-                <img src="https://via.placeholder.com/300x300?text=Produit+1" alt="Produit">
-                <h3>Montre de Luxe</h3>
-                <p class="price">1,200.00 €</p>
-                <button class="buy-btn">Ajouter au panier</button>
+                <div class="product-badge">Édition Limitée</div>
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x800?text=Montre+Premium" alt="Montre de Luxe">
+                </div>
+                <span class="brand">Rolex</span>
+                <h3>Oyster Perpetual</h3>
+                <p class="price">12 500,00 €</p>
+                <button class="buy-btn">Acquérir cette pièce</button>
             </div>
 
             <div class="product-card">
-                <img src="https://via.placeholder.com/300x300?text=Produit+2" alt="Produit">
-                <h3>Sac en Cuir</h3>
-                <p class="price">850.00 €</p>
-                <button class="buy-btn">Ajouter au panier</button>
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x800?text=Sac+Premium" alt="Sac en Cuir">
+                </div>
+                <span class="brand">Louis Vuitton</span>
+                <h3>Sac de Voyage Keepall</h3>
+                <p class="price">2 100,00 €</p>
+                <button class="buy-btn">Acquérir cette pièce</button>
             </div>
 
-            </section>
+        </section>
 
         <section class="support-section">
-            <h2>Besoin d'aide ?</h2>
-            <p>Notre service client est disponible 24h/7j pour vous accompagner.</p>
-            <a href="https://t.me/VOTRE_PSEUDO" class="support-btn">Contactez le SAV sur Telegram</a>
+            <h2>Expérience Client</h2>
+            <p>Besoin d'un conseil personnalisé ? Notre conciergerie vous répond.</p>
+            <a href="https://t.me/VOTRE_PSEUDO" class="support-btn">Contacter un expert</a>
         </section>
     </main>
 
-    <script src="script.js"></script>
 </body>
 </html>
