@@ -4,222 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MAISON LUXE | Officiel</title>
-    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
-    
     <style>
-        :root { 
-            --gold: #D4AF37; 
-            --black: #050505; 
-            --dark: #121212; 
-            --border: rgba(212, 175, 55, 0.3);
-            --glass: rgba(255, 255, 255, 0.03);
-        }
-
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0; background: var(--black); 
-            color: white; padding-bottom: 140px; 
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- HEADER --- */
-        .header { 
-            text-align: center; padding: 50px 20px; 
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(to bottom, #1a1a1a, var(--black));
-        }
-        .logo { 
-            font-family: 'Cinzel', serif; font-size: 32px; 
-            letter-spacing: 10px; color: var(--gold); margin: 0; 
-        }
-        .slogan { 
-            font-size: 9px; letter-spacing: 5px; color: #888; 
-            text-transform: uppercase; margin-top: 10px; 
-        }
-
-        /* --- CONTENU --- */
-        .container { padding: 20px; }
+        :root { --gold: #D4AF37; --black: #050505; --dark: #121212; --border: rgba(212, 175, 55, 0.3); --glass: rgba(255, 255, 255, 0.03); }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--black); color: white; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
         
-        .welcome-msg {
-            text-align: center; font-size: 12px; letter-spacing: 2px;
-            margin-bottom: 30px; color: var(--gold); font-weight: 200;
-        }
-
-        /* --- GRILLE PRODUITS --- */
-        .product-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; 
-        }
-        .product-card { 
-            background: var(--glass); border: 1px solid var(--border); 
-            padding: 10px; text-align: center; transition: 0.3s;
-        }
-        .product-card img { 
-            width: 100%; height: 180px; object-fit: cover; 
-            margin-bottom: 12px; filter: brightness(0.9);
-        }
-        .p-brand { font-size: 8px; letter-spacing: 2px; color: #666; margin-bottom: 5px; }
-        .p-name { font-size: 11px; letter-spacing: 1px; font-weight: 400; height: 30px; overflow: hidden; }
-        .p-price { color: var(--gold); font-weight: 600; margin-top: 10px; font-size: 14px; }
-
-        /* --- BARRE CONCIERGERIE FIXE --- */
-        .concierge-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(5, 5, 5, 0.95);
-            border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around;
-            padding: 20px 0; z-index: 999;
-            backdrop-filter: blur(15px);
-        }
-        .contact-link {
-            text-decoration: none; color: white; font-size: 9px;
-            letter-spacing: 2px; display: flex; flex-direction: column; 
-            align-items: center; transition: 0.3s;
-        }
-        .contact-link i { 
-            font-size: 18px; color: var(--gold); margin-bottom: 8px; 
-        }
-
-        /* --- MODAL DETAIL --- */
-        .modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--black); z-index: 10000; 
-            display: none; flex-direction: column; padding: 30px; box-sizing: border-box; 
-        }
-        .modal.open { display: flex; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* HEADER */
+        .header { text-align: center; padding: 40px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(to bottom, #1a1a1a, var(--black)); }
+        .logo { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: 8px; color: var(--gold); margin: 0; }
         
-        .close-btn { align-self: flex-end; font-size: 30px; color: var(--gold); cursor: pointer; }
-        .btn-gold { 
-            background: var(--gold); color: black; border: none; 
-            padding: 20px; font-weight: bold; width: 100%; 
-            letter-spacing: 3px; margin-top: 30px; font-family: 'Montserrat';
-        }
+        /* NAVIGATION CATEGORIES */
+        .categories { display: flex; justify-content: center; gap: 15px; margin: 20px 0; overflow-x: auto; padding: 10px; }
+        .cat-btn { background: none; border: 1px solid var(--border); color: #888; padding: 8px 15px; font-size: 10px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
+        .cat-btn.active { border-color: var(--gold); color: var(--gold); }
 
-        /* --- AVIS CLIENTS --- */
-        .reviews { margin-top: 50px; border-top: 1px solid var(--border); padding-top: 30px; }
-        .review-card { background: var(--glass); padding: 15px; margin-bottom: 15px; border-left: 1px solid var(--gold); }
+        /* GRILLE */
+        .container { padding: 15px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .product-card { background: var(--glass); border: 1px solid var(--border); padding: 10px; text-align: center; }
+        .product-card img { width: 100%; height: 150px; object-fit: cover; margin-bottom: 10px; }
+        .p-brand { font-size: 8px; color: #666; letter-spacing: 1px; }
+        .p-name { font-size: 10px; margin: 5px 0; height: 25px; overflow: hidden; }
+        .p-price { color: var(--gold); font-size: 12px; font-weight: 600; }
+
+        /* MODALE */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 10000; display: none; flex-direction: column; padding: 25px; box-sizing: border-box; }
+        .modal.open { display: flex; }
+        .btn-gold { background: var(--gold); color: black; border: none; padding: 18px; font-weight: bold; width: 100%; letter-spacing: 2px; margin-top: auto; cursor: pointer; }
+        
+        /* CONCIERGERIE FIXE */
+        .concierge-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5,5,5,0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; backdrop-filter: blur(10px); }
+        .contact-link { text-decoration: none; color: white; font-size: 8px; letter-spacing: 1px; text-align: center; }
+        .contact-link i { display: block; font-size: 18px; color: var(--gold); margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <h1 class="logo">MAISON LUXE</h1>
-        <div class="slogan">L'Art de l'Excellence</div>
+        <div id="user-greeting" style="font-size: 9px; color: var(--gold); margin-top: 15px; letter-spacing: 3px;">BIENVENUE</div>
     </header>
 
+    <div class="categories" id="cat-list">
+        <button class="cat-btn active" onclick="filterCat('all')">TOUT</button>
+        <button class="cat-btn" onclick="filterCat('Horlogerie')">MONTRES</button>
+        <button class="cat-btn" onclick="filterCat('Maroquinerie')">SACS</button>
+    </div>
+
     <div class="container">
-        <div class="welcome-msg" id="user-greeting">BIENVENUE DANS VOTRE ESPACE PRIVÉ</div>
-
-        <div id="grid" class="product-grid">
-            </div>
-
-        <section class="reviews">
-            <h3 style="font-family:'Cinzel'; font-size:14px; text-align:center; letter-spacing:3px; color:var(--gold);">Témoignages</h3>
-            <div class="review-card">
-                <div style="color:var(--gold); font-size:10px; margin-bottom:5px;">★★★★★</div>
-                <p style="font-size:11px; font-style:italic; margin:0;">"Service irréprochable et pièces d'une qualité rare. Je recommande la Maison Luxe."</p>
-                <p style="font-size:9px; text-align:right; margin-top:10px;">— Marc-Antoine D.</p>
-            </div>
-        </section>
+        <div id="grid" class="product-grid"></div>
     </div>
 
     <div class="concierge-bar">
-        <a href="https://wa.me/33600000000" class="contact-link">
-            <i>💬</i> WHATSAPP
-        </a>
-        <a href="https://t.me/ton_pseudo" class="contact-link">
-            <i>👤</i> CONCIERGE
-        </a>
-        <div class="contact-link" onclick="tg.showAlert('Chaque pièce est livrée avec son certificat d\'authenticité.')">
-            <i>🛡️</i> GARANTIE
-        </div>
+        <a href="https://t.me/ton_pseudo" class="contact-link"><i>👤</i>CONCIERGE</a>
+        <div class="contact-link" onclick="tg.showAlert('Certificat d\'authenticité inclus.')"><i>🛡️</i>GARANTIE</div>
     </div>
 
     <div id="product-modal" class="modal">
-        <span class="close-btn" onclick="closeModal()">✕</span>
-        <div id="modal-body" style="text-align:center; margin-top:20px;"></div>
+        <div id="modal-body" style="text-align:center; flex-grow: 1;"></div>
+        <button id="add-btn" class="btn-gold">AJOUTER À LA SÉLECTION</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        
-        // Nom de l'utilisateur
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-greeting').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
-        }
 
         let cart = [];
-
         const products = [
-            { id: 1, brand: "HERMÈS", name: "Blazer en Laine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=600" },
-            { id: 2, brand: "ROLEX", name: "Oyster Perpetual", price: 8400, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600" },
-            { id: 3, brand: "DIOR", name: "Sac Lady Noir", price: 4200, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600" },
-            { id: 4, brand: "CHANEL", name: "Parfum N°5", price: 185, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600" }
+            { id: 1, cat: "Vêtements", brand: "HERMÈS", name: "Blazer Laine", price: 1250, img: "https://images.unsplash.com/photo-1594932224010-74f43a18652b?w=400" },
+            { id: 2, cat: "Horlogerie", brand: "ROLEX", name: "Oyster Perpetual", price: 8400, img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
+            { id: 3, cat: "Maroquinerie", brand: "DIOR", name: "Sac Lady Noir", price: 4200, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+            { id: 4, cat: "Beauté", brand: "CHANEL", name: "Parfum N°5", price: 185, img: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" }
         ];
 
-        // Remplir la grille
-        const grid = document.getElementById('grid');
-        grid.innerHTML = products.map(p => `
-            <div class="product-card" onclick="openProduct(${p.id})">
-                <img src="${p.img}">
-                <div class="p-brand">${p.brand}</div>
-                <div class="p-name">${p.name}</div>
-                <div class="p-price">${p.price} €</div>
-            </div>
-        `).join('');
+        function renderGrid(filter = 'all') {
+            const grid = document.getElementById('grid');
+            const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card" onclick="openProduct(${p.id})">
+                    <img src="${p.img}">
+                    <div class="p-brand">${p.brand}</div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price} €</div>
+                </div>
+            `).join('');
+        }
+
+        function filterCat(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGrid(cat);
+        }
 
         function openProduct(id) {
             const p = products.find(x => x.id === id);
             document.getElementById('modal-body').innerHTML = `
-                <img src="${p.img}" style="width:100%; border:1px solid var(--border);">
-                <div style="font-size:10px; color:#666; margin-top:20px; letter-spacing:2px;">${p.brand}</div>
-                <h2 style="font-family:'Cinzel'; color:var(--gold); margin:10px 0;">${p.name}</h2>
-                <p style="font-size:12px; font-weight:200; line-height:1.6; color:#ccc;">Pièce d'exception sélectionnée par nos experts. Livraison sécurisée et assurée.</p>
-                <div style="font-size:24px; color:var(--gold); margin:30px 0;">${p.price} €</div>
-                <button class="btn-gold" onclick="addToCart(${p.id})">AJOUTER À LA SÉLECTION</button>
+                <img src="${p.img}" style="width:100%; margin-bottom:20px;">
+                <div style="font-size:10px; color:#666;">${p.brand}</div>
+                <h2 style="font-family:'Cinzel'; color:var(--gold);">${p.name}</h2>
+                <div style="font-size:22px; color:var(--gold); margin:20px 0;">${p.price} €</div>
             `;
+            document.getElementById('add-btn').onclick = () => addToCart(p);
             document.getElementById('product-modal').classList.add('open');
-            tg.HapticFeedback.impactOccurred('light');
+            tg.BackButton.show();
         }
 
-        function closeModal() {
+        tg.onEvent('backButtonClicked', () => {
             document.getElementById('product-modal').classList.remove('open');
-        }
-
-        function addToCart(id) {
-            const p = products.find(x => x.id === id);
-            cart.push(p);
-            tg.HapticFeedback.notificationOccurred('success');
-            closeModal();
-            
-            // Mise à jour du bouton natif Telegram
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            tg.MainButton.setText(`VALIDER L'ACQUISITION (${total} €)`);
-            tg.MainButton.setParams({ color: "#D4AF37", text_color: "#000000" });
-            tg.MainButton.show();
-        }
-
-        // --- ENVOI DE LA COMMANDE ---
-        tg.onEvent('mainButtonClicked', () => {
-            const items = cart.map(i => i.name).join(", ");
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            
-            const payload = {
-                type: "COMMANDE_PRESTIGE",
-                client: tg.initDataUnsafe?.user?.first_name || "Anonyme",
-                articles: items,
-                total: total
-            };
-
-            // Envoie au Bot et ferme
-            tg.sendData(JSON.stringify(payload));
-            tg.close();
+            tg.BackButton.hide();
         });
 
+        function addToCart(product) {
+            cart.push(product);
+            tg.HapticFeedback.notificationOccurred('success');
+            document.getElementById('product-modal').classList.remove('open');
+            tg.BackButton.hide();
+            updateMainButton();
+        }
+
+        function updateMainButton() {
+            if (cart.length > 0) {
+                const total = cart.reduce((sum, i) => sum + i.price, 0);
+                tg.MainButton.setText(`VALIDER L'ACQUISITION (${total} €)`);
+                tg.MainButton.setParams({ color: "#D4AF37", text_color: "#000000" });
+                tg.MainButton.show();
+            }
+        }
+
+        tg.onEvent('mainButtonClicked', () => {
+            const data = {
+                order: cart.map(i => i.name),
+                total: cart.reduce((sum, i) => sum + i.price, 0),
+                user: tg.initDataUnsafe?.user?.username || "Client"
+            };
+            tg.sendData(JSON.stringify(data));
+        });
+
+        // Init
+        if (tg.initDataUnsafe?.user) {
+            document.getElementById('user-greeting').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
+        }
+        renderGrid();
     </script>
 </body>
 </html>
