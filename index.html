@@ -2,180 +2,146 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MAISON LUXE | EXCELLENCE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MAISON LUXE | SYSTÈME AVANCÉ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --black: #050505; --dark: #121212; --border: rgba(197, 160, 89, 0.3); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 100px; overflow-x: hidden; }
+        :root { --gold: #C5A059; --black: #050505; --grey: #1a1a1a; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--black); color: white; margin: 0; padding-bottom: 100px; }
+        
+        /* Header Luxe */
+        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(197, 160, 89, 0.2); }
+        .logo { font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 8px; color: var(--gold); }
+        
+        /* Tabs */
+        .tabs { display: flex; overflow-x: auto; padding: 20px; gap: 15px; sticky; top: 0; background: var(--black); z-index: 10; }
+        .tab { padding: 8px 15px; border: 1px solid #333; border-radius: 20px; font-size: 10px; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+        .tab.active { background: var(--gold); color: black; border-color: var(--gold); }
 
-        .header { padding: 40px 20px; text-align: center; border-bottom: 1px solid var(--border); }
-        .logo { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 10px; color: var(--gold); text-transform: uppercase; margin: 0; }
+        /* Grille de produits */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .card { background: var(--grey); padding: 15px; border-radius: 8px; text-align: center; }
+        .card img { width: 100%; border-radius: 5px; margin-bottom: 10px; }
+        .card-brand { color: var(--gold); font-size: 9px; letter-spacing: 2px; }
+        .card-name { font-size: 11px; margin: 5px 0; height: 30px; }
+        .card-price { font-weight: bold; color: white; }
+        
+        /* Bouton Ajouter */
+        .add-btn { margin-top: 10px; width: 100%; padding: 8px; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 4px; font-size: 10px; cursor: pointer; transition: 0.3s; }
+        .add-btn:active { background: var(--gold); color: black; }
 
-        .nav-tabs { display: flex; overflow-x: auto; padding: 15px; gap: 20px; position: sticky; top: 0; background: rgba(5,5,5,0.95); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); scrollbar-width: none; }
-        .tab-item { color: #555; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: none; background: none; white-space: nowrap; cursor: pointer; }
-        .tab-item.active { color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
-        .product { background: var(--black); padding: 25px 15px; text-align: center; }
-        .product img { width: 100%; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .p-brand { font-size: 8px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-        .p-name { font-size: 10px; font-weight: 200; margin: 5px 0; height: 24px; overflow: hidden; }
-        .p-price { font-size: 11px; font-weight: 700; color: #fff; }
-
-        /* MODALE PRODUIT (ZOOM) */
-        .modal-view { position: fixed; inset: 0; background: var(--black); z-index: 3000; display: none; flex-direction: column; padding: 20px; text-align: center; }
-        .modal-view.open { display: flex; }
-        .modal-view img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid var(--border); margin-bottom: 20px; }
-        .btn-gold { background: var(--gold); color: black; border: none; padding: 18px; width: 100%; font-weight: bold; letter-spacing: 2px; margin-top: auto; cursor: pointer; }
-
-        /* MODALE PANIER */
-        .modal-cart { position: fixed; inset: 0; background: var(--black); z-index: 2000; display: none; flex-direction: column; padding: 30px; }
-        .modal-cart.open { display: flex; }
-        .cart-list { flex-grow: 1; overflow-y: auto; margin-top: 20px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #222; font-size: 11px; }
-        .remove-btn { color: #ff4444; font-weight: bold; font-size: 18px; padding-left: 15px; cursor: pointer; }
-
-        .footer { position: fixed; bottom: 0; width: 100%; background: #0a0a0a; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 10px; z-index: 1000; }
-        .nav-link { color: #444; text-decoration: none; font-size: 8px; text-align: center; cursor: pointer; position: relative; }
-        .badge { position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; font-size: 9px; padding: 2px 5px; border-radius: 10px; display: none; }
+        /* Badge Panier */
+        .cart-status { position: fixed; bottom: 20px; right: 20px; background: var(--gold); color: black; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: pop 0.3s ease; }
+        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <header class="header"><h1 class="logo">Maison Luxe</h1></header>
-
-    <div class="nav-tabs">
-        <button class="tab-item active" onclick="filter('all', this)">Tous</button>
-        <button class="tab-item" onclick="filter('habille', this)">Habille Luxe</button>
-        <button class="tab-item" onclick="filter('chaussures', this)">Souliers</button>
-        <button class="tab-item" onclick="filter('horlogerie', this)">Horlogerie</button>
-        <button class="tab-item" onclick="filter('maroquinerie', this)">Maroquinerie</button>
+    <div class="header">
+        <div class="logo">MAISON LUXE</div>
+        <div id="user-greeting" style="font-size: 10px; color: #666; margin-top: 10px;">CHARGEMENT...</div>
     </div>
 
-    <div id="grid" class="grid"></div>
-
-    <div id="product-modal" class="modal-view">
-        <div id="modal-content"></div>
-        <button class="btn-gold" id="confirm-add">AJOUTER À LA SÉLECTION</button>
+    <div class="tabs" id="tabs-container">
+        <div class="tab active" onclick="filter('all')">Tous</div>
+        <div class="tab" onclick="filter('horlogerie')">Horlogerie</div>
+        <div class="tab" onclick="filter('maroquinerie')">Maroquinerie</div>
+        <div class="tab" onclick="filter('joaillerie')">Joaillerie</div>
     </div>
 
-    <div id="cart-modal" class="modal-cart">
-        <div style="font-family:'Cinzel'; color:var(--gold); font-size:20px; text-align:center;">VOTRE PANIER</div>
-        <div id="cart-items-list" class="cart-list"></div>
-        <div id="cart-total-price" style="font-size:18px; color:var(--gold); text-align:right; margin-top:20px; font-weight:700;"></div>
-        <button class="btn-gold" onclick="toggleCart()">RETOUR AU SHOP</button>
-    </div>
-
-    <nav class="footer">
-        <div class="nav-link" onclick="tg.openTelegramLink('https://t.me/ton_pseudo')"><i>👤</i>CONCIERGE</div>
-        <div class="nav-link" onclick="tg.showAlert('LIVRAISON :\n🇫🇷 24h | 🇪🇺 48h | 🌎 4 jours')"><i>📦</i>LIVRAISON</div>
-        <div class="nav-link" onclick="toggleCart()"><i>🛒</i>PANIER <span id="cart-badge" class="badge">0</span></div>
-    </nav>
+    <div class="grid" id="product-grid"></div>
+    <div class="cart-status" id="cart-badge">0 ARTICLES</div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let cart = [];
-        const products = [
-            { id: 1, cat: 'habille', b: 'HERMÈS', n: 'Manteau Cachemire', p: 4200, i: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500' },
-            { id: 2, cat: 'chaussures', b: 'BERLUTI', n: 'Richelieu Alessandro', p: 1850, i: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500' },
-            { id: 3, cat: 'horlogerie', b: 'ROLEX', n: 'Daytona Panda', p: 38500, i: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=500' },
-            { id: 4, cat: 'maroquinerie', b: 'HERMÈS', n: 'Birkin 30 Togo', p: 21500, i: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500' }
+        const PRODUCTS = [
+            { id: 1, cat: 'horlogerie', brand: 'ROLEX', name: 'Submariner Date', price: 14500, img: 'https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400' },
+            { id: 2, cat: 'maroquinerie', brand: 'HERMÈS', name: 'Birkin 30 Togo', price: 22000, img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400' },
+            { id: 3, cat: 'joaillerie', brand: 'CARTIER', name: 'Bracelet Love Or', price: 7800, img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400' },
+            { id: 4, cat: 'horlogerie', brand: 'AP', name: 'Royal Oak Blue', price: 55000, img: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400' }
         ];
 
-        function render(cat = 'all') {
-            const grid = document.getElementById('grid');
-            const items = cat === 'all' ? products : products.filter(x => x.cat === cat);
-            grid.innerHTML = items.map(p => `
-                <div class="product" onclick="openZoom(${p.id})">
-                    <img src="${p.i}">
-                    <div class="p-brand">${p.b}</div>
-                    <div class="p-name">${p.n}</div>
-                    <div class="p-price">${p.p.toLocaleString()} €</div>
-                </div>
-            `).join('');
+        let cart = [];
+
+        // Initialisation
+        function init() {
+            if (tg.initDataUnsafe?.user) {
+                document.getElementById('user-greeting').innerText = `BIENVENUE, ${tg.initDataUnsafe.user.first_name.toUpperCase()}`;
+            }
+            renderProducts('all');
         }
 
-        function openZoom(id) {
-            const p = products.find(x => x.id === id);
-            document.getElementById('modal-content').innerHTML = `
-                <img src="${p.i}">
-                <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:10px;">${p.b}</div>
-                <h2 style="font-family:'Cinzel'; margin:10px 0;">${p.n}</h2>
-                <div style="font-size:20px; font-weight:700;">${p.p.toLocaleString()} €</div>
-                <p style="font-size:12px; color:#666; margin-top:20px;">Pièce d'exception certifiée par nos experts.</p>
-            `;
-            document.getElementById('confirm-add').onclick = () => { add(p); closeZoom(); };
-            document.getElementById('product-modal').classList.add('open');
-            tg.BackButton.show();
+        function renderProducts(category) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            
+            const filtered = category === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === category);
+            
+            filtered.forEach(p => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${p.img}" alt="${p.name}">
+                        <div class="card-brand">${p.brand}</div>
+                        <div class="card-name">${p.name}</div>
+                        <div class="card-price">${p.price.toLocaleString()} €</div>
+                        <button class="add-btn" onclick="addToCart(${p.id})">ACQUÉRIR</button>
+                    </div>
+                `;
+            });
         }
 
-        function closeZoom() { document.getElementById('product-modal').classList.remove('open'); tg.BackButton.hide(); }
+        function filter(cat) {
+            renderProducts(cat);
+            // Mise à jour visuelle des tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            tg.HapticFeedback.impactOccurred('light');
+        }
 
-        function add(product) {
-            cart.push({...product, uid: Date.now()});
+        function addToCart(id) {
+            const product = PRODUCTS.find(p => p.id === id);
+            cart.push(product);
             tg.HapticFeedback.notificationOccurred('success');
             updateUI();
         }
 
-        function remove(uid) {
-            cart = cart.filter(item => item.uid !== uid);
-            updateUI();
-        }
-
-        function toggleCart() {
-            document.getElementById('cart-modal').classList.toggle('open');
-        }
-
-        tg.onEvent('backButtonClicked', closeZoom);
-
         function updateUI() {
             const badge = document.getElementById('cart-badge');
-            badge.innerText = cart.length;
-            badge.style.display = cart.length > 0 ? 'block' : 'none';
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-            document.getElementById('cart-items-list').innerHTML = cart.map(item => `
-                <div class="cart-item">
-                    <div><b>${item.b}</b><br>${item.n}</div>
-                    <div style="display:flex; align-items:center;">
-                        <b>${item.p.toLocaleString()} €</b>
-                        <span class="remove-btn" onclick="remove(${item.uid})">✕</span>
-                    </div>
-                </div>
-            `).join('');
-
-            const total = cart.reduce((s, x) => s + x.p, 0);
-            document.getElementById('cart-total-price').innerText = `Total : ${total.toLocaleString()} €`;
-
-            if(total > 0) {
-                tg.MainButton.setText(`VALIDER L'ACQUISITION (${total.toLocaleString()} €)`);
+            if (cart.length > 0) {
+                badge.style.display = 'block';
+                badge.innerText = `${cart.length} PIÈCE${cart.length > 1 ? 'S' : ''}`;
+                
+                // Configurer le bouton principal de Telegram (MainButton)
+                tg.MainButton.text = `FINALISER L'ACQUISITION (${total.toLocaleString()} €)`;
                 tg.MainButton.show();
-            } else {
-                tg.MainButton.hide();
+                tg.MainButton.setParams({ color: '#C5A059', text_color: '#000000' });
             }
         }
 
-        tg.onEvent('mainButtonClicked', () => {
-            const total = cart.reduce((s, x) => s + x.p, 0);
-            const order = {
-                client: tg.initDataUnsafe?.user?.first_name || "Client Privé",
-                panier: cart.map(x => `${x.b} ${x.n} (${x.p.toLocaleString()}€)`).join(", "),
-                total: total.toLocaleString() + " €"
+        // Événement quand on clique sur le gros bouton "Finaliser" de Telegram
+        tg.onEvent('mainButtonClicked', function() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const orderData = {
+                client: tg.initDataUnsafe?.user?.first_name || "Anonyme",
+                user_id: tg.initDataUnsafe?.user?.id,
+                items: cart.map(i => ({ name: i.name, price: i.price })),
+                total: total
             };
-            tg.sendData(JSON.stringify(order));
+
+            tg.showConfirm(`Envoyer la demande d'acquisition pour ${total.toLocaleString()} € ?`, (ok) => {
+                if (ok) {
+                    // C'est ICI que les données partent vers le bot
+                    tg.sendData(JSON.stringify(orderData));
+                }
+            });
         });
 
-        function filter(cat, el) {
-            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            render(cat);
-        }
-
-        render();
+        init();
     </script>
 </body>
 </html>
