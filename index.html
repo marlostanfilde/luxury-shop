@@ -10,138 +10,142 @@
 
 <style>
 :root {
-    --gold: #C5A059;
-    --black: #050505;
-    --grey: #1a1a1a;
+    --gold:#C5A059;
+    --black:#050505;
+    --grey:#1a1a1a;
 }
 
-body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: var(--black);
-    color: white;
+body{
+    margin:0;
+    font-family:'Montserrat',sans-serif;
+    background:var(--black);
+    color:white;
 }
 
-/* Header */
-.header {
-    padding: 40px 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(197,160,89,0.2);
+.header{
+    padding:30px;
+    text-align:center;
+    border-bottom:1px solid rgba(197,160,89,0.2);
 }
 
-.logo {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 8px;
-    font-size: 20px;
-    color: var(--gold);
+.logo{
+    font-family:'Cinzel',serif;
+    letter-spacing:8px;
+    color:var(--gold);
 }
 
-/* Tabs */
-.tabs {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 15px;
-    position: sticky;
-    top: 0;
-    background: var(--black);
-    z-index: 10;
+.tabs{
+    display:flex;
+    overflow-x:auto;
+    gap:10px;
+    padding:15px;
+    position:sticky;
+    top:0;
+    background:var(--black);
 }
 
-.tab {
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 1px solid #333;
-    font-size: 10px;
-    text-transform: uppercase;
-    cursor: pointer;
+.tab{
+    padding:8px 14px;
+    border-radius:20px;
+    border:1px solid #333;
+    font-size:10px;
+    text-transform:uppercase;
+    cursor:pointer;
 }
 
-.tab.active {
-    background: var(--gold);
-    color: black;
-    border-color: var(--gold);
+.tab.active{
+    background:var(--gold);
+    color:black;
 }
 
-/* Grid */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 12px;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    padding:12px;
 }
 
-.card {
-    background: var(--grey);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
+.card{
+    background:var(--grey);
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+    cursor:pointer;
 }
 
-.card img {
-    width: 100%;
-    border-radius: 6px;
+.card img{
+    width:100%;
+    border-radius:6px;
 }
 
-.card-brand {
-    font-size: 9px;
-    color: var(--gold);
-    letter-spacing: 2px;
-    margin-top: 6px;
+.card-brand{
+    font-size:9px;
+    color:var(--gold);
+    margin-top:6px;
 }
 
-.card-name {
-    font-size: 11px;
-    margin: 6px 0;
-    min-height: 28px;
+.card-name{
+    font-size:11px;
+    margin:6px 0;
 }
 
-.card-price {
-    font-weight: 600;
+.card-price{
+    font-weight:600;
 }
 
-.add-btn {
-    margin-top: 8px;
-    padding: 8px;
-    width: 100%;
-    border: 1px solid var(--gold);
-    background: transparent;
-    color: var(--gold);
-    font-size: 10px;
-    border-radius: 4px;
-}
-
-/* Cart badge */
-.cart-badge {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--gold);
-    color: black;
-    padding: 10px 18px;
-    border-radius: 30px;
-    font-weight: 600;
-    display: none;
-    cursor: pointer;
-}
-
-/* Cart modal */
-#cartModal {
-    display:none;
+/* MODAL */
+.modal{
     position:fixed;
     inset:0;
-    background:#000000ee;
-    z-index:1000;
-    padding:20px;
-    overflow:auto;
+    background:rgba(0,0,0,0.8);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
 }
 
-#cartModal > div {
-    max-width:500px;
-    margin:auto;
+.modal-content{
     background:#111;
     padding:20px;
+    width:90%;
     border-radius:12px;
+    text-align:center;
+}
+
+.size-select button{
+    margin:5px;
+    padding:8px 12px;
+    border:1px solid var(--gold);
+    background:transparent;
+    color:var(--gold);
+    border-radius:4px;
+}
+
+.size-select button.active{
+    background:var(--gold);
+    color:black;
+}
+
+.add-btn{
+    margin-top:10px;
+    padding:10px;
+    width:100%;
+    background:var(--gold);
+    border:none;
+    color:black;
+    font-weight:600;
+    border-radius:6px;
+}
+
+.cart-badge{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--gold);
+    color:black;
+    padding:10px 18px;
+    border-radius:30px;
+    font-weight:600;
 }
 </style>
 </head>
@@ -150,7 +154,6 @@ body {
 
 <div class="header">
     <div class="logo">MAISON LUXE</div>
-    <div id="greeting" style="font-size:10px;color:#777;margin-top:8px;">CHARGEMENT...</div>
 </div>
 
 <div class="tabs">
@@ -158,102 +161,109 @@ body {
     <div class="tab" data-cat="horlogerie">Horlogerie</div>
     <div class="tab" data-cat="maroquinerie">Maroquinerie</div>
     <div class="tab" data-cat="joaillerie">Joaillerie</div>
-    <div class="tab" data-cat="parfumerie">Parfumerie</div>
-    <div class="tab" data-cat="edition">Éditions Limitées</div>
+    <div class="tab" data-cat="vetements">Vêtements</div>
 </div>
 
 <div class="grid" id="grid"></div>
-<div class="cart-badge" id="cartBadge">0 PIÈCE(S)</div>
+<div class="cart-badge" id="cartBadge">0</div>
 
-<!-- Cart modal -->
-<div id="cartModal">
-  <div>
-    <h2 style="color:#C5A059;text-align:center;">Votre Panier</h2>
-    <div id="cartItems"></div>
-    <div style="margin-top:15px;padding-top:10px;border-top:1px solid #333;">
-      <div id="deliveryInfo" style="font-size:12px;color:#aaa;margin-bottom:10px;"></div>
-      <div id="savInfo" style="font-size:12px;color:#aaa;margin-bottom:15px;">
-        🛡 SAV Premium : Assistance 7j/7 • Garantie internationale 2 ans
-      </div>
-      <button onclick="closeCart()" style="width:100%;padding:10px;border:none;background:#C5A059;color:black;font-weight:600;border-radius:6px;">Fermer</button>
+<!-- MODAL PRODUIT -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3 id="modalName"></h3>
+        <p id="modalPrice"></p>
+        <div class="size-select" id="sizeSelect"></div>
+        <button class="add-btn" onclick="confirmAdd()">Ajouter au panier</button>
     </div>
-  </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-/* =========================
-   PRODUITS
-========================= */
 const PRODUCTS = [
 { id:1, cat:"horlogerie", brand:"ROLEX", name:"Submariner Date", price:14500, img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=400" },
-{ id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30 Togo", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
-{ id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love Or", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
-{ id:4, cat:"horlogerie", brand:"AUDEMARS PIGUET", name:"Royal Oak Blue", price:55000, img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=400" },
-{ id:5, cat:"parfumerie", brand:"DIOR", name:"Sauvage Elixir", price:210, img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
-{ id:6, cat:"parfumerie", brand:"CHANEL", name:"Bleu de Chanel Parfum", price:185, img:"https://images.unsplash.com/photo-1619994403073-2cec3f3e4b04?w=400" },
-{ id:7, cat:"maroquinerie", brand:"LOUIS VUITTON", name:"Keepall 50", price:2450, img:"https://images.unsplash.com/photo-1593032465171-8c0e9c6cbb3f?w=400" },
-{ id:8, cat:"joaillerie", brand:"BVLGARI", name:"B.Zero1 Ring", price:3200, img:"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400" },
-{ id:9, cat:"horlogerie", brand:"PATEK PHILIPPE", name:"Nautilus 5711", price:120000, img:"https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=400" },
-{ id:10, cat:"edition", brand:"RICHARD MILLE", name:"RM 07-01 Limited", price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" },
-{ id:11, cat:"edition", brand:"HERMÈS", name:"Birkin Himalaya", price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" }
+{ id:2, cat:"maroquinerie", brand:"HERMÈS", name:"Birkin 30", price:22000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" },
+{ id:3, cat:"joaillerie", brand:"CARTIER", name:"Bracelet Love", price:7800, img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400" },
+
+{ id:10, cat:"vetements", brand:"MAISON LUXE", name:"Veste Premium Noir", price:890, img:"https://images.unsplash.com/photo-1520975916090-3105956dac38?w=400", sizes:["S","M","L","XL"] },
+{ id:11, cat:"vetements", brand:"MAISON LUXE", name:"Pantalon Tailoring", price:490, img:"https://images.unsplash.com/photo-1593032465171-8c2dcb9fdf73?w=400", sizes:["S","M","L","XL"] }
 ];
 
-let state = {
-    cart: JSON.parse(localStorage.getItem("cart")) || [],
-    category: "all"
+let state={
+    cart:[],
+    category:"all",
+    selectedProduct:null,
+    selectedSize:null
 };
 
-/* =========================
-   UTILS
-========================= */
-function formatPrice(p){ return p.toLocaleString("fr-FR")+" €"; }
+function formatPrice(p){
+    return p.toLocaleString("fr-FR")+" €";
+}
 
-/* =========================
-   RENDER
-========================= */
 function renderProducts(){
-    const grid = document.getElementById("grid");
+    const grid=document.getElementById("grid");
     grid.innerHTML="";
-    const list = state.category==="all"?PRODUCTS:PRODUCTS.filter(p=>p.cat===state.category);
-    list.forEach((p)=>{
-        grid.innerHTML += `
-        <div class="card">
+
+    const list=state.category==="all"?PRODUCTS:PRODUCTS.filter(p=>p.cat===state.category);
+
+    list.forEach(p=>{
+        grid.innerHTML+=`
+        <div class="card" onclick="openProduct(${p.id})">
             <img src="${p.img}">
             <div class="card-brand">${p.brand}</div>
             <div class="card-name">${p.name}</div>
             <div class="card-price">${formatPrice(p.price)}</div>
-            <button class="add-btn" onclick="addToCart(${p.id})">ACQUÉRIR</button>
         </div>
         `;
     });
 }
 
-function updateCartUI(){
-    const badge = document.getElementById("cartBadge");
-    const total = state.cart.reduce((s,i)=>s+i.price,0);
-    if(state.cart.length===0){
-        badge.style.display="none"; tg.MainButton.hide(); return;
+function openProduct(id){
+    const product=PRODUCTS.find(p=>p.id===id);
+    state.selectedProduct=product;
+    state.selectedSize=null;
+
+    document.getElementById("modalName").innerText=product.name;
+    document.getElementById("modalPrice").innerText=formatPrice(product.price);
+
+    const sizeBox=document.getElementById("sizeSelect");
+    sizeBox.innerHTML="";
+
+    if(product.sizes){
+        product.sizes.forEach(size=>{
+            sizeBox.innerHTML+=`<button onclick="selectSize('${size}',this)">${size}</button>`;
+        });
     }
-    badge.style.display="block";
-    badge.innerText = `${state.cart.length} PIÈCE(S) • ${formatPrice(total)}`;
-    badge.onclick=openCart;
-    tg.MainButton.text=`FINALISER (${formatPrice(total)})`;
-    tg.MainButton.setParams({color:"#C5A059",text_color:"#000000"});
-    tg.MainButton.show();
+
+    document.getElementById("modal").style.display="flex";
 }
 
-/* =========================
-   ACTIONS
-========================= */
-function addToCart(id){
-    const product=PRODUCTS.find(p=>p.id===id);
-    state.cart.push(product);
-    localStorage.setItem("cart",JSON.stringify(state.cart));
-    tg.HapticFeedback.notificationOccurred("success");
-    updateCartUI();
+function selectSize(size,btn){
+    state.selectedSize=size;
+    document.querySelectorAll(".size-select button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+}
+
+function confirmAdd(){
+    if(state.selectedProduct.sizes && !state.selectedSize){
+        alert("Choisissez une taille");
+        return;
+    }
+
+    state.cart.push({
+        ...state.selectedProduct,
+        size:state.selectedSize||null
+    });
+
+    updateCart();
+    document.getElementById("modal").style.display="none";
+}
+
+function updateCart(){
+    const badge=document.getElementById("cartBadge");
+    const total=state.cart.reduce((s,i)=>s+i.price,0);
+    badge.innerText=state.cart.length+" • "+formatPrice(total);
 }
 
 document.querySelectorAll(".tab").forEach(tab=>{
@@ -265,79 +275,7 @@ document.querySelectorAll(".tab").forEach(tab=>{
     });
 });
 
-/* =========================
-   PANIER MODAL
-========================= */
-function openCart(){
-    const modal=document.getElementById("cartModal");
-    const container=document.getElementById("cartItems");
-    const delivery=document.getElementById("deliveryInfo");
-    container.innerHTML="";
-    if(state.cart.length===0){
-        container.innerHTML="<p style='text-align:center;color:#777;'>Panier vide</p>";
-        delivery.innerHTML="";
-        modal.style.display="block";
-        return;
-    }
-    let total=0, maxDelay=0;
-    state.cart.forEach((item,index)=>{
-        total+=item.price;
-        let delayText="", delayDays=0;
-        if(item.cat==="horlogerie"){delayText="7-14 jours ouvrés";delayDays=14;}
-        if(item.cat==="maroquinerie"){delayText="5-10 jours ouvrés";delayDays=10;}
-        if(item.cat==="joaillerie"){delayText="10-15 jours ouvrés";delayDays=15;}
-        if(item.cat==="parfumerie"){delayText="3-5 jours ouvrés";delayDays=5;}
-        if(item.cat==="edition"){delayText="15-30 jours (pièce exclusive)";delayDays=30;}
-        if(delayDays>maxDelay) maxDelay=delayDays;
-        container.innerHTML+=`
-        <div style="margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #222;">
-            <div style="font-size:12px;color:#C5A059;">${item.brand}</div>
-            <div style="font-size:13px;">${item.name}</div>
-            <div style="font-weight:600;">${formatPrice(item.price)}</div>
-            <div style="font-size:11px;color:#777;">Livraison estimée : ${delayText}</div>
-            <button onclick="removeItem(${index})" style="margin-top:5px;font-size:10px;background:none;border:none;color:#ff4d4d;">Retirer</button>
-        </div>
-        `;
-    });
-    delivery.innerHTML=`🚚 Livraison maximale estimée : ${maxDelay} jours ouvrés`;
-    modal.style.display="block";
-}
-function closeCart(){document.getElementById("cartModal").style.display="none";}
-function removeItem(index){
-    state.cart.splice(index,1);
-    localStorage.setItem("cart",JSON.stringify(state.cart));
-    updateCartUI();
-    openCart();
-}
-
-/* =========================
-   TELEGRAM MAINBUTTON
-========================= */
-tg.onEvent("mainButtonClicked",()=>{
-    const total=state.cart.reduce((s,i)=>s+i.price,0);
-    tg.showConfirm(`Confirmer la demande pour ${formatPrice(total)} ?`, ok=>{
-        if(ok){
-            tg.sendData(JSON.stringify({
-                user_id: tg.initDataUnsafe?.user?.id,
-                items: state.cart.map(i=>({id:i.id})),
-                total: total
-            }));
-        }
-    });
-});
-
-/* =========================
-   INIT
-========================= */
-function init(){
-    if(tg.initDataUnsafe?.user){
-        document.getElementById("greeting").innerText=
-        "BIENVENUE, "+tg.initDataUnsafe.user.first_name.toUpperCase();
-    }
-    renderProducts();
-    updateCartUI();
-}
-init();
+renderProducts();
 </script>
 
 </body>
