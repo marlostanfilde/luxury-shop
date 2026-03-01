@@ -20,7 +20,7 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 .tab{ padding:8px 14px; border-radius:20px; border:1px solid #333; font-size:10px; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
 .tab.active{ background:var(--gold); color:#000; border-color:var(--gold); }
 
-/* ✅ Cartes plus compactes */
+/* ✅ Cartes compactes */
 .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; }
 .card{ background:var(--grey); border-radius:10px; padding:10px; text-align:center; cursor:pointer; }
 .card img{ width:100%; border-radius:6px; height:110px; object-fit:cover; }
@@ -108,6 +108,12 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
     <div class="tab" data-cat="vetements">Vêtements</div>
   </div>
 
+  <!-- ✅ Recherche -->
+  <div style="padding:10px;">
+    <input id="search" placeholder="Rechercher un produit..."
+      style="width:100%;padding:10px;border-radius:10px;border:1px solid #222;background:#0f0f0f;color:#fff;outline:none;">
+  </div>
+
   <div class="grid" id="grid"></div>
 </div>
 
@@ -164,7 +170,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
     </div>
 
     <div style="margin-top:12px;">
-      <!-- ✅ On garde ce bouton et on supprime MainButton Telegram -->
       <button class="btn primary" onclick="checkout()">Finaliser la demande</button>
     </div>
 
@@ -176,6 +181,13 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 
 <!-- Floating cart button -->
 <div class="fab" id="fab" onclick="goCart()">PANIER</div>
+
+<!-- ✅ Toast -->
+<div id="toast"
+  style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
+         background:#111;border:1px solid #222;color:#fff;padding:10px 14px;
+         border-radius:12px;display:none;z-index:9999;font-size:12px;">
+</div>
 
 <script>
 const tg = window.Telegram.WebApp;
@@ -214,8 +226,19 @@ let state = {
   category: "all",
   cart: JSON.parse(localStorage.getItem("cart")) || [],
   currentProductId: null,
-  selectedSize: null
+  selectedSize: null,
+  search: ""
 };
+
+/* =========================
+   UI
+========================= */
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display = "block";
+  setTimeout(()=> t.style.display="none", 1800);
+}
 
 /* =========================
    HELPERS
@@ -223,18 +246,28 @@ let state = {
 function formatPrice(p){ return p.toLocaleString("fr-FR") + " €"; }
 function saveCart(){ localStorage.setItem("cart", JSON.stringify(state.cart)); }
 function getProduct(id){ return PRODUCTS.find(p => p.id === id); }
+function cartQtyTotal(){ return state.cart.reduce((s,i)=> s + (i.qty || 1), 0); }
+function cartTotal(){ return state.cart.reduce((s,i)=> s + i.price * (i.qty || 1), 0); }
 
 function setActivePage(pageId){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
-  // ✅ On ne montre jamais MainButton Telegram
   tg.MainButton.hide();
 }
 
 function updateFab(){
-  const total = state.cart.reduce((s,i)=>s+i.price,0);
-  document.getElementById("fab").innerText = state.cart.length ? `PANIER • ${state.cart.length} • ${formatPrice(total)}` : "PANIER";
+  const qty = cartQtyTotal();
+  const total = cartTotal();
+  document.getElementById("fab").innerText = qty ? `PANIER • ${qty} • ${formatPrice(total)}` : "PANIER";
 }
+
+/* =========================
+   SEARCH
+========================= */
+document.getElementById("search").addEventListener("input", (e)=>{
+  state.search = e.target.value.trim().toLowerCase();
+  renderCatalog();
+});
 
 /* =========================
    CATALOG
@@ -243,7 +276,11 @@ function renderCatalog(){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  const list = state.category === "all" ? PRODUCTS : PRODUCTS.filter(p => p.cat === state.category);
+  let list = state.category === "all" ? PRODUCTS : PRODUCTS.filter(p => p.cat === state.category);
+
+  if(state.search){
+    list = list.filter(p => (p.name + " " + p.brand).toLowerCase().includes(state.search));
+  }
 
   list.forEach(p => {
     grid.innerHTML += `
@@ -311,21 +348,32 @@ function addCurrentToCart(){
   if(!p) return;
 
   if(p.sizes && p.sizes.length && !state.selectedSize){
-    tg.showAlert("Veuillez sélectionner une taille.");
+    toast("Veuillez sélectionner une taille");
+    tg.HapticFeedback.notificationOccurred("error");
     return;
   }
 
-  state.cart.push({
-    id: p.id,
-    name: p.name,
-    brand: p.brand,
-    price: p.price,
-    cat: p.cat,
-    size: p.sizes ? state.selectedSize : null
-  });
+  const key = `${p.id}:${p.sizes ? state.selectedSize : ""}`;
+  const found = state.cart.find(i => i.key === key);
+
+  if(found){
+    found.qty = (found.qty || 1) + 1;
+  } else {
+    state.cart.push({
+      key,
+      id: p.id,
+      name: p.name,
+      brand: p.brand,
+      price: p.price,
+      cat: p.cat,
+      size: p.sizes ? state.selectedSize : null,
+      qty: 1
+    });
+  }
 
   saveCart();
   updateFab();
+  toast("Ajouté au panier");
   tg.HapticFeedback.notificationOccurred("success");
 }
 
@@ -359,8 +407,9 @@ function renderCart(){
   let minMin = 0;
   const byCat = {};
 
-  state.cart.forEach((it, idx)=>{
-    total += it.price;
+  state.cart.forEach((it)=>{
+    const qty = it.qty || 1;
+    total += it.price * qty;
 
     const d = estimateDelayForCat(it.cat);
     minMax = Math.max(minMax, d.max);
@@ -373,13 +422,19 @@ function renderCart(){
           <div class="cbrand">${it.brand}</div>
           <div class="cname">${it.name}</div>
           <div class="cmeta">
-            Catégorie : ${it.cat}
-            ${it.size ? " • Taille : " + it.size : ""}
+            Catégorie : ${it.cat}${it.size ? " • Taille : " + it.size : ""}
+          </div>
+
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+            <button class="btn muted" style="width:auto;padding:6px 10px;" onclick="decQty('${it.key}')">-</button>
+            <div style="min-width:26px;text-align:center;font-weight:700;">${qty}</div>
+            <button class="btn muted" style="width:auto;padding:6px 10px;" onclick="incQty('${it.key}')">+</button>
           </div>
         </div>
+
         <div class="cright">
-          <div class="cprice">${formatPrice(it.price)}</div>
-          <div class="remove" onclick="removeCartItem(${idx})">Retirer</div>
+          <div class="cprice">${formatPrice(it.price * qty)}</div>
+          <div class="remove" onclick="removeByKey('${it.key}')">Retirer</div>
         </div>
       </div>
     `;
@@ -397,10 +452,32 @@ function renderCart(){
   updateFab();
 }
 
-function removeCartItem(index){
-  state.cart.splice(index,1);
+function incQty(key){
+  const it = state.cart.find(x => x.key === key);
+  if(!it) return;
+  it.qty = (it.qty || 1) + 1;
   saveCart();
   renderCart();
+  updateFab();
+}
+
+function decQty(key){
+  const it = state.cart.find(x => x.key === key);
+  if(!it) return;
+  it.qty = (it.qty || 1) - 1;
+  if(it.qty <= 0){
+    state.cart = state.cart.filter(x => x.key !== key);
+  }
+  saveCart();
+  renderCart();
+  updateFab();
+}
+
+function removeByKey(key){
+  state.cart = state.cart.filter(x => x.key !== key);
+  saveCart();
+  renderCart();
+  updateFab();
 }
 
 /* =========================
@@ -418,15 +495,16 @@ function contactSupport(){
 
 function checkout(){
   if(!state.cart.length){
-    tg.showAlert("Votre panier est vide.");
+    toast("Votre panier est vide");
+    tg.HapticFeedback.notificationOccurred("error");
     return;
   }
-  const total = state.cart.reduce((s,i)=>s+i.price,0);
 
+  const total = cartTotal();
   const payload = {
     user_id: tg.initDataUnsafe?.user?.id,
     client: tg.initDataUnsafe?.user?.first_name,
-    items: state.cart.map(i=>({ id:i.id, size:i.size || null })),
+    items: state.cart.map(i=>({ id:i.id, size:i.size || null, qty: i.qty || 1 })),
     total
   };
 
