@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -21,12 +20,17 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 .tab{ padding:8px 14px; border-radius:20px; border:1px solid #333; font-size:10px; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
 .tab.active{ background:var(--gold); color:#000; border-color:var(--gold); }
 
-.grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px; }
-.card{ background:var(--grey); border-radius:10px; padding:12px; text-align:center; cursor:pointer; }
-.card img{ width:100%; border-radius:6px; }
+/* ✅ Cartes plus compactes */
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; }
+.card{ background:var(--grey); border-radius:10px; padding:10px; text-align:center; cursor:pointer; }
+.card img{ width:100%; border-radius:6px; height:110px; object-fit:cover; }
 .card-brand{ font-size:9px; color:var(--gold); letter-spacing:2px; margin-top:6px; }
-.card-name{ font-size:11px; margin:6px 0; min-height:28px; }
-.card-price{ font-weight:600; }
+.card-name{
+  font-size:11px; margin:6px 0;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.card-price{ font-weight:600; font-size:12px; }
 
 .btn{ width:100%; padding:10px; border-radius:6px; border:1px solid var(--gold); background:transparent; color:var(--gold); font-size:12px; cursor:pointer; }
 .btn.primary{ background:var(--gold); color:#000; border:none; font-weight:600; }
@@ -39,7 +43,7 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
   cursor:pointer;
 }
 
-/* Pages (SPA) */
+/* Pages */
 .page{ display:none; }
 .page.active{ display:block; }
 
@@ -53,7 +57,7 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 
 /* Product page */
 .pwrap{ padding:12px; }
-.pimg{ width:100%; border-radius:10px; }
+.pimg{ width:100%; border-radius:10px; height:240px; object-fit:cover; }
 .pbrand{ margin-top:10px; color:var(--gold); letter-spacing:2px; font-size:11px; }
 .pname{ font-size:18px; font-weight:600; margin:6px 0; }
 .pprice{ font-size:16px; font-weight:700; }
@@ -160,7 +164,12 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
     </div>
 
     <div style="margin-top:12px;">
+      <!-- ✅ On garde ce bouton et on supprime MainButton Telegram -->
       <button class="btn primary" onclick="checkout()">Finaliser la demande</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <button class="btn muted" onclick="goCatalog()">Continuer les achats</button>
     </div>
   </div>
 </div>
@@ -171,32 +180,34 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+// ✅ On cache le MainButton Telegram définitivement
+tg.MainButton.hide();
 
 /* =========================
    DATA
 ========================= */
 const PRODUCTS = [
-  { id:1,  cat:"horlogerie",  brand:"ROLEX",            name:"Submariner Date",      price:14500,  img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=800", desc:"Icône de la plongée, précision suisse, finition premium." },
-  { id:2,  cat:"maroquinerie",brand:"HERMÈS",           name:"Birkin 30 Togo",       price:22000,  img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Cuir grainé Togo, fabrication artisanale, pièce intemporelle." },
-  { id:3,  cat:"joaillerie",  brand:"CARTIER",          name:"Bracelet Love Or",     price:7800,   img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800", desc:"Or précieux, design emblématique, signature Maison." },
-  { id:4,  cat:"horlogerie",  brand:"AUDEMARS PIGUET",  name:"Royal Oak Blue",       price:55000,  img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800", desc:"Boîtier octogonal, cadran bleu, prestige horloger." },
+  { id:1,  cat:"horlogerie",  brand:"ROLEX",            name:"Submariner Date",       price:14500,  img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=800", desc:"Icône de la plongée, précision suisse, finition premium." },
+  { id:2,  cat:"maroquinerie",brand:"HERMÈS",           name:"Birkin 30 Togo",        price:22000,  img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Cuir grainé Togo, fabrication artisanale, pièce intemporelle." },
+  { id:3,  cat:"joaillerie",  brand:"CARTIER",          name:"Bracelet Love Or",      price:7800,   img:"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800", desc:"Or précieux, design emblématique, signature Maison." },
+  { id:4,  cat:"horlogerie",  brand:"AUDEMARS PIGUET",  name:"Royal Oak Blue",        price:55000,  img:"https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?w=800", desc:"Boîtier octogonal, cadran bleu, prestige horloger." },
 
-  { id:5,  cat:"parfumerie",  brand:"DIOR",             name:"Sauvage Elixir",       price:210,    img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800", desc:"Élixir intense, sillage puissant, notes épicées." },
-  { id:6,  cat:"parfumerie",  brand:"CHANEL",           name:"Bleu de Chanel Parfum",price:185,    img:"https://images.unsplash.com/photo-1619994403073-2cec3f3e4b04?w=800", desc:"Boisé aromatique, élégant, intemporel." },
+  { id:5,  cat:"parfumerie",  brand:"DIOR",             name:"Sauvage Elixir",        price:210,    img:"https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800", desc:"Élixir intense, sillage puissant, notes épicées." },
+  { id:6,  cat:"parfumerie",  brand:"CHANEL",           name:"Bleu de Chanel Parfum", price:185,    img:"https://images.unsplash.com/photo-1619994403073-2cec3f3e4b04?w=800", desc:"Boisé aromatique, élégant, intemporel." },
 
-  { id:7,  cat:"maroquinerie",brand:"LOUIS VUITTON",    name:"Keepall 50",           price:2450,   img:"https://images.unsplash.com/photo-1593032465171-8c0e9c6cbb3f?w=800", desc:"Sac de voyage iconique, monogramme, finitions premium." },
-  { id:8,  cat:"joaillerie",  brand:"BVLGARI",          name:"B.Zero1 Ring",         price:3200,   img:"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800", desc:"Design architectural, esprit contemporain, or raffiné." },
+  { id:7,  cat:"maroquinerie",brand:"LOUIS VUITTON",    name:"Keepall 50",            price:2450,   img:"https://images.unsplash.com/photo-1593032465171-8c0e9c6cbb3f?w=800", desc:"Sac de voyage iconique, monogramme, finitions premium." },
+  { id:8,  cat:"joaillerie",  brand:"BVLGARI",          name:"B.Zero1 Ring",          price:3200,   img:"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800", desc:"Design architectural, esprit contemporain, or raffiné." },
 
-  { id:9,  cat:"horlogerie",  brand:"PATEK PHILIPPE",   name:"Nautilus 5711",        price:120000, img:"https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=800", desc:"Pièce convoitée, haute horlogerie, rareté." },
+  { id:9,  cat:"horlogerie",  brand:"PATEK PHILIPPE",   name:"Nautilus 5711",         price:120000, img:"https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=800", desc:"Pièce convoitée, haute horlogerie, rareté." },
 
-  { id:10, cat:"edition",     brand:"RICHARD MILLE",    name:"RM 07-01 Limited",     price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800", desc:"Série limitée, ultra exclusif, performance et design." },
-  { id:11, cat:"edition",     brand:"HERMÈS",           name:"Birkin Himalaya",      price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Pièce iconique, rare, prestige absolu." },
+  { id:10, cat:"edition",     brand:"RICHARD MILLE",    name:"RM 07-01 Limited",      price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800", desc:"Série limitée, ultra exclusif, performance et design." },
+  { id:11, cat:"edition",     brand:"HERMÈS",           name:"Birkin Himalaya",       price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Pièce iconique, rare, prestige absolu." },
 
   /* VÊTEMENTS (tailles) */
-  { id:20, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Premium Noir",   price:890,    img:"https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800", desc:"Coupe structurée, tissu premium, finition couture.", sizes:["S","M","L","XL"] },
-  { id:21, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Laine Beige",    price:990,    img:"https://images.unsplash.com/photo-1520975682030-1f7fdb1df8b5?w=800", desc:"Laine raffinée, chaleur et élégance, silhouette luxe.", sizes:["S","M","L","XL"] },
-  { id:22, cat:"vetements",   brand:"MAISON LUXE",      name:"Pantalon Tailoring",   price:490,    img:"https://images.unsplash.com/photo-1593032465171-8c2dcb9fdf73?w=800", desc:"Taille haute, tombé parfait, esprit tailoring.", sizes:["S","M","L","XL"] },
-  { id:23, cat:"vetements",   brand:"MAISON LUXE",      name:"Pantalon Noir Ajusté", price:520,    img:"https://images.unsplash.com/photo-1520975682030-42a3ce8d1d88?w=800", desc:"Ajusté, sobre, ultra polyvalent, finition premium.", sizes:["S","M","L","XL"] },
+  { id:20, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Premium Noir",    price:890,    img:"https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800", desc:"Coupe structurée, tissu premium, finition couture.", sizes:["S","M","L","XL"] },
+  { id:21, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Laine Beige",     price:990,    img:"https://images.unsplash.com/photo-1520975682030-1f7fdb1df8b5?w=800", desc:"Laine raffinée, chaleur et élégance, silhouette luxe.", sizes:["S","M","L","XL"] },
+  { id:22, cat:"vetements",   brand:"MAISON LUXE",      name:"Pantalon Tailoring",    price:490,    img:"https://images.unsplash.com/photo-1593032465171-8c2dcb9fdf73?w=800", desc:"Taille haute, tombé parfait, esprit tailoring.", sizes:["S","M","L","XL"] },
+  { id:23, cat:"vetements",   brand:"MAISON LUXE",      name:"Pantalon Noir Ajusté",  price:520,    img:"https://images.unsplash.com/photo-1520975682030-42a3ce8d1d88?w=800", desc:"Ajusté, sobre, polyvalent, finition premium.", sizes:["S","M","L","XL"] },
 ];
 
 let state = {
@@ -216,20 +227,8 @@ function getProduct(id){ return PRODUCTS.find(p => p.id === id); }
 function setActivePage(pageId){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
-
-  // MainButton Telegram: on l’affiche uniquement sur la page panier
-  if(pageId === "page-cart"){
-    const total = state.cart.reduce((s,i)=>s+i.price,0);
-    if(state.cart.length){
-      tg.MainButton.text = `FINALISER (${formatPrice(total)})`;
-      tg.MainButton.setParams({color:"#C5A059", text_color:"#000000"});
-      tg.MainButton.show();
-    }else{
-      tg.MainButton.hide();
-    }
-  }else{
-    tg.MainButton.hide();
-  }
+  // ✅ On ne montre jamais MainButton Telegram
+  tg.MainButton.hide();
 }
 
 function updateFab(){
@@ -316,7 +315,6 @@ function addCurrentToCart(){
     return;
   }
 
-  // On sauvegarde la taille uniquement si elle existe
   state.cart.push({
     id: p.id,
     name: p.name,
@@ -335,7 +333,6 @@ function addCurrentToCart(){
    CART PAGE (SAV + délais)
 ========================= */
 function estimateDelayForCat(cat){
-  // Délais par catégorie (modifie si tu veux)
   if(cat === "parfumerie")   return {min:3,  max:5,  label:"3–5 jours ouvrés"};
   if(cat === "maroquinerie") return {min:5,  max:10, label:"5–10 jours ouvrés"};
   if(cat === "horlogerie")   return {min:7,  max:14, label:"7–14 jours ouvrés"};
@@ -358,8 +355,8 @@ function renderCart(){
   }
 
   let total = 0;
-  let minMax = 0; // max des max
-  let minMin = 0; // max des min (pour “au plus tôt”)
+  let minMax = 0;
+  let minMin = 0;
   const byCat = {};
 
   state.cart.forEach((it, idx)=>{
@@ -368,7 +365,6 @@ function renderCart(){
     const d = estimateDelayForCat(it.cat);
     minMax = Math.max(minMax, d.max);
     minMin = Math.max(minMin, d.min);
-
     byCat[it.cat] = byCat[it.cat] || d.label;
 
     list.innerHTML += `
@@ -417,7 +413,6 @@ function goCart(){ setActivePage("page-cart"); renderCart(); }
    SAV / CHECKOUT
 ========================= */
 function contactSupport(){
-  // Remplace par ton support
   tg.openTelegramLink("https://t.me/TON_SUPPORT");
 }
 
@@ -439,9 +434,6 @@ function checkout(){
     if(ok) tg.sendData(JSON.stringify(payload));
   });
 }
-
-// MainButton Telegram = même action que "Finaliser"
-tg.onEvent("mainButtonClicked", checkout);
 
 /* =========================
    INIT
