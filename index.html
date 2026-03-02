@@ -493,6 +493,7 @@ function contactSupport(){
   tg.openTelegramLink("https://t.me/toulouse315");
 }
 
+/* ✅✅✅ CHECKOUT FIXÉ : on envoie name + brand + size + qty */
 function checkout(){
   if(!state.cart.length){
     toast("Votre panier est vide");
@@ -501,11 +502,19 @@ function checkout(){
   }
 
   const total = cartTotal();
+
   const payload = {
     user_id: tg.initDataUnsafe?.user?.id,
     client: tg.initDataUnsafe?.user?.first_name,
-    items: state.cart.map(i=>({ id:i.id, size:i.size || null, qty: i.qty || 1 })),
-    total
+    items: state.cart.map(i => ({
+      id: i.id,
+      name: i.name,          // ✅ AJOUT NOM
+      brand: i.brand,        // ✅ AJOUT MARQUE
+      size: i.size || null,
+      qty: i.qty || 1,
+      price: i.price         // ✅ optionnel
+    })),
+    totalPrice: total        // ✅ ton bot lit totalPrice OU total
   };
 
   tg.showConfirm(`Envoyer la demande pour ${formatPrice(total)} ?`, ok=>{
