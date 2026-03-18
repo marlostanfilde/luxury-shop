@@ -13,7 +13,7 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 const PORT = process.env.PORT || 3000;
 
 if (!BOT_TOKEN || !ADMIN_CHAT_ID) {
-  throw new Error("BOT_TOKEN ou ADMIN_CHAT_ID manquant dans .env");
+  throw new Error("8514059253:AAF5-LXRJnPZts9cDRQV7sB7qA49lyzVpRk");
 }
 
 function escapeHtml(str = "") {
