@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>MAISON LUXE</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js?61"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -20,7 +20,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 .tab{ padding:8px 14px; border-radius:20px; border:1px solid #333; font-size:10px; text-transform:uppercase; cursor:pointer; white-space:nowrap; }
 .tab.active{ background:var(--gold); color:#000; border-color:var(--gold); }
 
-/* ✅ Cartes compactes */
 .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; }
 .card{ background:var(--grey); border-radius:10px; padding:10px; text-align:center; cursor:pointer; }
 .card img{ width:100%; border-radius:6px; height:110px; object-fit:cover; }
@@ -43,7 +42,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
   cursor:pointer;
 }
 
-/* Pages */
 .page{ display:none; }
 .page.active{ display:block; }
 
@@ -55,7 +53,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 .back{ cursor:pointer; color:var(--gold); font-weight:600; }
 .title{ font-weight:600; }
 
-/* Product page */
 .pwrap{ padding:12px; }
 .pimg{ width:100%; border-radius:10px; height:240px; object-fit:cover; }
 .pbrand{ margin-top:10px; color:var(--gold); letter-spacing:2px; font-size:11px; }
@@ -70,7 +67,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 .row{ display:flex; gap:10px; }
 .row > *{ flex:1; }
 
-/* Cart page */
 .cartlist{ padding:12px; display:flex; flex-direction:column; gap:10px; }
 .citem{ background:#111; border:1px solid #222; border-radius:10px; padding:12px; display:flex; justify-content:space-between; gap:10px; }
 .cleft{ min-width:0; }
@@ -91,7 +87,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 
 <body>
 
-<!-- CATALOG PAGE -->
 <div class="page active" id="page-catalog">
   <div class="header">
     <div class="logo">MAISON LUXE</div>
@@ -108,7 +103,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
     <div class="tab" data-cat="vetements">Vêtements</div>
   </div>
 
-  <!-- ✅ Recherche -->
   <div style="padding:10px;">
     <input id="search" placeholder="Rechercher un produit..."
       style="width:100%;padding:10px;border-radius:10px;border:1px solid #222;background:#0f0f0f;color:#fff;outline:none;">
@@ -117,7 +111,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
   <div class="grid" id="grid"></div>
 </div>
 
-<!-- PRODUCT PAGE -->
 <div class="page" id="page-product">
   <div class="backbar">
     <div class="back" onclick="goCatalog()">← Retour</div>
@@ -144,7 +137,6 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
   </div>
 </div>
 
-<!-- CART PAGE -->
 <div class="page" id="page-cart">
   <div class="backbar">
     <div class="back" onclick="goCatalog()">← Boutique</div>
@@ -164,7 +156,7 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
     <div class="box">
       <b style="color:#fff;">🛡 SAV Premium</b><br>
       Assistance 7j/7 • Garantie internationale • Échanges/retours sous conditions.<br>
-      <span class="small">Contact : remplace le lien ci-dessous par ton support Telegram.</span>
+      <span class="small">Contact direct Telegram.</span>
       <div class="hr"></div>
       <button class="btn" onclick="contactSupport()">Contacter le SAV</button>
     </div>
@@ -179,10 +171,8 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
   </div>
 </div>
 
-<!-- Floating cart button -->
 <div class="fab" id="fab" onclick="goCart()">PANIER</div>
 
-<!-- ✅ Toast -->
 <div id="toast"
   style="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);
          background:#111;border:1px solid #222;color:#fff;padding:10px 14px;
@@ -190,14 +180,19 @@ body{ margin:0; font-family:'Montserrat',sans-serif; background:var(--black); co
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-// ✅ On cache le MainButton Telegram définitivement
-tg.MainButton.hide();
+const tg = window.Telegram?.WebApp;
 
-/* =========================
-   DATA
-========================= */
+if (!tg) {
+  alert("Cette boutique doit être ouverte depuis Telegram.");
+  throw new Error("Telegram WebApp non disponible");
+}
+
+tg.ready();
+tg.expand();
+if (tg.MainButton) tg.MainButton.hide();
+
+const SUPPORT_USERNAME = "toulouse315";
+
 const PRODUCTS = [
   { id:1,  cat:"horlogerie",  brand:"ROLEX",            name:"Submariner Date",       price:14500,  img:"https://images.unsplash.com/photo-1547996160-81dfa63595dd?w=800", desc:"Icône de la plongée, précision suisse, finition premium." },
   { id:2,  cat:"maroquinerie",brand:"HERMÈS",           name:"Birkin 30 Togo",        price:22000,  img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Cuir grainé Togo, fabrication artisanale, pièce intemporelle." },
@@ -215,7 +210,6 @@ const PRODUCTS = [
   { id:10, cat:"edition",     brand:"RICHARD MILLE",    name:"RM 07-01 Limited",      price:380000, img:"https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800", desc:"Série limitée, ultra exclusif, performance et design." },
   { id:11, cat:"edition",     brand:"HERMÈS",           name:"Birkin Himalaya",       price:450000, img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800", desc:"Pièce iconique, rare, prestige absolu." },
 
-  /* VÊTEMENTS (tailles) */
   { id:20, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Premium Noir",    price:890,    img:"https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800", desc:"Coupe structurée, tissu premium, finition couture.", sizes:["S","M","L","XL"] },
   { id:21, cat:"vetements",   brand:"MAISON LUXE",      name:"Veste Laine Beige",     price:990,    img:"https://images.unsplash.com/photo-1520975682030-1f7fdb1df8b5?w=800", desc:"Laine raffinée, chaleur et élégance, silhouette luxe.", sizes:["S","M","L","XL"] },
   { id:22, cat:"vetements",   brand:"MAISON LUXE",      name:"Pantalon Tailoring",    price:490,    img:"https://images.unsplash.com/photo-1593032465171-8c2dcb9fdf73?w=800", desc:"Taille haute, tombé parfait, esprit tailoring.", sizes:["S","M","L","XL"] },
@@ -227,12 +221,10 @@ let state = {
   cart: JSON.parse(localStorage.getItem("cart")) || [],
   currentProductId: null,
   selectedSize: null,
-  search: ""
+  search: "",
+  sending: false
 };
 
-/* =========================
-   UI
-========================= */
 function toast(msg){
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -240,10 +232,7 @@ function toast(msg){
   setTimeout(()=> t.style.display="none", 1800);
 }
 
-/* =========================
-   HELPERS
-========================= */
-function formatPrice(p){ return p.toLocaleString("fr-FR") + " €"; }
+function formatPrice(p){ return Number(p).toLocaleString("fr-FR") + " €"; }
 function saveCart(){ localStorage.setItem("cart", JSON.stringify(state.cart)); }
 function getProduct(id){ return PRODUCTS.find(p => p.id === id); }
 function cartQtyTotal(){ return state.cart.reduce((s,i)=> s + (i.qty || 1), 0); }
@@ -252,7 +241,7 @@ function cartTotal(){ return state.cart.reduce((s,i)=> s + i.price * (i.qty || 1
 function setActivePage(pageId){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
-  tg.MainButton.hide();
+  if (tg.MainButton) tg.MainButton.hide();
 }
 
 function updateFab(){
@@ -261,17 +250,11 @@ function updateFab(){
   document.getElementById("fab").innerText = qty ? `PANIER • ${qty} • ${formatPrice(total)}` : "PANIER";
 }
 
-/* =========================
-   SEARCH
-========================= */
 document.getElementById("search").addEventListener("input", (e)=>{
   state.search = e.target.value.trim().toLowerCase();
   renderCatalog();
 });
 
-/* =========================
-   CATALOG
-========================= */
 function renderCatalog(){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -300,13 +283,10 @@ document.querySelectorAll(".tab").forEach(tab=>{
     tab.classList.add("active");
     state.category = tab.dataset.cat;
     renderCatalog();
-    tg.HapticFeedback.impactOccurred("light");
+    tg.HapticFeedback?.impactOccurred("light");
   });
 });
 
-/* =========================
-   PRODUCT PAGE
-========================= */
 function openProduct(id){
   const p = getProduct(id);
   state.currentProductId = id;
@@ -340,7 +320,7 @@ function openProduct(id){
   }
 
   setActivePage("page-product");
-  tg.HapticFeedback.impactOccurred("light");
+  tg.HapticFeedback?.impactOccurred("light");
 }
 
 function addCurrentToCart(){
@@ -349,7 +329,7 @@ function addCurrentToCart(){
 
   if(p.sizes && p.sizes.length && !state.selectedSize){
     toast("Veuillez sélectionner une taille");
-    tg.HapticFeedback.notificationOccurred("error");
+    tg.HapticFeedback?.notificationOccurred("error");
     return;
   }
 
@@ -374,12 +354,9 @@ function addCurrentToCart(){
   saveCart();
   updateFab();
   toast("Ajouté au panier");
-  tg.HapticFeedback.notificationOccurred("success");
+  tg.HapticFeedback?.notificationOccurred("success");
 }
 
-/* =========================
-   CART PAGE (SAV + délais)
-========================= */
 function estimateDelayForCat(cat){
   if(cat === "parfumerie")   return {min:3,  max:5,  label:"3–5 jours ouvrés"};
   if(cat === "maroquinerie") return {min:5,  max:10, label:"5–10 jours ouvrés"};
@@ -480,51 +457,81 @@ function removeByKey(key){
   updateFab();
 }
 
-/* =========================
-   NAVIGATION
-========================= */
 function goCatalog(){ setActivePage("page-catalog"); }
 function goCart(){ setActivePage("page-cart"); renderCart(); }
 
-/* =========================
-   SAV / CHECKOUT
-========================= */
 function contactSupport(){
-  tg.openTelegramLink("https://t.me/toulouse315");
+  tg.openTelegramLink(`https://t.me/${SUPPORT_USERNAME}`);
 }
 
-/* ✅✅✅ CHECKOUT FIXÉ : on envoie name + brand + size + qty */
-function checkout(){
+async function checkout(){
   if(!state.cart.length){
     toast("Votre panier est vide");
-    tg.HapticFeedback.notificationOccurred("error");
+    tg.HapticFeedback?.notificationOccurred("error");
     return;
   }
+
+  if (state.sending) return;
+  state.sending = true;
 
   const total = cartTotal();
 
   const payload = {
-    user_id: tg.initDataUnsafe?.user?.id,
-    client: tg.initDataUnsafe?.user?.first_name,
+    initData: tg.initData || "",
+    user: tg.initDataUnsafe?.user || null,
     items: state.cart.map(i => ({
       id: i.id,
-      name: i.name,          // ✅ AJOUT NOM
-      brand: i.brand,        // ✅ AJOUT MARQUE
+      name: i.name,
+      brand: i.brand,
       size: i.size || null,
       qty: i.qty || 1,
-      price: i.price         // ✅ optionnel
+      price: i.price
     })),
-    totalPrice: total        // ✅ ton bot lit totalPrice OU total
+    totalPrice: total
   };
 
-  tg.showConfirm(`Envoyer la demande pour ${formatPrice(total)} ?`, ok=>{
-    if(ok) tg.sendData(JSON.stringify(payload));
+  tg.showConfirm(`Envoyer la demande pour ${formatPrice(total)} ?`, async (ok) => {
+    if(!ok){
+      state.sending = false;
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if(!res.ok || !data.ok){
+        throw new Error(data.error || "Erreur serveur");
+      }
+
+      tg.HapticFeedback?.notificationOccurred("success");
+      toast("Demande envoyée avec succès");
+
+      state.cart = [];
+      saveCart();
+      renderCart();
+      updateFab();
+
+      setTimeout(() => {
+        if (tg.close) tg.close();
+      }, 700);
+    } catch (err) {
+      console.error(err);
+      tg.HapticFeedback?.notificationOccurred("error");
+      toast(err.message || "Échec de l’envoi");
+    } finally {
+      state.sending = false;
+    }
   });
 }
 
-/* =========================
-   INIT
-========================= */
 (function init(){
   if(tg.initDataUnsafe?.user){
     document.getElementById("sub").innerText = "BIENVENUE, " + tg.initDataUnsafe.user.first_name.toUpperCase();
